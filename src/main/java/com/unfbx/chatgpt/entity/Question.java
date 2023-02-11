@@ -25,7 +25,7 @@ public class Question implements Serializable {
     private String model = Model.DAVINCI_003.getName();
     @JsonProperty("max_tokens")
     @Builder.Default
-    private Integer max_tokens = 1024;
+    private Integer max_tokens = 2048;
     @Builder.Default
     private double temperature = 0.9;
     @Builder.Default
