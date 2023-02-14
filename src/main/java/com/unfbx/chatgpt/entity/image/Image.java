@@ -23,8 +23,13 @@ public class Image {
      */
     @Builder.Default
     private Integer n = 1;
+    /**
+     * 256x256
+     * 512x512
+     * 1024x1024
+     */
     @Builder.Default
-    private String size = "1024x1024";
+    private String size = "512x512";
 
     @JsonProperty("response_format")
     @Builder.Default

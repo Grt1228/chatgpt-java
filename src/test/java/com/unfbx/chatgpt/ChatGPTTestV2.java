@@ -21,7 +21,7 @@ public class ChatGPTTestV2 {
     private ChatGPTClientV2 v2;
     @Before
     public void before() {
-        v2 = new ChatGPTClientV2("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");
+        v2 = new ChatGPTClientV2("**************************");
     }
 
     @Test

@@ -8,7 +8,7 @@ package com.unfbx.chatgpt;
  */
 public class ChatGPTTest {
     public static void main(String[] args) {
-        ChatGPTClient client = new ChatGPTClient("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");
+        ChatGPTClient client = new ChatGPTClient("*********************");
         String body = client.askQuestion("简单描述下三体这本书");
         System.out.println(body);
     }
