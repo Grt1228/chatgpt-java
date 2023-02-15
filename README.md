@@ -2,6 +2,8 @@
 
 **切换分支到1.0.0**，目前还在测试阶段
 
+参考：OpenAiClientTest
+
 OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] Models
 - [x] Completions
