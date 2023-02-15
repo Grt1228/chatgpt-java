@@ -13,7 +13,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ChatGPTUrl {
 
-    MODELS("https://api.openai.com/v1/models"),
     COMPLETIONS("https://api.openai.com/v1/completions"),
     ;
 

@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * 描述：
+ *
+ * @author https:www.unfbx.com
+ * @date 2023-02-15
+ */
 public class Model {
 
     private String id;

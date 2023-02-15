@@ -1,5 +1,7 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.images.ImageEdit;
+
 /**
  * 描述： 测试类
  *

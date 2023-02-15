@@ -4,9 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-
+/**
+ * 描述：
+ *
+ * @author https:www.unfbx.com
+ * @date 2023-02-15
+ */
 @Getter
 @Builder
 @Slf4j
@@ -14,6 +20,7 @@ public class Edit {
     /**
      * 编辑模型，目前支持两种
      */
+    @NonNull
     private String model;
 
     @Builder.Default
@@ -21,6 +28,7 @@ public class Edit {
     /**
      * 提示说明。告知模型如何修改。
      */
+    @NonNull
     private String instruction;
 
 

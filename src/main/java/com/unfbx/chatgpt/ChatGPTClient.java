@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 描述： 客户端
+ * 描述： chatgpt客户端
  *
  * @author https:www.unfbx.com
  * @date 2023-02-11

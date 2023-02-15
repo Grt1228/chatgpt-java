@@ -1,6 +1,6 @@
 package com.unfbx.chatgpt.entity.completions;
 
-import com.unfbx.chatgpt.common.OpenAiResponse;
+import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.common.Choice;
 import com.unfbx.chatgpt.entity.common.Usage;
 import lombok.Data;

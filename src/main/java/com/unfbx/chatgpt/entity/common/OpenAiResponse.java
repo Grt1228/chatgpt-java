@@ -1,11 +1,18 @@
-package com.unfbx.chatgpt.common;
+package com.unfbx.chatgpt.entity.common;
 
 import lombok.Data;
 
+import java.util.List;
+/**
+ * 描述：
+ *
+ * @author https:www.unfbx.com
+ * @date 2023-02-15
+ */
 @Data
 public class OpenAiResponse<T> {
     private String object;
-    private String data;
+    private List<T> data;
     private Error error;
 
 

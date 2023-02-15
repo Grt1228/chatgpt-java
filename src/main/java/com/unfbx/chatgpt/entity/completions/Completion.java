@@ -21,11 +21,14 @@ import java.util.*;
 @Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Completion implements Serializable {
+
+    @NonNull
     @Builder.Default
     private String model = Model.DAVINCI_003.getName();
     /**
      * 问题描述
      */
+    @NonNull
     private String prompt;
     /**
      * 完成输出后的后缀，用于格式化输出结果
