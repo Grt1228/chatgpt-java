@@ -9,8 +9,11 @@ import com.unfbx.chatgpt.entity.embeddings.Embedding;
 import com.unfbx.chatgpt.entity.embeddings.EmbeddingResponse;
 import com.unfbx.chatgpt.entity.engines.Engine;
 import com.unfbx.chatgpt.entity.files.File;
-import com.unfbx.chatgpt.entity.files.FileDeleteResponse;
+import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
+import com.unfbx.chatgpt.entity.fineTune.Event;
+import com.unfbx.chatgpt.entity.fineTune.FineTune;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.Image;
 import com.unfbx.chatgpt.entity.images.ImageResponse;
 import com.unfbx.chatgpt.entity.models.Model;
@@ -23,7 +26,6 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -94,7 +96,7 @@ public interface OpenAiApi {
     Single<ImageResponse> editImages(@Part() MultipartBody.Part image,
                                      @Part() MultipartBody.Part mask,
                                      @PartMap() Map<String, RequestBody> requestBodyMap
-                                     );
+    );
 
     /**
      * Creates a variation of a given image.
@@ -134,7 +136,7 @@ public interface OpenAiApi {
      * @return
      */
     @DELETE("v1/files/{file_id}")
-    Single<FileDeleteResponse> deleteFile(@Path("file_id") String fileId);
+    Single<DeleteResponse> deleteFile(@Path("file_id") String fileId);
 
     /**
      * 上传文件
@@ -180,6 +182,59 @@ public interface OpenAiApi {
      */
     @POST("v1/moderations")
     Single<ModerationResponse> moderations(@Body Moderation moderation);
+
+
+    /**
+     * 创建微调作业
+     *
+     * @param fineTune
+     * @return
+     */
+    @POST("v1/fine-tunes")
+    Single<FineTuneResponse> fineTune(@Body FineTune fineTune);
+
+    /**
+     * 微调作业集合
+     *
+     * @return
+     */
+    @GET("v1/fine-tunes")
+    Single<OpenAiResponse<FineTuneResponse>> fineTunes();
+
+
+    /**
+     * 检索微调作业
+     *
+     * @return
+     */
+    @GET("v1/fine-tunes/{fine_tune_id}")
+    Single<FineTuneResponse> retrieveFineTune(@Path("fine_tune_id") String fineTuneId);
+
+    /**
+     * 取消微调作业
+     *
+     * @return
+     */
+    @POST("v1/fine-tunes/{fine_tune_id}/cancel")
+    Single<FineTuneResponse> cancelFineTune(@Path("fine_tune_id") String fineTuneId);
+
+    /**
+     * 微调作业事件列表
+     *
+     * @return
+     */
+    @GET("v1/fine-tunes/{fine_tune_id}/events")
+    Single<OpenAiResponse<Event>> fineTuneEvents(@Path("fine_tune_id") String fineTuneId);
+
+    /**
+     * 删除微调作业模型
+     * Delete a fine-tuned model. You must have the Owner role in your organization.
+     *
+     * @return
+     */
+    @GET("v1/models/{model}")
+    Single<DeleteResponse> deleteFineTuneModel(@Path("model") String model);
+
 
     /**
      * 引擎列表

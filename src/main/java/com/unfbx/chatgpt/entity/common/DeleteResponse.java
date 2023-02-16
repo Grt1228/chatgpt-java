@@ -1,4 +1,4 @@
-package com.unfbx.chatgpt.entity.files;
+package com.unfbx.chatgpt.entity.common;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2023-02-15
  */
 @Data
-public class FileDeleteResponse {
+public class DeleteResponse {
     private String id;
     private String object;
     private boolean deleted;

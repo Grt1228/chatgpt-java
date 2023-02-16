@@ -2,7 +2,6 @@ package com.unfbx.chatgpt;
 
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
-import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
@@ -13,8 +12,11 @@ import com.unfbx.chatgpt.entity.embeddings.Embedding;
 import com.unfbx.chatgpt.entity.embeddings.EmbeddingResponse;
 import com.unfbx.chatgpt.entity.engines.Engine;
 import com.unfbx.chatgpt.entity.files.File;
-import com.unfbx.chatgpt.entity.files.FileDeleteResponse;
+import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
+import com.unfbx.chatgpt.entity.fineTune.Event;
+import com.unfbx.chatgpt.entity.fineTune.FineTune;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
@@ -79,7 +81,7 @@ public class OpenAiClient {
             if (!response.isSuccessful()) {
                 if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
                         || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()
-                        || response.code() == CommonError.OPENAI_SERVER_ERROR.code() ) {
+                        || response.code() == CommonError.OPENAI_SERVER_ERROR.code()) {
                     OpenAiResponse openAiResponse = JSONUtil.toBean(response.body().string(), OpenAiResponse.class);
                     log.error(openAiResponse.getError().getMessage());
                     throw new BaseException(openAiResponse.getError().getMessage());
@@ -254,8 +256,9 @@ public class OpenAiClient {
 
     /**
      * Creates a variation of a given image.
-     *
+     * <p>
      * 变化图片，类似ai重做图片
+     *
      * @param image
      * @param imageVariations
      * @return
@@ -368,8 +371,8 @@ public class OpenAiClient {
      * @param fileId
      * @return
      */
-    public FileDeleteResponse deleteFile(String fileId) {
-        Single<FileDeleteResponse> deleteFile = this.openAiApi.deleteFile(fileId);
+    public DeleteResponse deleteFile(String fileId) {
+        Single<DeleteResponse> deleteFile = this.openAiApi.deleteFile(fileId);
         return deleteFile.blockingGet();
     }
 
@@ -445,6 +448,84 @@ public class OpenAiClient {
         Single<ModerationResponse> moderations = this.openAiApi.moderations(moderation);
         return moderations.blockingGet();
     }
+
+    /**
+     * 创建微调模型
+     *
+     * @param fineTune
+     * @return
+     */
+    public FineTuneResponse fineTune(FineTune fineTune) {
+        Single<FineTuneResponse> fineTuneResponse = this.openAiApi.fineTune(fineTune);
+        return fineTuneResponse.blockingGet();
+    }
+
+    /**
+     * 创建微调模型
+     *
+     * @param trainingFileId 文件id，文件上传返回的id
+     * @return
+     */
+    public FineTuneResponse fineTune(String trainingFileId) {
+        FineTune fineTune = FineTune.builder().trainingFile(trainingFileId).build();
+        return this.fineTune(fineTune);
+    }
+
+    /**
+     * 微调模型列表
+     *
+     * @return
+     */
+    public List<FineTuneResponse> fineTunes() {
+        Single<OpenAiResponse<FineTuneResponse>> fineTunes = this.openAiApi.fineTunes();
+        return fineTunes.blockingGet().getData();
+    }
+
+    /**
+     * 检索微调作业
+     *
+     * @param fineTuneId
+     * @return
+     */
+    public FineTuneResponse retrieveFineTune(String fineTuneId) {
+        Single<FineTuneResponse> fineTune = this.openAiApi.retrieveFineTune(fineTuneId);
+        return fineTune.blockingGet();
+    }
+
+    /**
+     * 取消微调作业
+     *
+     * @param fineTuneId
+     * @return
+     */
+    public FineTuneResponse cancelFineTune(String fineTuneId) {
+        Single<FineTuneResponse> fineTune = this.openAiApi.cancelFineTune(fineTuneId);
+        return fineTune.blockingGet();
+    }
+
+    /**
+     * 微调作业事件列表
+     *
+     * @param fineTuneId
+     * @return
+     */
+    public List<Event> fineTuneEvents(String fineTuneId) {
+        Single<OpenAiResponse<Event>> events = this.openAiApi.fineTuneEvents(fineTuneId);
+        return events.blockingGet().getData();
+    }
+
+    /**
+     * 删除微调作业模型
+     * Delete a fine-tuned model. You must have the Owner role in your organization.
+     *
+     * @param model
+     * @return
+     */
+    public DeleteResponse deleteFineTuneModel(String model) {
+        Single<DeleteResponse> delete = this.openAiApi.deleteFineTuneModel(model);
+        return delete.blockingGet();
+    }
+
 
     /**
      * 引擎列表
