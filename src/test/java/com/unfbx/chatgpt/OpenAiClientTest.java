@@ -11,6 +11,7 @@ import com.unfbx.chatgpt.entity.files.File;
 import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
 import com.unfbx.chatgpt.entity.fineTune.Event;
+import com.unfbx.chatgpt.entity.fineTune.FineTune;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
@@ -60,9 +61,10 @@ public class OpenAiClientTest {
     }
 
     @Test
-    public void completionsv2() {
+    public void completionsV2() {
         Completion q = Completion.builder()
                 .prompt("三体人是什么？")
+                .model("********")
                 .build();
         CompletionResponse completions = v2.completions(q);
         System.out.println(completions);
@@ -219,6 +221,12 @@ public class OpenAiClientTest {
         FineTuneResponse fineTuneResponse = v2.fineTune("file-EHB0Wp3wcZu6tpbwkB6xeiEd");
         System.out.println(fineTuneResponse);
     }
+    @Test
+    public void fineTuneV2() {
+        FineTune fineTune = FineTune.builder().trainingFile("file-EHB0Wp3wcZu6tpbwkB6xeiEd").suffix("grttttttttt").build();
+        FineTuneResponse fineTuneResponse = v2.fineTune(fineTune);
+        System.out.println(fineTuneResponse);
+    }
 
     @Test
     public void fineTunes() {
@@ -228,7 +236,7 @@ public class OpenAiClientTest {
 
     @Test
     public void retrieveFineTune() {
-        FineTuneResponse fineTuneResponses = v2.retrieveFineTune("ft-KohbEOCbPyNTyQmt5UV1F1cb");
+        FineTuneResponse fineTuneResponses = v2.retrieveFineTune("ft-bU0xJzVfrgOjqoy1e9lC2oDP");
         System.out.println(fineTuneResponses);
     }
 
