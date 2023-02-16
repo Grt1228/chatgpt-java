@@ -40,7 +40,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 
 ## 方式一（推荐方式）
 
-**这种调用方式除了 ++Fine-tune++相关的几个接口，其他接口全部支持调用**
+**OpenAI全部接口支持调用**
 调用方式和上面类似，创建客户端配置api-key
 完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest
 ```
