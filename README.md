@@ -1,4 +1,21 @@
-# 工程简介
+# 已经支持OpenAI官方的绝大多数api
+
+**切换分支到1.0.0**，目前还在测试阶段
+
+参考：OpenAiClientTest
+
+OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
+- [x] Models
+- [x] Completions
+- [x] Images
+- [x] Embeddings
+- [x] Files
+- [ ] Fine-tune
+- [x] Moderations
+- [x] Engines
+
+# 工程简介 
+master分支
 
 **ChatGPT的Java客户端**
 目前支持api-keys的方式调用.
