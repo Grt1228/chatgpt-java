@@ -1,6 +1,5 @@
 package com.unfbx.chatgpt.entity.files;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -11,7 +10,4 @@ import lombok.Data;
  */
 @Data
 public class UploadFileResponse extends File {
-    private String status;
-    @JsonProperty("status_details")
-    private String statusDetails;
 }

@@ -19,11 +19,4 @@ public class EmbeddingResponse {
     private List<Item> data;
     private String model;
     private Usage usage;
-
-    @Data
-    public class Item {
-        private String object;
-        private List<BigDecimal> embedding;
-        private Integer index;
-    }
 }

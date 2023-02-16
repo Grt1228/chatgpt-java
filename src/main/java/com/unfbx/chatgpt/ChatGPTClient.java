@@ -5,6 +5,7 @@ import cn.hutool.http.*;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.config.ChatGPTUrl;
 import com.unfbx.chatgpt.entity.common.Choice;
+import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.exception.BaseException;

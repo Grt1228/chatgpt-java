@@ -18,9 +18,13 @@ import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
 import io.reactivex.Single;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 描述： open ai官方api接口
@@ -79,41 +83,31 @@ public interface OpenAiApi {
     /**
      * Creates an edited or extended image given an original image and a prompt.
      * 根据描述修改图片
+     *
      * @param image
      * @param mask
-     * @param prompt
-     * @param n         生成几张照片：1~10
-     * @param size
-     * @param responseFormat
-     * @param user
+     * @param requestBodyMap
      * @return
      */
     @Multipart
     @POST("v1/images/edits")
-    Single<ImageResponse> editImages(@Part ("image") RequestBody image,
-                                     @Part ("mask") RequestBody mask,
-                                     @Part ("prompt") String prompt,
-                                     @Part ("n") int n,
-                                     @Part ("size") String size,
-                                     @Part ("response_format")String responseFormat,
-                                     @Part ("user")String user);
+    Single<ImageResponse> editImages(@Part() MultipartBody.Part image,
+                                     @Part() MultipartBody.Part mask,
+                                     @PartMap() Map<String, RequestBody> requestBodyMap
+                                     );
 
     /**
      * Creates a variation of a given image.
+     *
      * @param image
-     * @param n
-     * @param size
-     * @param responseFormat
-     * @param user
+     * @param requestBodyMap
      * @return
      */
     @Multipart
     @POST("v1/images/variations")
-    Single<ImageResponse> variationsImages(@Part ("image") RequestBody image,
-                                           @Part ("n") int n,
-                                           @Part ("size") String size,
-                                           @Part ("response_format")String responseFormat,
-                                           @Part ("user")String user);
+    Single<ImageResponse> variationsImages(@Part() MultipartBody.Part image,
+                                           @PartMap() Map<String, RequestBody> requestBodyMap
+    );
 
     /**
      * Creates an embedding vector representing the input text.
@@ -139,7 +133,7 @@ public interface OpenAiApi {
      * @param fileId
      * @return
      */
-    @DELETE("v1/files")
+    @DELETE("v1/files/{file_id}")
     Single<FileDeleteResponse> deleteFile(@Path("file_id") String fileId);
 
     /**
@@ -150,8 +144,9 @@ public interface OpenAiApi {
      * @return
      */
     @Multipart
-    @POST("v1/files/{file_id}")
-    Single<UploadFileResponse> uploadFile(@Path("purpose") String purpose, @Part("file") RequestBody file);
+    @POST("v1/files")
+    Single<UploadFileResponse> uploadFile(@Part MultipartBody.Part file,
+                                          @Part("purpose") RequestBody purpose);
 
 
     /**

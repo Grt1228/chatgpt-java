@@ -23,8 +23,8 @@ public class Edit {
     @NonNull
     private String model;
 
-    @Builder.Default
-    private String input = "";
+    @NonNull
+    private String input;
     /**
      * 提示说明。告知模型如何修改。
      */
@@ -89,14 +89,15 @@ public class Edit {
     public void setInstruction(String instruction) {
         this.instruction = instruction;
     }
+    @Getter
+    @AllArgsConstructor
+    public enum Model {
+        TEXT_DAVINCI_EDIT_001("text-davinci-edit-001"),
+        CODE_DAVINCI_EDIT_001("code-davinci-edit-001"),
+        ;
+        private String name;
+    }
 }
 
-@Getter
-@AllArgsConstructor
-enum Model {
-    TEXT_DAVINCI_EDIT_001("text-davinci-edit-001"),
-    CODE_DAVINCI_EDIT_001("code-davinci-edit-001"),
-    ;
-    private String name;
-}
+
 

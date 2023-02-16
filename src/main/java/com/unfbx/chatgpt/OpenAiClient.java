@@ -30,8 +30,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -78,14 +77,18 @@ public class OpenAiClient {
             Request original = chain.request();
             Response response = chain.proceed(original);
             if (!response.isSuccessful()) {
-                if (response.code() == HttpStatus.HTTP_UNAUTHORIZED) {
-                    OpenAiResponse body = JSONUtil.toBean(response.body().string(), OpenAiResponse.class);
-                    throw new BaseException(body.getError().getMessage());
+                if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
+                        || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()
+                        || response.code() == CommonError.OPENAI_SERVER_ERROR.code() ) {
+                    OpenAiResponse openAiResponse = JSONUtil.toBean(response.body().string(), OpenAiResponse.class);
+                    log.error(openAiResponse.getError().getMessage());
+                    throw new BaseException(openAiResponse.getError().getMessage());
                 }
                 String errorMsg = response.body().string();
                 log.error("请求异常：{}", errorMsg);
                 OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
                 if (Objects.nonNull(openAiResponse.getError())) {
+                    log.error(openAiResponse.getError().getMessage());
                     throw new BaseException(openAiResponse.getError().getMessage());
                 }
                 throw new BaseException(CommonError.RETRY_ERROR);
@@ -132,9 +135,6 @@ public class OpenAiClient {
      * @return
      */
     public CompletionResponse completions(Completion completion) {
-        if (Objects.isNull(completion)) {
-            throw new BaseException(CommonError.PARAM_ERROR);
-        }
         Single<CompletionResponse> completions = this.openAiApi.completions(completion);
         return completions.blockingGet();
     }
@@ -222,42 +222,60 @@ public class OpenAiClient {
      */
     public List<Item> editImages(java.io.File image, java.io.File mask, ImageEdit imageEdit) {
         checkImage(image);
-        if (Objects.nonNull(mask) && mask.length() > 4 * 1024 * 1024) {
-            log.error("mask最大支持4MB");
-            throw new BaseException(CommonError.PARAM_ERROR);
-        }
-        RequestBody imageBody = RequestBody.create(MediaType.parse("image/png"), image);
-        RequestBody maskBody = null;
+        checkImageFormat(image);
+        checkImageSize(image);
         if (Objects.nonNull(mask)) {
-            maskBody = RequestBody.create(MediaType.parse("image/png"), mask);
+            checkImageFormat(image);
+            checkImageSize(image);
+        }
+        // 创建 RequestBody，用于封装构建RequestBody
+        RequestBody imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+        MultipartBody.Part imageMultipartBody = MultipartBody.Part.createFormData("image", image.getName(), imageBody);
+        MultipartBody.Part maskMultipartBody = null;
+        if (Objects.nonNull(mask)) {
+            RequestBody maskBody = RequestBody.create(MediaType.parse("multipart/form-data"), mask);
+            maskMultipartBody = MultipartBody.Part.createFormData("mask", image.getName(), maskBody);
+        }
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
+        requestBodyMap.put("prompt", RequestBody.create(MediaType.parse("multipart/form-data"), imageEdit.getPrompt()));
+        requestBodyMap.put("n", RequestBody.create(MediaType.parse("multipart/form-data"), imageEdit.getN().toString()));
+        requestBodyMap.put("size", RequestBody.create(MediaType.parse("multipart/form-data"), imageEdit.getSize()));
+        requestBodyMap.put("response_format", RequestBody.create(MediaType.parse("multipart/form-data"), imageEdit.getResponseFormat()));
+        if (!(Objects.isNull(imageEdit.getUser()) || "".equals(imageEdit.getUser()))) {
+            requestBodyMap.put("user", RequestBody.create(MediaType.parse("multipart/form-data"), imageEdit.getUser()));
         }
         Single<ImageResponse> imageResponse = this.openAiApi.editImages(
-                imageBody,
-                maskBody,
-                imageEdit.getPrompt(),
-                imageEdit.getN(),
-                imageEdit.getSize(),
-                imageEdit.getResponseFormat(),
-                imageEdit.getUser());
+                imageMultipartBody,
+                maskMultipartBody,
+                requestBodyMap
+        );
         return imageResponse.blockingGet().getData();
     }
 
     /**
      * Creates a variation of a given image.
      *
+     * 变化图片，类似ai重做图片
      * @param image
      * @param imageVariations
      * @return
      */
     public ImageResponse variationsImages(java.io.File image, ImageVariations imageVariations) {
         checkImage(image);
-        RequestBody imageBody = RequestBody.create(MediaType.parse("image/png"), image);
+        checkImageFormat(image);
+        checkImageSize(image);
+        RequestBody imageBody = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("image", image.getName(), imageBody);
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
+        requestBodyMap.put("n", RequestBody.create(MediaType.parse("multipart/form-data"), imageVariations.getN().toString()));
+        requestBodyMap.put("size", RequestBody.create(MediaType.parse("multipart/form-data"), imageVariations.getSize()));
+        requestBodyMap.put("response_format", RequestBody.create(MediaType.parse("multipart/form-data"), imageVariations.getResponseFormat()));
+        if (!(Objects.isNull(imageVariations.getUser()) || "".equals(imageVariations.getUser()))) {
+            requestBodyMap.put("user", RequestBody.create(MediaType.parse("multipart/form-data"), imageVariations.getUser()));
+        }
         Single<ImageResponse> variationsImages = this.openAiApi.variationsImages(
-                imageBody,
-                imageVariations.getN(),
-                imageVariations.getSize(),
-                imageVariations.getResponseFormat(),
-                imageVariations.getUser()
+                multipartBody,
+                requestBodyMap
         );
         return variationsImages.blockingGet();
     }
@@ -270,20 +288,14 @@ public class OpenAiClient {
      */
     public ImageResponse variationsImages(java.io.File image) {
         checkImage(image);
+        checkImageFormat(image);
+        checkImageSize(image);
         ImageVariations imageVariations = ImageVariations.builder().build();
-        RequestBody imageBody = RequestBody.create(MediaType.parse("image/png"), image);
-        Single<ImageResponse> variationsImages = this.openAiApi.variationsImages(
-                imageBody,
-                imageVariations.getN(),
-                imageVariations.getSize(),
-                imageVariations.getResponseFormat(),
-                imageVariations.getUser()
-        );
-        return variationsImages.blockingGet();
+        return this.variationsImages(image, imageVariations);
     }
 
     /**
-     * 校验图片信息
+     * 校验图片不能为空
      *
      * @param image
      */
@@ -292,10 +304,26 @@ public class OpenAiClient {
             log.error("image不能为空");
             throw new BaseException(CommonError.PARAM_ERROR);
         }
+    }
+
+    /**
+     * 校验图片格式
+     *
+     * @param image
+     */
+    private void checkImageFormat(java.io.File image) {
         if (!(image.getName().endsWith("png") || image.getName().endsWith("PNG"))) {
             log.error("image格式错误");
             throw new BaseException(CommonError.PARAM_ERROR);
         }
+    }
+
+    /**
+     * 校验图片大小
+     *
+     * @param image
+     */
+    private void checkImageSize(java.io.File image) {
         if (image.length() > 4 * 1024 * 1024) {
             log.error("image最大支持4MB");
             throw new BaseException(CommonError.PARAM_ERROR);
@@ -304,6 +332,7 @@ public class OpenAiClient {
 
     /**
      * Creates an embedding vector representing the input text.
+     *
      * @param input
      * @return
      */
@@ -314,6 +343,7 @@ public class OpenAiClient {
 
     /**
      * Creates an embedding vector representing the input text.
+     *
      * @param embedding
      * @return
      */
@@ -324,6 +354,7 @@ public class OpenAiClient {
 
     /**
      * 获取文件列表
+     *
      * @return
      */
     public List<File> files() {
@@ -333,6 +364,7 @@ public class OpenAiClient {
 
     /**
      * 删除文件
+     *
      * @param fileId
      * @return
      */
@@ -343,27 +375,35 @@ public class OpenAiClient {
 
     /**
      * 上传文件
+     *
      * @param purpose
      * @param file
      * @return
      */
-    public UploadFileResponse uploadFile(String purpose, RequestBody file) {
-        Single<UploadFileResponse> uploadFileResponse = this.openAiApi.uploadFile(purpose, file);
+    public UploadFileResponse uploadFile(String purpose, java.io.File file) {
+        // 创建 RequestBody，用于封装构建RequestBody
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
+
+        RequestBody purposeBody = RequestBody.create(MediaType.parse("multipart/form-data"), purpose);
+        Single<UploadFileResponse> uploadFileResponse = this.openAiApi.uploadFile(multipartBody, purposeBody);
         return uploadFileResponse.blockingGet();
     }
 
     /**
      * 上传文件
+     *
      * @param file
      * @return
      */
-    public UploadFileResponse uploadFile(RequestBody file) {
+    public UploadFileResponse uploadFile(java.io.File file) {
         //purpose 官网示例默认是：fine-tune
         return this.uploadFile("fine-tune", file);
     }
 
     /**
      * 检索文件
+     *
      * @param fileId
      * @return
      */
@@ -375,6 +415,7 @@ public class OpenAiClient {
     /**
      * 检索文件内容
      * 免费用户无法使用此接口
+     *
      * @param fileId
      * @return
      */
@@ -385,6 +426,7 @@ public class OpenAiClient {
 
     /**
      * 文本审核
+     *
      * @param input
      * @return
      */
@@ -395,6 +437,7 @@ public class OpenAiClient {
 
     /**
      * 文本审核
+     *
      * @param moderation
      * @return
      */
@@ -405,6 +448,7 @@ public class OpenAiClient {
 
     /**
      * 引擎列表
+     *
      * @return
      */
     @Deprecated
@@ -415,6 +459,7 @@ public class OpenAiClient {
 
     /**
      * 引擎详细信息
+     *
      * @param engineId
      * @return
      */
