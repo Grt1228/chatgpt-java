@@ -41,7 +41,8 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 ## 方式一（推荐方式）
 
 **OpenAI全部接口支持调用**
-调用方式和上面类似，创建客户端配置api-key
+
+创建客户端配置api-key
 完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest
 ```
 public class OpenAiClientTest {
