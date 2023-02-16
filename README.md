@@ -1,12 +1,18 @@
 ##### 已经支持OpenAI官方的绝大多数api，目前还在测试阶段，有问题欢迎朋友们指出，互相学习。
 
+it’s an “unofficial" or "community-maintained” library.
+
+这是一个非官方的社区维护的库。
 # 工程简介
 
 **ChatGPT的Java客户端**
+
 OpenAI官方Api的Java SDK
+
 目前支持api-keys的方式调用，获取api-keys可以百度或者csdn查一下。
+
 **api-keys的方式调用目前不用梯子即可访问。**
-后续可能会持续集成国内类ChatGpt的厂商api。
+
 
 OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 **已完成接口列表：**
