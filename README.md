@@ -1,8 +1,17 @@
-##### 已经支持OpenAI官方的绝大多数api，目前还在测试阶段，有问题欢迎朋友们指出，互相学习。
-
 it’s an “unofficial" or "community-maintained” library.
 
 这是一个非官方的社区维护的库。
+
+---
+#### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
+
+注意：由于这个接口：
+
+https://platform.openai.com/docs/api-reference/files/retrieve-content
+
+**免费用户无法使用，所以并未经过测试！！！**（哪位朋友有收费版keys也可以提供下）
+
+
 # 工程简介
 
 **ChatGPT的Java客户端**
@@ -21,7 +30,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] Images
 - [x] Embeddings
 - [x] Files
-- [ ] Fine-tune
+- [x] Fine-tune
 - [x] Moderations
 - [x] Engines
 

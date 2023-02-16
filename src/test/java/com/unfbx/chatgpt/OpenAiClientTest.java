@@ -8,13 +8,14 @@ import com.unfbx.chatgpt.entity.embeddings.Embedding;
 import com.unfbx.chatgpt.entity.embeddings.EmbeddingResponse;
 import com.unfbx.chatgpt.entity.engines.Engine;
 import com.unfbx.chatgpt.entity.files.File;
-import com.unfbx.chatgpt.entity.files.FileDeleteResponse;
+import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
+import com.unfbx.chatgpt.entity.fineTune.Event;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
-import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,13 +35,16 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
-        v2 = new OpenAiClient("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");
+        v2 = new OpenAiClient("****************************************");
     }
 
     @Test
     public void models() {
         List<Model> models = v2.models();
-        System.out.println(models.toString());
+        models.forEach(e -> {
+            System.out.println(e.getOwnedBy());
+            System.out.println(e.getID());
+        });
     }
 
     @Test
@@ -180,7 +184,7 @@ public class OpenAiClientTest {
 
     @Test
     public void deleteFile() {
-        FileDeleteResponse deleteResponse = v2.deleteFile("file-GreIoKq6lWHvq8PDwDZIGJjm");
+        DeleteResponse deleteResponse = v2.deleteFile("file-GreIoKq6lWHvq8PDwDZIGJjm");
         System.out.println(deleteResponse);
     }
 
@@ -208,5 +212,42 @@ public class OpenAiClientTest {
     public void engine() {
         Engine engines = v2.engine("code-davinci-002");
         System.out.println(engines);
+    }
+
+    @Test
+    public void fineTune() {
+        FineTuneResponse fineTuneResponse = v2.fineTune("file-EHB0Wp3wcZu6tpbwkB6xeiEd");
+        System.out.println(fineTuneResponse);
+    }
+
+    @Test
+    public void fineTunes() {
+        List<FineTuneResponse> fineTuneResponses = v2.fineTunes();
+        System.out.println(fineTuneResponses);
+    }
+
+    @Test
+    public void retrieveFineTune() {
+        FineTuneResponse fineTuneResponses = v2.retrieveFineTune("ft-KohbEOCbPyNTyQmt5UV1F1cb");
+        System.out.println(fineTuneResponses);
+    }
+
+    @Test
+    public void cancelFineTune() {
+        //status发生变化 pending -> cancelled
+        FineTuneResponse fineTuneResponses = v2.cancelFineTune("ft-KohbEOCbPyNTyQmt5UV1F1cb");
+        System.out.println(fineTuneResponses);
+    }
+
+    @Test
+    public void fineTuneEvents() {
+        List<Event> events = v2.fineTuneEvents("ft-KohbEOCbPyNTyQmt5UV1F1cb");
+        System.out.println(events);
+    }
+
+    @Test
+    public void deleteFineTuneModel() {
+        DeleteResponse deleteResponse = v2.deleteFineTuneModel("ft-KohbEOCbPyNTyQmt5UV1F1cb");
+        System.out.println(deleteResponse);
     }
 }
