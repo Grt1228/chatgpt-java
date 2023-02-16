@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -27,7 +28,10 @@ public class FineTune {
 
     @JsonProperty("validation_file")
     private String validationFile;
-
+    /**
+     * 参考
+     * @see FineTune.Model
+     */
     private String model;
 
     @JsonProperty("n_epochs")
@@ -102,5 +106,17 @@ public class FineTune {
             throw new BaseException(CommonError.PARAM_ERROR);
         }
         this.suffix = suffix;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Model {
+        // or a fine-tuned model created after 2022-04-21.
+        ADA("ada"),
+        BABBAGE("babbage"),
+        CURIE("curie"),
+        DAVINCI("davinci"),
+        ;
+        private String name;
     }
 }

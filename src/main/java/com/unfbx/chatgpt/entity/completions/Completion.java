@@ -207,14 +207,15 @@ public class Completion implements Serializable {
     public void setUser(String user) {
         this.user = user;
     }
+    @Getter
+    @AllArgsConstructor
+    public enum Model {
+        DAVINCI_003("text-davinci-003"),
+        DAVINCI_002("text-davinci-002"),
+        DAVINCI("davinci"),
+        ;
+        private String name;
+    }
 }
 
-@Getter
-@AllArgsConstructor
-enum Model {
-    DAVINCI_003("text-davinci-003"),
-    DAVINCI_002("text-davinci-002"),
-    DAVINCI("davinci"),
-    ;
-    private String name;
-}
+
