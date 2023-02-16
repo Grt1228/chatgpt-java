@@ -4,8 +4,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.http.*;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.config.ChatGPTUrl;
-import com.unfbx.chatgpt.entity.Answer;
-import com.unfbx.chatgpt.entity.Question;
+import com.unfbx.chatgpt.entity.common.Choice;
+import com.unfbx.chatgpt.entity.common.OpenAiResponse;
+import com.unfbx.chatgpt.entity.completions.CompletionResponse;
+import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import lombok.Getter;
@@ -17,7 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 描述： 客户端
+ * 描述： chatgpt客户端
  *
  * @author https:www.unfbx.com
  * @date 2023-02-11
@@ -33,7 +35,7 @@ public class ChatGPTClient {
     }
 
     public String askQuestion(String question) {
-        Question q = Question.builder()
+        Completion q = Completion.builder()
                 .prompt(question)
                 .build();
         HttpResponse response = HttpRequest
@@ -46,17 +48,17 @@ public class ChatGPTClient {
         log.info("调用ChatGPT请求返回值：{}", body);
         if (!response.isOk()) {
             if (response.getStatus() == HttpStatus.HTTP_UNAUTHORIZED) {
-                Answer answer = JSONUtil.toBean(response.body(), Answer.class);
+                CompletionResponse answer = JSONUtil.toBean(response.body(), CompletionResponse.class);
                 throw new BaseException(answer.getError().getMessage());
             }
             throw new BaseException(CommonError.RETRY_ERROR);
         }
         log.info("调用ChatGPT请求返回值：{}", body);
-        Answer answer = JSONUtil.toBean(body, Answer.class);
+        CompletionResponse answer = JSONUtil.toBean(body, CompletionResponse.class);
         if (Objects.nonNull(answer.getError())) {
             return answer.getError().getMessage();
         }
-        List<Answer.Choice> choiceList = Arrays.stream(answer.getChoices()).collect(Collectors.toList());
+        List<Choice> choiceList = Arrays.stream(answer.getChoices()).collect(Collectors.toList());
         if (CollectionUtil.isEmpty(choiceList)) {
             throw new BaseException(CommonError.RETRY_ERROR);
         }
