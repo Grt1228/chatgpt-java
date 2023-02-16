@@ -118,13 +118,13 @@ public class OpenAiClientTest {
     @Test
     public void variationsImagesV2() {
         ImageVariations imageVariations = ImageVariations.builder().build();
-        ImageResponse imageResponse = v2.variationsImages(new java.io.File("C:\\Users\\FLJS188\\Desktop\\12.png"), imageVariations);
+        ImageResponse imageResponse = v2.variationsImages(new java.io.File("C:\\Users\\***\\Desktop\\12.png"), imageVariations);
         System.out.println(imageResponse);
     }
 
     @Test
     public void variationsImages() {
-        ImageResponse imageResponse = v2.variationsImages(new java.io.File("C:\\Users\\FLJS188\\Desktop\\12.png"));
+        ImageResponse imageResponse = v2.variationsImages(new java.io.File("C:\\Users\\***\\Desktop\\12.png"));
         System.out.println(imageResponse);
     }
 
