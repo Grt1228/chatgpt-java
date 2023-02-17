@@ -36,7 +36,8 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
-        v2 = new OpenAiClient("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");
+        v2 = new OpenAiClient("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");
+        v2 = new OpenAiClient("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");
     }
 
     @Test
@@ -57,7 +58,10 @@ public class OpenAiClientTest {
 
     @Test
     public void completions() {
-        CompletionResponse completions = v2.completions("Java Stream list to map");
+//        CompletionResponse completions = v2.completions("Java Stream list to map");
+//        Arrays.stream(completions.getChoices()).forEach(System.out::println);
+
+        CompletionResponse completions = v2.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
         Arrays.stream(completions.getChoices()).forEach(System.out::println);
     }
 
