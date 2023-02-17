@@ -13,6 +13,22 @@
         <connection>scm:git:git://github.com/Grt1228/chatgpt-java.git</connection>
         <url>https://github.com/Grt1228/chatgpt-java</url>
     </scm>
+    <organization>
+        <name>grt1228</name>
+        <url>https://www.unfbx.com</url>
+    </organization>
+    <developers>
+        <developer>
+            <name>unfbx</name>
+            <email>rtguo1228@qq.com</email>
+            <organization>unfbx</organization>
+            <organizationUrl>https://www.unfbx.com</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
 
     <properties>
         <java.version>1.8</java.version>
