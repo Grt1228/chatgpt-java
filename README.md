@@ -36,11 +36,43 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 
 # 快速开始
 
-有两种调用方式
+## 方式一（下载源码直接运行）
+导入pom依赖
+```
+<dependency>
+    <groupId>com.unfbx</groupId>
+    <artifactId>chatgpt-java</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
-## 方式一（推荐方式）
+使用示例：
+```
+package com.unfbx.eventTest.test;
+import com.unfbx.chatgpt.OpenAiClient;
+import com.unfbx.chatgpt.entity.completions.CompletionResponse;
+import java.util.Arrays;
 
-**OpenAI全部接口支持调用**
+public class TestB {
+    public static void main(String[] args) {
+        //配置api keys
+        OpenAiClient openAiClient = new OpenAiClient("sk-—***************api keys ****************");
+        CompletionResponse completions = openAiClient.completions("三体人是什么？");
+        Arrays.stream(completions.getChoices()).forEach(System.out::println);
+    }
+}
+```
+
+输出：
+```
+Choice(text=
+
+三体人是一种虚构的外星生物，出现在中国作家刘慈欣的科幻小说《三体》中。它们是一种三节身体的外星生物，每个节身体都有自己的大脑，它们可以通过超越光速的思维来沟通。, index=0, logprobs=null, finishReason=stop)
+```
+
+## 方式二（下载源码直接运行）
+
+### **OpenAI全部接口支持调用**
 
 创建客户端配置api-key
 完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest
@@ -82,7 +114,7 @@ public class OpenAiClientTest {
     }
 }
 ```
-## 方式二
+### 问答接口第二种调用方式
 **目前ChatGPTClient只支持Completions相关api**
 创建客户端配置api-key
 ```
