@@ -29,6 +29,13 @@
             <timezone>+8</timezone>
         </developer>
     </developers>
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://projectlombok.org/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <java.version>1.8</java.version>
