@@ -36,7 +36,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 
 # 快速开始
 
-## 方式一（下载源码直接运行）
+## 方式一
 导入pom依赖
 ```
 <dependency>
