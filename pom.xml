@@ -100,7 +100,7 @@
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>maven-public</id> <!-- 此处id与setting.xml中的服务id保持一致 -->
+            <id>unfbx</id> <!-- 此处id与setting.xml中的服务id保持一致 -->
             <name>oss Staging Repository</name>
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
