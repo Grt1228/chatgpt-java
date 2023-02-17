@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  * 描述： open ai 客户端
  *
  * @author https:www.unfbx.com
- * @date 2023-02-11
+ *  2023-02-11
  */
 @Getter
 @Slf4j
@@ -63,7 +63,7 @@ public class OpenAiClient {
     /**
      * 创建okhttpClient
      *
-     * @return
+     * @return OkHttpClient
      */
     private OkHttpClient okHttpClient() {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
@@ -107,7 +107,7 @@ public class OpenAiClient {
     /**
      * openAi模型列表
      *
-     * @return
+     * @return Model  list
      */
     public List<Model> models() {
         Single<ModelResponse> models = this.openAiApi.models();
@@ -119,7 +119,7 @@ public class OpenAiClient {
      * openAi模型详细信息
      *
      * @param id
-     * @return
+     * @return Model
      */
     public Model model(String id) {
         if (Objects.isNull(id) || "".equals(id)) {
@@ -134,7 +134,7 @@ public class OpenAiClient {
      * 问答接口
      *
      * @param completion
-     * @return
+     * @return CompletionResponse
      */
     public CompletionResponse completions(Completion completion) {
         Single<CompletionResponse> completions = this.openAiApi.completions(completion);
@@ -145,7 +145,7 @@ public class OpenAiClient {
      * 问答接口-简易版
      *
      * @param question
-     * @return
+     * @return CompletionResponse
      */
     public CompletionResponse completions(String question) {
         Completion q = Completion.builder()
@@ -159,7 +159,7 @@ public class OpenAiClient {
      * 文本修改
      *
      * @param edit
-     * @return
+     * @return EditResponse
      */
     public EditResponse edit(Edit edit) {
         Single<EditResponse> edits = this.openAiApi.edits(edit);
@@ -170,7 +170,7 @@ public class OpenAiClient {
      * 根据描述生成图片
      *
      * @param prompt
-     * @return
+     * @return ImageResponse
      */
     public ImageResponse genImages(String prompt) {
         Image image = Image.builder().prompt(prompt).build();
@@ -181,7 +181,7 @@ public class OpenAiClient {
      * 根据描述生成图片
      *
      * @param image
-     * @return
+     * @return ImageResponse
      */
     public ImageResponse genImages(Image image) {
         Single<ImageResponse> edits = this.openAiApi.genImages(image);
@@ -194,7 +194,7 @@ public class OpenAiClient {
      *
      * @param image
      * @param prompt
-     * @return
+     * @return Item  list
      */
     public List<Item> editImages(java.io.File image, String prompt) {
         ImageEdit imageEdit = ImageEdit.builder().prompt(prompt).build();
@@ -207,7 +207,7 @@ public class OpenAiClient {
      *
      * @param image
      * @param imageEdit
-     * @return
+     * @return Item  list
      */
     public List<Item> editImages(java.io.File image, ImageEdit imageEdit) {
         return this.editImages(image, null, imageEdit);
@@ -220,7 +220,7 @@ public class OpenAiClient {
      * @param image     png格式的图片，最大4MB
      * @param mask      png格式的图片，最大4MB
      * @param imageEdit
-     * @return
+     * @return  Item list
      */
     public List<Item> editImages(java.io.File image, java.io.File mask, ImageEdit imageEdit) {
         checkImage(image);
@@ -261,7 +261,7 @@ public class OpenAiClient {
      *
      * @param image
      * @param imageVariations
-     * @return
+     * @return ImageResponse
      */
     public ImageResponse variationsImages(java.io.File image, ImageVariations imageVariations) {
         checkImage(image);
@@ -287,7 +287,7 @@ public class OpenAiClient {
      * Creates a variation of a given image.
      *
      * @param image
-     * @return
+     * @return ImageResponse
      */
     public ImageResponse variationsImages(java.io.File image) {
         checkImage(image);
@@ -337,7 +337,7 @@ public class OpenAiClient {
      * Creates an embedding vector representing the input text.
      *
      * @param input
-     * @return
+     * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(String input) {
         Embedding embedding = Embedding.builder().input(input).build();
@@ -348,7 +348,7 @@ public class OpenAiClient {
      * Creates an embedding vector representing the input text.
      *
      * @param embedding
-     * @return
+     * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(Embedding embedding) {
         Single<EmbeddingResponse> embeddings = this.openAiApi.embeddings(embedding);
@@ -358,7 +358,7 @@ public class OpenAiClient {
     /**
      * 获取文件列表
      *
-     * @return
+     * @return File  list
      */
     public List<File> files() {
         Single<OpenAiResponse<File>> files = this.openAiApi.files();
@@ -369,7 +369,7 @@ public class OpenAiClient {
      * 删除文件
      *
      * @param fileId
-     * @return
+     * @return DeleteResponse
      */
     public DeleteResponse deleteFile(String fileId) {
         Single<DeleteResponse> deleteFile = this.openAiApi.deleteFile(fileId);
@@ -381,7 +381,7 @@ public class OpenAiClient {
      *
      * @param purpose
      * @param file
-     * @return
+     * @return UploadFileResponse
      */
     public UploadFileResponse uploadFile(String purpose, java.io.File file) {
         // 创建 RequestBody，用于封装构建RequestBody
@@ -397,7 +397,7 @@ public class OpenAiClient {
      * 上传文件
      *
      * @param file
-     * @return
+     * @return UploadFileResponse
      */
     public UploadFileResponse uploadFile(java.io.File file) {
         //purpose 官网示例默认是：fine-tune
@@ -408,7 +408,7 @@ public class OpenAiClient {
      * 检索文件
      *
      * @param fileId
-     * @return
+     * @return File
      */
     public File retrieveFile(String fileId) {
         Single<File> fileContent = this.openAiApi.retrieveFile(fileId);
@@ -420,7 +420,7 @@ public class OpenAiClient {
      * 免费用户无法使用此接口 #未经过测试
      *
      * @param fileId
-     * @return
+     * @return ResponseBody
      */
 //    public ResponseBody retrieveFileContent(String fileId) {
 //        Single<ResponseBody> fileContent = this.openAiApi.retrieveFileContent(fileId);
@@ -431,7 +431,7 @@ public class OpenAiClient {
      * 文本审核
      *
      * @param input
-     * @return
+     * @return ModerationResponse
      */
     public ModerationResponse moderations(String input) {
         Moderation moderation = Moderation.builder().input(input).build();
@@ -442,7 +442,7 @@ public class OpenAiClient {
      * 文本审核
      *
      * @param moderation
-     * @return
+     * @return ModerationResponse
      */
     public ModerationResponse moderations(Moderation moderation) {
         Single<ModerationResponse> moderations = this.openAiApi.moderations(moderation);
@@ -453,7 +453,7 @@ public class OpenAiClient {
      * 创建微调模型
      *
      * @param fineTune
-     * @return
+     * @return FineTuneResponse
      */
     public FineTuneResponse fineTune(FineTune fineTune) {
         Single<FineTuneResponse> fineTuneResponse = this.openAiApi.fineTune(fineTune);
@@ -464,7 +464,7 @@ public class OpenAiClient {
      * 创建微调模型
      *
      * @param trainingFileId 文件id，文件上传返回的id
-     * @return
+     * @return FineTuneResponse
      */
     public FineTuneResponse fineTune(String trainingFileId) {
         FineTune fineTune = FineTune.builder().trainingFile(trainingFileId).build();
@@ -474,7 +474,7 @@ public class OpenAiClient {
     /**
      * 微调模型列表
      *
-     * @return
+     * @return FineTuneResponse list
      */
     public List<FineTuneResponse> fineTunes() {
         Single<OpenAiResponse<FineTuneResponse>> fineTunes = this.openAiApi.fineTunes();
@@ -485,7 +485,7 @@ public class OpenAiClient {
      * 检索微调作业
      *
      * @param fineTuneId
-     * @return
+     * @return FineTuneResponse
      */
     public FineTuneResponse retrieveFineTune(String fineTuneId) {
         Single<FineTuneResponse> fineTune = this.openAiApi.retrieveFineTune(fineTuneId);
@@ -496,7 +496,7 @@ public class OpenAiClient {
      * 取消微调作业
      *
      * @param fineTuneId
-     * @return
+     * @return FineTuneResponse
      */
     public FineTuneResponse cancelFineTune(String fineTuneId) {
         Single<FineTuneResponse> fineTune = this.openAiApi.cancelFineTune(fineTuneId);
@@ -507,7 +507,7 @@ public class OpenAiClient {
      * 微调作业事件列表
      *
      * @param fineTuneId
-     * @return
+     * @return Event List
      */
     public List<Event> fineTuneEvents(String fineTuneId) {
         Single<OpenAiResponse<Event>> events = this.openAiApi.fineTuneEvents(fineTuneId);
@@ -519,7 +519,7 @@ public class OpenAiClient {
      * Delete a fine-tuned model. You must have the Owner role in your organization.
      *
      * @param model
-     * @return
+     * @return DeleteResponse
      */
     public DeleteResponse deleteFineTuneModel(String model) {
         Single<DeleteResponse> delete = this.openAiApi.deleteFineTuneModel(model);
@@ -530,7 +530,7 @@ public class OpenAiClient {
     /**
      * 引擎列表
      *
-     * @return
+     * @return Engine List
      */
     @Deprecated
     public List<Engine> engines() {
@@ -541,8 +541,8 @@ public class OpenAiClient {
     /**
      * 引擎详细信息
      *
-     * @param engineId
-     * @return
+     * @param engineId 引擎id
+     * @return Engine
      */
     @Deprecated
     public Engine engine(String engineId) {

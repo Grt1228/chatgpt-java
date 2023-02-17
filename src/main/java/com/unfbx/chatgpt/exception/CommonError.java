@@ -4,7 +4,7 @@ package com.unfbx.chatgpt.exception;
  * 描述： 错误
  *
  * @author https:www.unfbx.com
- * @date 2023-02-11
+ *  2023-02-11
  */
 public enum CommonError implements IError {
     SYS_ERROR(500, "系统繁忙"),

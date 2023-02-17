@@ -8,7 +8,7 @@ import lombok.Data;
  * 描述： 答案类
  *
  * @author https:www.unfbx.com
- * @date 2023-02-11
+ *  2023-02-11
  */
 @Data
 public class CompletionResponse extends OpenAiResponse {

@@ -4,7 +4,7 @@ package com.unfbx.chatgpt.exception;
  * 描述： 异常
  *
  * @author https:www.unfbx.com
- * @date 2023-02-11
+ *  2023-02-11
  */
 public class BaseException extends RuntimeException {
 

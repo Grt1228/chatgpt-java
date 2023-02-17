@@ -32,22 +32,22 @@ import java.util.Map;
  * 描述： open ai官方api接口
  *
  * @author https:www.unfbx.com
- * @date 2023-02-15
+ *  2023-02-15
  */
 public interface OpenAiApi {
 
     /**
      * 模型列表
      *
-     * @return
+     * @return Single ModelResponse
      */
     @GET("v1/models")
     Single<ModelResponse> models();
 
     /**
      * models 返回的数据id
-     *
-     * @return
+     * @param id
+     * @return Single Model
      */
     @GET("v1/models/{id}")
     Single<Model> model(@Path("id") String id);
@@ -57,7 +57,7 @@ public interface OpenAiApi {
      * Given a prompt, the model will return one or more predicted completions, and can also return the probabilities of alternative tokens at each position.
      *
      * @param completion
-     * @return
+     * @return Single CompletionResponse
      */
     @POST("v1/completions")
     Single<CompletionResponse> completions(@Body Completion completion);
@@ -67,7 +67,7 @@ public interface OpenAiApi {
      * 文本修复
      *
      * @param edit
-     * @return
+     * @return Single EditResponse
      */
     @POST("v1/edits")
     Single<EditResponse> edits(@Body Edit edit);
@@ -77,7 +77,7 @@ public interface OpenAiApi {
      * 根据描述生成图片
      *
      * @param image
-     * @return
+     * @return Single ImageResponse
      */
     @POST("v1/images/generations")
     Single<ImageResponse> genImages(@Body Image image);
@@ -89,7 +89,7 @@ public interface OpenAiApi {
      * @param image
      * @param mask
      * @param requestBodyMap
-     * @return
+     * @return Single ImageResponse
      */
     @Multipart
     @POST("v1/images/edits")
@@ -103,7 +103,7 @@ public interface OpenAiApi {
      *
      * @param image
      * @param requestBodyMap
-     * @return
+     * @return Single ImageResponse
      */
     @Multipart
     @POST("v1/images/variations")
@@ -115,7 +115,7 @@ public interface OpenAiApi {
      * Creates an embedding vector representing the input text.
      *
      * @param embedding
-     * @return
+     * @return Single EmbeddingResponse
      */
     @POST("v1/embeddings")
     Single<EmbeddingResponse> embeddings(@Body Embedding embedding);
@@ -124,7 +124,7 @@ public interface OpenAiApi {
     /**
      * Returns a list of files that belong to the user's organization.
      *
-     * @return
+     * @return Single OpenAiResponse File
      */
     @GET("/v1/files")
     Single<OpenAiResponse<File>> files();
@@ -133,7 +133,7 @@ public interface OpenAiApi {
      * 删除文件
      *
      * @param fileId
-     * @return
+     * @return Single DeleteResponse
      */
     @DELETE("v1/files/{file_id}")
     Single<DeleteResponse> deleteFile(@Path("file_id") String fileId);
@@ -143,7 +143,7 @@ public interface OpenAiApi {
      *
      * @param purpose
      * @param file
-     * @return
+     * @return  Single UploadFileResponse
      */
     @Multipart
     @POST("v1/files")
@@ -155,7 +155,7 @@ public interface OpenAiApi {
      * 检索文件
      *
      * @param fileId
-     * @return
+     * @return Single File
      */
     @GET("v1/files/{file_id}")
     Single<File> retrieveFile(@Path("file_id") String fileId);
@@ -167,7 +167,7 @@ public interface OpenAiApi {
      * ###不对免费用户开放###
      *
      * @param fileId
-     * @return
+     * @return Single ResponseBody
      */
     @Streaming
     @GET("v1/files/{file_id}/content")
@@ -178,7 +178,7 @@ public interface OpenAiApi {
      * 文本审核
      *
      * @param moderation
-     * @return
+     * @return Single ModerationResponse
      */
     @POST("v1/moderations")
     Single<ModerationResponse> moderations(@Body Moderation moderation);
@@ -188,7 +188,7 @@ public interface OpenAiApi {
      * 创建微调作业
      *
      * @param fineTune
-     * @return
+     * @return Single FineTuneResponse
      */
     @POST("v1/fine-tunes")
     Single<FineTuneResponse> fineTune(@Body FineTune fineTune);
@@ -196,7 +196,7 @@ public interface OpenAiApi {
     /**
      * 微调作业集合
      *
-     * @return
+     * @return Single OpenAiResponse FineTuneResponse
      */
     @GET("v1/fine-tunes")
     Single<OpenAiResponse<FineTuneResponse>> fineTunes();
@@ -205,7 +205,7 @@ public interface OpenAiApi {
     /**
      * 检索微调作业
      *
-     * @return
+     * @return Single FineTuneResponse
      */
     @GET("v1/fine-tunes/{fine_tune_id}")
     Single<FineTuneResponse> retrieveFineTune(@Path("fine_tune_id") String fineTuneId);
@@ -213,7 +213,7 @@ public interface OpenAiApi {
     /**
      * 取消微调作业
      *
-     * @return
+     * @return Single FineTuneResponse
      */
     @POST("v1/fine-tunes/{fine_tune_id}/cancel")
     Single<FineTuneResponse> cancelFineTune(@Path("fine_tune_id") String fineTuneId);
@@ -221,7 +221,7 @@ public interface OpenAiApi {
     /**
      * 微调作业事件列表
      *
-     * @return
+     * @return Single OpenAiResponse Event
      */
     @GET("v1/fine-tunes/{fine_tune_id}/events")
     Single<OpenAiResponse<Event>> fineTuneEvents(@Path("fine_tune_id") String fineTuneId);
@@ -230,7 +230,7 @@ public interface OpenAiApi {
      * 删除微调作业模型
      * Delete a fine-tuned model. You must have the Owner role in your organization.
      *
-     * @return
+     * @return Single DeleteResponse
      */
     @GET("v1/models/{model}")
     Single<DeleteResponse> deleteFineTuneModel(@Path("model") String model);
@@ -240,7 +240,7 @@ public interface OpenAiApi {
      * 引擎列表
      * 官方已废弃此接口
      *
-     * @return
+     * @return Single OpenAiResponse Engine
      */
     @Deprecated
     @GET("v1/engines")
@@ -249,8 +249,8 @@ public interface OpenAiApi {
     /**
      * 检索引擎
      * 官方已废弃此接口
-     *
-     * @return
+     * @param engineId
+     * @return Engine
      */
     @Deprecated
     @GET("v1/engines/{engine_id}")
