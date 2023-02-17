@@ -36,15 +36,16 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
-        v2 = new OpenAiClient("****************************************");
+        v2 = new OpenAiClient("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");
     }
 
     @Test
     public void models() {
         List<Model> models = v2.models();
         models.forEach(e -> {
-            System.out.println(e.getOwnedBy());
-            System.out.println(e.getID());
+            System.out.print(e.getOwnedBy() + " ");
+            System.out.print(e.getID() + " ");
+            System.out.println(e.getObject() + " ");
         });
     }
 
@@ -64,7 +65,7 @@ public class OpenAiClientTest {
     public void completionsV2() {
         Completion q = Completion.builder()
                 .prompt("三体人是什么？")
-                .model("********")
+                .model("ada:ft-org-DL6GzliwY20i7Lxr5pUAoKUH:grttttttttt-2023-02-16-05-42-02")
                 .build();
         CompletionResponse completions = v2.completions(q);
         System.out.println(completions);
@@ -168,8 +169,8 @@ public class OpenAiClientTest {
      */
     @Test
     public void retrieveFileContent() {
-        ResponseBody responseBody = v2.retrieveFileContent("file-EHB0Wp3wcZu6tpbwkB6xeiEd");
-        System.out.println(responseBody);
+//        ResponseBody responseBody = v2.retrieveFileContent("file-EHB0Wp3wcZu6tpbwkB6xeiEd");
+//        System.out.println(responseBody);
     }
 
     @Test
@@ -223,7 +224,11 @@ public class OpenAiClientTest {
     }
     @Test
     public void fineTuneV2() {
-        FineTune fineTune = FineTune.builder().trainingFile("file-EHB0Wp3wcZu6tpbwkB6xeiEd").suffix("grttttttttt").build();
+        FineTune fineTune = FineTune.builder()
+                .trainingFile("file-OcQb9zg35cxa4WLBZJ9K2523")
+                .suffix("grttttttttt")
+                .model(FineTune.Model.ADA.getName())
+                .build();
         FineTuneResponse fineTuneResponse = v2.fineTune(fineTune);
         System.out.println(fineTuneResponse);
     }

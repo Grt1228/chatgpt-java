@@ -417,15 +417,15 @@ public class OpenAiClient {
 
     /**
      * 检索文件内容
-     * 免费用户无法使用此接口
+     * 免费用户无法使用此接口 #未经过测试
      *
      * @param fileId
      * @return
      */
-    public ResponseBody retrieveFileContent(String fileId) {
-        Single<ResponseBody> fileContent = this.openAiApi.retrieveFileContent(fileId);
-        return fileContent.blockingGet();
-    }
+//    public ResponseBody retrieveFileContent(String fileId) {
+//        Single<ResponseBody> fileContent = this.openAiApi.retrieveFileContent(fileId);
+//        return fileContent.blockingGet();
+//    }
 
     /**
      * 文本审核
