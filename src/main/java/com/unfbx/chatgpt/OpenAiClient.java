@@ -40,32 +40,135 @@ import java.util.concurrent.TimeUnit;
  * 描述： open ai 客户端
  *
  * @author https:www.unfbx.com
- *  2023-02-11
+ * 2023-02-11
  */
-@Getter
+
 @Slf4j
 public class OpenAiClient {
-
+    @Getter
     private String apiKey;
-
+    @Getter
     private OpenAiApi openAiApi;
 
-    public OpenAiClient(String apiKey) {
+    private final OkHttpClient okHttpClient;
+
+    /**
+     * 创建OpenAiClient，自定义OkHttpClient
+     *
+     * @param apiKey         key
+     * @param connectTimeout 连接超时时间 单位秒
+     * @param writeTimeout   写超时 单位秒
+     * @param readTimeout    读超时 单位秒
+     * @param interceptor    自定义拦截器
+     */
+    public OpenAiClient(String apiKey, long connectTimeout, long writeTimeout, long readTimeout, Interceptor... interceptor) {
         this.apiKey = apiKey;
+        this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, interceptor);
         this.openAiApi = new Retrofit.Builder()
                 .baseUrl("https://api.openai.com/")
-                .client(okHttpClient())
+                .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build().create(OpenAiApi.class);
     }
 
     /**
-     * 创建okhttpClient
+     * 创建OpenAiClient，使用默认的超时时间
+     * 注意当超时时间过短，长的文本输出问答系统可能超时。
      *
-     * @return OkHttpClient
+     * @param apiKey key
+     */
+    public OpenAiClient(String apiKey) {
+        this.apiKey = apiKey;
+        this.okHttpClient = this.okHttpClient();
+        this.openAiApi = new Retrofit.Builder()
+                .baseUrl("https://api.openai.com/")
+                .client(okHttpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build().create(OpenAiApi.class);
+    }
+
+    /**
+     * 创建OpenAiClient，自定义OkHttpClient
+     *
+     * @param apiKey         key
+     * @param connectTimeout 连接超时时间 单位秒
+     * @param writeTimeout   写超时 单位秒
+     * @param readTimeout    读超时 单位秒
+     */
+    public OpenAiClient(String apiKey, long connectTimeout, long writeTimeout, long readTimeout) {
+        this.apiKey = apiKey;
+        this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout);
+        this.openAiApi = new Retrofit.Builder()
+                .baseUrl("https://api.openai.com/")
+                .client(okHttpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build().create(OpenAiApi.class);
+    }
+
+
+    /**
+     * 创建OpenAiClient，使用默认的超时时间
+     * 注意当超时时间过短，长的文本输出问答系统可能超时。
+     *
+     * @param apiKey      key
+     * @param interceptor 自定义拦截器
+     */
+    public OpenAiClient(String apiKey, Interceptor... interceptor) {
+        this.apiKey = apiKey;
+        this.okHttpClient = this.okHttpClient(interceptor);
+        this.openAiApi = new Retrofit.Builder()
+                .baseUrl("https://api.openai.com/")
+                .client(okHttpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build().create(OpenAiApi.class);
+    }
+
+    /**
+     * 创建 OkHttpClient，默认超时时间30秒
+     *
+     * @param interceptor 自定义拦截器
+     * @return OkHttpClient实例
+     */
+    private OkHttpClient okHttpClient(Interceptor... interceptor) {
+        return this.okHttpClient(30, 30, 30, interceptor);
+    }
+
+    /**
+     * 创建 OkHttpClient，默认超时时间30秒
+     *
+     * @return OkHttpClient实例
      */
     private OkHttpClient okHttpClient() {
+        return this.okHttpClient(30, 30, 30, null);
+    }
+
+    /**
+     * 创建 OkHttpClient，自定义超时时间
+     *
+     * @param connectTimeout 默认30秒
+     * @param writeTimeout   默认30秒
+     * @param readTimeout    默认30秒
+     * @return
+     */
+    private OkHttpClient okHttpClient(long connectTimeout, long writeTimeout, long readTimeout) {
+        return this.okHttpClient(connectTimeout, writeTimeout, readTimeout, null);
+    }
+
+
+    /**
+     * 创建 OkHttpClient，自定义超时时间和拦截器
+     *
+     * @param connectTimeout 默认30秒
+     * @param writeTimeout   默认30秒
+     * @param readTimeout    默认30秒
+     * @param interceptor    自定义拦截器
+     * @return
+     */
+    private OkHttpClient okHttpClient(long connectTimeout, long writeTimeout, long readTimeout, Interceptor... interceptor) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.addInterceptor(chain -> {
             Request original = chain.request();
@@ -97,9 +200,12 @@ public class OpenAiClient {
             }
             return response;
         });
-        client.connectTimeout(30, TimeUnit.SECONDS);
-        client.writeTimeout(30, TimeUnit.SECONDS);
-        client.readTimeout(30, TimeUnit.SECONDS);
+        if (Objects.nonNull(interceptor) && interceptor.length > 0) {
+            Arrays.stream(interceptor).forEach(e -> client.addInterceptor(e));
+        }
+        client.connectTimeout(connectTimeout, TimeUnit.SECONDS);
+        client.writeTimeout(writeTimeout, TimeUnit.SECONDS);
+        client.readTimeout(readTimeout, TimeUnit.SECONDS);
         OkHttpClient httpClient = client.build();
         return httpClient;
     }
@@ -220,7 +326,7 @@ public class OpenAiClient {
      * @param image     png格式的图片，最大4MB
      * @param mask      png格式的图片，最大4MB
      * @param imageEdit
-     * @return  Item list
+     * @return Item list
      */
     public List<Item> editImages(java.io.File image, java.io.File mask, ImageEdit imageEdit) {
         checkImage(image);

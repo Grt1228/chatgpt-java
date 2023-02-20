@@ -17,6 +17,7 @@ import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,9 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
-        v2 = new OpenAiClient("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");
+//        v2 = new OpenAiClient("sk-******************************************");
+//        v2 = new OpenAiClient("sk-******************************************",60,60,60);
+        v2 = new OpenAiClient("sk-******************************************",60,60,60,null);
     }
 
     @Test
@@ -57,7 +60,10 @@ public class OpenAiClientTest {
 
     @Test
     public void completions() {
-        CompletionResponse completions = v2.completions("Java Stream list to map");
+//        CompletionResponse completions = v2.completions("Java Stream list to map");
+//        Arrays.stream(completions.getChoices()).forEach(System.out::println);
+
+        CompletionResponse completions = v2.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
         Arrays.stream(completions.getChoices()).forEach(System.out::println);
     }
 
@@ -65,7 +71,7 @@ public class OpenAiClientTest {
     public void completionsV2() {
         Completion q = Completion.builder()
                 .prompt("三体人是什么？")
-                .model("ada:ft-org-DL6GzliwY20i7Lxr5pUAoKUH:grttttttttt-2023-02-16-05-42-02")
+                .model("ada:ft-org-DL6GzliwY20i7Lxr5pUAoKUH:2023-02-16-05-42-02")
                 .build();
         CompletionResponse completions = v2.completions(q);
         System.out.println(completions);
