@@ -39,7 +39,7 @@ public class OpenAiClientTest {
     public void before() {
 //        v2 = new OpenAiClient("sk-******************************************");
 //        v2 = new OpenAiClient("sk-******************************************",60,60,60);
-        v2 = new OpenAiClient("sk-******************************************",60,60,60,null);
+        v2 = new OpenAiClient("sk-*****************",60,60,60,null);
     }
 
     @Test
@@ -65,6 +65,29 @@ public class OpenAiClientTest {
 
         CompletionResponse completions = v2.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
         Arrays.stream(completions.getChoices()).forEach(System.out::println);
+    }
+
+    //对话测试
+    @Test
+    public void completionsV3() {
+        String question = "Human: 帮我把下面的文本翻译成英文；我爱你中国\n";
+        Completion q = Completion.builder()
+                .prompt(question)
+                .stop(Arrays.asList(" Human:", " Bot:"))
+
+                .echo(true)
+                .build();
+        CompletionResponse completions = v2.completions(q);
+        String text = completions.getChoices()[0].getText();
+
+        q.setPrompt(text + "\n" + "再翻译成韩文\n");
+        completions = v2.completions(q);
+        text = completions.getChoices()[0].getText();
+
+        q.setPrompt(text + "\n" + "再翻译成日文\n");
+        completions = v2.completions(q);
+        text = completions.getChoices()[0].getText();
+        System.out.println(text);
     }
 
     @Test
