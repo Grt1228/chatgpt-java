@@ -11,6 +11,8 @@ https://platform.openai.com/docs/api-reference/files/retrieve-content
 
 **免费用户无法使用，所以并未经过测试！！！**（哪位朋友有收费版keys也可以提供下）
 
+#### **Q：如何连续对话？**
+#### **A：issues，https://github.com/Grt1228/chatgpt-java/issues/8**
 
 # 工程简介
 
