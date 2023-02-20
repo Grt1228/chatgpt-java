@@ -17,6 +17,7 @@ import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +37,9 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
-        v2 = new OpenAiClient("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");
-        v2 = new OpenAiClient("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");
+//        v2 = new OpenAiClient("sk-******************************************");
+//        v2 = new OpenAiClient("sk-******************************************",60,60,60);
+        v2 = new OpenAiClient("sk-******************************************",60,60,60,null);
     }
 
     @Test
@@ -69,7 +71,7 @@ public class OpenAiClientTest {
     public void completionsV2() {
         Completion q = Completion.builder()
                 .prompt("三体人是什么？")
-                .model("ada:ft-org-DL6GzliwY20i7Lxr5pUAoKUH:grttttttttt-2023-02-16-05-42-02")
+                .model("ada:ft-org-DL6GzliwY20i7Lxr5pUAoKUH:2023-02-16-05-42-02")
                 .build();
         CompletionResponse completions = v2.completions(q);
         System.out.println(completions);

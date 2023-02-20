@@ -42,15 +42,15 @@ import java.util.concurrent.TimeUnit;
  * @author https:www.unfbx.com
  * 2023-02-11
  */
-@Getter
+
 @Slf4j
 public class OpenAiClient {
-
+    @Getter
     private String apiKey;
-
+    @Getter
     private OpenAiApi openAiApi;
 
-    private OkHttpClient okHttpClient;
+    private final OkHttpClient okHttpClient;
 
     /**
      * 创建OpenAiClient，自定义OkHttpClient
