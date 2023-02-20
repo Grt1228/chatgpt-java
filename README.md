@@ -34,6 +34,11 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] Moderations
 - [x] Engines
 
+# 更新日志
+- [x] 1.0.0   支持所有的OpenAI官方接口
+- [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
+
+
 # 快速开始
 
 ## 方式一
@@ -42,7 +47,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -56,8 +61,10 @@ import java.util.Arrays;
 public class TestB {
     public static void main(String[] args) {
         //配置api keys
-        OpenAiClient openAiClient = new OpenAiClient("sk-—***************api keys ****************");
-        CompletionResponse completions = openAiClient.completions("三体人是什么？");
+        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60);
+//        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60,null);
+//        OpenAiClient openAiClient = new OpenAiClient("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");
+        CompletionResponse completions = openAiClient.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
         Arrays.stream(completions.getChoices()).forEach(System.out::println);
     }
 }
@@ -67,7 +74,24 @@ public class TestB {
 ```
 Choice(text=
 
-三体人是一种虚构的外星生物，出现在中国作家刘慈欣的科幻小说《三体》中。它们是一种三节身体的外星生物，每个节身体都有自己的大脑，它们可以通过超越光速的思维来沟通。, index=0, logprobs=null, finishReason=stop)
+尊敬的领导：
+
+您好！
+
+我是XX，目前就读于XX大学计算机专业，现在我想申请转专业，从计算机专业转到会计学专业。
+
+我有着良好的学习习惯，在计算机专业的学习中，我取得了良好的成绩，并且拥有了一定的计算机基础知识。在这一年的学习中，我发现自己对计算机的兴趣不太浓厚，而对会计学的兴趣却很浓厚，我觉得会计学是一个很有前景的专业，而且也是我的兴趣所在，我想把自己的未来打造成一个会计学专业的专家。
+
+因此，我希望能够申请转专业，从计算机专业转到会计学专业，我会努力学习，努力完成学业，让自己成为一个优秀的会计学专业的专家。
+
+最后，我再次表达我申请转专业的请求，希望能够得到您的认可和批准。
+
+谨上
+
+XX, index=0, logprobs=null, finishReason=stop)
+
+Process finished with exit code 0
+
 ```
 
 ## 方式二（下载源码直接运行）
@@ -83,7 +107,9 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
-        v2 = new OpenAiClient("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");
+        // v2 = new OpenAiClient("sk-******************************************");
+        // v2 = new OpenAiClient("sk-******************************************",60,60,60);
+        v2 = new OpenAiClient("sk-******************************************",60,60,60,null);
     }
 
     @Test
@@ -114,7 +140,7 @@ public class OpenAiClientTest {
     }
 }
 ```
-### 问答接口第二种调用方式
+### 问答接口第二种调用方式（推荐使用方式一）
 **目前ChatGPTClient只支持Completions相关api**
 创建客户端配置api-key
 ```
