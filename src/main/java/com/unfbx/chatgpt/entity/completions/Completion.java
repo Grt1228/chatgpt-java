@@ -74,8 +74,7 @@ public class Completion implements Serializable {
     @Builder.Default
     private boolean echo = false;
 
-    @Builder.Default
-    private List<String> stop = Arrays.asList("#");
+    private List<String> stop;
 
     @JsonProperty("presence_penalty")
     @Builder.Default
