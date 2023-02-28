@@ -5,7 +5,7 @@
 
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>chatgpt-java</name>
     <description>OpenAI Java SDK, OpenAI Api for Java. ChatGPT Java SDK .</description>
     <url>https://www.unfbx.com</url>
