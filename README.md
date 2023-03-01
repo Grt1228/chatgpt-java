@@ -1,6 +1,10 @@
 it’s an “unofficial" or "community-maintained” library.
 
 这是一个非官方的社区维护的库。
+## 更新日志
+- [x] 1.0.0   支持所有的OpenAI官方接口
+- [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
+- [x] 1.0.2   支持Stream流式输出，参考：OpenAiStreamClient
 
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
@@ -11,11 +15,16 @@ https://platform.openai.com/docs/api-reference/files/retrieve-content
 
 **免费用户无法使用，所以并未经过测试！！！**（哪位朋友有收费版keys也可以提供下）
 
-**完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest**
+**完整测试案例参考源码中的：com.unfbx.chatgpt.OpenAiClientTest**和
+**com.unfbx.chatgpt.OpenAiStreamClientTest**
 
 ---
-#### **Q：如何连续对话？**
-#### **A：issues，https://github.com/Grt1228/chatgpt-java/issues/8**
+
+Q | A
+---|---
+如何实现连续对话？ | issues：https://github.com/Grt1228/chatgpt-java/issues/8
+如何实现流式输出？ | 升级1.0.2版本，参考源码：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/)
+如何整合SpringBoot实现流式输出的Api接口？ | 参考另外一个项目：[chatgpt-steam-output](https://github.com/Grt1228/chatgpt-steam-output)
 ---
 # 工程简介
 
@@ -39,11 +48,6 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] Moderations
 - [x] Engines
 
-# 更新日志
-- [x] 1.0.0   支持所有的OpenAI官方接口
-- [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
-
-
 # 快速开始
 
 ## 方式一
@@ -52,7 +56,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 </dependency>
 ```
 
@@ -98,79 +102,79 @@ XX, index=0, logprobs=null, finishReason=stop)
 Process finished with exit code 0
 
 ```
+流式输出代码：
+
+```
+package com.unfbx.chatgpt;
+
+import com.unfbx.chatgpt.entity.completions.Completion;
+import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.concurrent.CountDownLatch;
+
+/**
+ * 描述： 测试类
+ *
+ * @author https:www.unfbx.com
+ * 2023-02-28
+ */
+public class OpenAiStreamClientTest {
+
+    private OpenAiStreamClient client;
+
+    @Before
+    public void before() {
+        client = new OpenAiStreamClient("****************", 60, 60, 60);
+    }
+
+
+    @Test
+    public void completions() {
+        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
+        Completion q = Completion.builder()
+                .prompt("一句话描述下开心的心情")
+                .stream(true)
+                .build();
+        client.streamCompletions(q, eventSourceListener);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+输出日志（text是持续输出的）：
+```
+23:03:59.158 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI建立sse连接...
+23:03:59.160 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\n", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.172 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\n", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.251 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u5fc3", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.313 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u60c5", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.380 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u8212", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.439 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u7545", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.532 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\uff0c", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.579 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u5fc3", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.641 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u65f7", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.673 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u795e", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.751 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u6021", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.782 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：{"id": "cmpl-6pIHnOOJiiUEVMesXwxzzcSQFoZHj", "object": "text_completion", "created": 1677683039, "choices": [{"text": "\u3002", "index": 0, "logprobs": null, "finish_reason": null}], "model": "text-davinci-003"}
+23:03:59.815 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据：[DONE]
+23:03:59.815 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据结束了
+23:03:59.815 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI关闭sse连接...
+
+Process finished with exit code -1
+
+```
+
 
 ## 方式二（下载源码直接运行）
 
 ### **OpenAI全部接口支持调用**
 
 创建客户端配置api-key
-完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest
-```
-public class OpenAiClientTest {
-
-    private OpenAiClient v2;
-
-    @Before
-    public void before() {
-        // v2 = new OpenAiClient("sk-******************************************");
-        // v2 = new OpenAiClient("sk-******************************************",60,60,60);
-        v2 = new OpenAiClient("sk-******************************************",60,60,60,null);
-    }
-
-    @Test
-    public void models() {
-        List<Model> models = v2.models();
-        System.out.println(models.toString());
-    }
-
-    @Test
-    public void model() {
-        Model model = v2.model("code-davinci-002");
-        System.out.println(model.toString());
-    }
-
-    @Test
-    public void completions() {
-        CompletionResponse completions = v2.completions("Java Stream list to map");
-        Arrays.stream(completions.getChoices()).forEach(System.out::println);
-    }
-    
-    @Test
-    public void completionsv2() {
-        Completion q = Completion.builder()
-                .prompt("三体人是什么？")
-                .build();
-        CompletionResponse completions = v2.completions(q);
-        System.out.println(completions);
-    }
-}
-```
-### 问答接口第二种调用方式（推荐使用方式一）
-**目前ChatGPTClient只支持Completions相关api**
-创建客户端配置api-key
-```
-public class ChatGPTTest {
-    public static void main(String[] args) {
-        //输入官方申请的api-keys
-        ChatGPTClient client = new ChatGPTClient("sk-****************");
-        //输入问题描述
-        String body = client.askQuestion("简单描述下三体这本书");
-        System.out.println(body);
-    }
-}
-```
-输出：
-```
-《三体》是中国作家刘慈欣创作的科幻小说，书中描写了一个存在于三体星系的中心神秘文明——「三体文明」的兴衰历程，叙述了它与地球文明之间的碰撞历史。
-```
-
-Completions接口的model目前官方支持的三种模型，参考代码
-```
-enum Model {
-    DAVINCI_003("text-davinci-003"),
-    DAVINCI_002("text-davinci-002"),
-    DAVINCI("davinci"),
-    ;
-    private String name;
-}
-```
+完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest 和 com.unfbx.chatgpt.OpenAiStreamClientTest
