@@ -5,7 +5,7 @@ it’s an “unofficial" or "community-maintained” library.
 - [x] 1.0.0   支持所有的OpenAI官方接口
 - [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
 - [x] 1.0.2   支持Stream流式输出，参考：OpenAiStreamClient
-- [x] 1.0.3   支持最新的gpt-3.5-turbo模型，chat相关Api
+- [ ] 1.0.3   近期支持最新的gpt-3.5-turbo模型，chat相关Api
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
 
