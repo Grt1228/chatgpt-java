@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
@@ -17,6 +19,7 @@ import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
 import okhttp3.sse.EventSources;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -88,6 +91,7 @@ public class OpenAiStreamClient {
      *
      * @param completion          open ai 参数
      * @param eventSourceListener sse监听器
+     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
      */
     public void streamCompletions(Completion completion, EventSourceListener eventSourceListener) {
         if (Objects.isNull(eventSourceListener)) {
@@ -124,7 +128,9 @@ public class OpenAiStreamClient {
     /**
      * 问答接口-简易版
      *
-     * @param question              请求参数
+     * @param question            请求参数
+     * @param eventSourceListener sse监听器
+     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
      */
     public void streamCompletions(String question, EventSourceListener eventSourceListener) {
         Completion q = Completion.builder()
@@ -132,5 +138,55 @@ public class OpenAiStreamClient {
                 .stream(true)
                 .build();
         this.streamCompletions(q, eventSourceListener);
+    }
+
+    /**
+     * 流式输出，最新版的GPT-3.5 chat completion 更加贴近官方网站的问答模型
+     *
+     * @param chatCompletion      问答参数
+     * @param eventSourceListener sse监听器
+     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
+     */
+    public void streamChatCompletion(ChatCompletion chatCompletion, EventSourceListener eventSourceListener) {
+        if (Objects.isNull(eventSourceListener)) {
+            log.error("参数异常：EventSourceListener不能为空，可以参考：com.unfbx.chatgpt.sse.ConsoleEventSourceListener");
+            throw new BaseException(CommonError.PARAM_ERROR);
+        }
+        if (!chatCompletion.isStream()) {
+            chatCompletion.setStream(true);
+        }
+        try {
+            EventSource.Factory factory = EventSources.createFactory(this.okHttpClient);
+            ObjectMapper mapper = new ObjectMapper();
+            String requestBody = mapper.writeValueAsString(chatCompletion);
+            Request request = new Request.Builder()
+                    .url("https://api.openai.com/v1/chat/completions")
+                    .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), requestBody))
+                    .header("Authorization", "Bearer " + this.apiKey)
+                    .build();
+            //创建事件
+            EventSource eventSource = factory.newEventSource(request, eventSourceListener);
+        } catch (JsonProcessingException e) {
+            log.error("请求参数解析异常：{}", e);
+            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("请求参数解析异常：{}", e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 流式输出，最新版的GPT-3.5 chat completion 更加贴近官方网站的问答模型
+     *
+     * @param messages            问答列表
+     * @param eventSourceListener sse监听器
+     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
+     */
+    public void streamChatCompletion(List<Message> messages, EventSourceListener eventSourceListener) {
+        ChatCompletion chatCompletion = ChatCompletion.builder()
+                .messages(messages)
+                .stream(true)
+                .build();
+        this.streamChatCompletion(chatCompletion, eventSourceListener);
     }
 }

@@ -3,6 +3,9 @@ package com.unfbx.chatgpt;
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
 import cn.hutool.json.JSONUtil;
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
+import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
@@ -22,6 +25,8 @@ import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import com.unfbx.chatgpt.entity.whisper.Whisper;
+import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import io.reactivex.Single;
@@ -654,5 +659,91 @@ public class OpenAiClient {
     public Engine engine(String engineId) {
         Single<Engine> engine = this.openAiApi.engine(engineId);
         return engine.blockingGet();
+    }
+
+    /**
+     * 最新版的GPT-3.5 chat completion 更加贴近官方网站的问答模型
+     * @param chatCompletion  问答参数
+     * @return 答案
+     */
+    public ChatCompletionResponse chatCompletion(ChatCompletion chatCompletion) {
+        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion(chatCompletion);
+        return chatCompletionResponse.blockingGet();
+    }
+
+    /**
+     * 简易版
+     *
+     * @param messages 问答参数
+     * @return 答案
+     */
+    public ChatCompletionResponse chatCompletion(List<Message> messages) {
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
+        return this.chatCompletion(chatCompletion);
+    }
+
+
+    /**
+     * 语音转文字
+     *
+     * @param model         模型 Whisper.Model
+     * @param file          语音文件 最大支持25MB
+     * @return 语音文本
+     */
+    public WhisperResponse speechToTextTranscriptions(java.io.File file, Whisper.Model model) {
+        checkSpeechFileSize(file);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
+        RequestBody modelBody = RequestBody.create(MediaType.parse("multipart/form-data"), model.getName());
+        Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranscriptions(multipartBody, modelBody);
+        return whisperResponse.blockingGet();
+    }
+
+    /**
+     * 简易版 语音转文字
+     *
+     * @param file 语音文件 最大支持25MB
+     * @return 语音文本
+     */
+    public WhisperResponse speechToTextTranscriptions(java.io.File file) {
+        return this.speechToTextTranscriptions(file, Whisper.Model.WHISPER_1);
+
+    }
+
+
+    /**
+     * 语音翻译：目前仅支持翻译为英文
+     *
+     * @param model 模型 Whisper.Model
+     * @param file  语音文件 最大支持25MB
+     * @return 翻译后文本
+     */
+    public WhisperResponse speechToTextTranslations(java.io.File file, Whisper.Model model) {
+        checkSpeechFileSize(file);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
+        RequestBody modelBody = RequestBody.create(MediaType.parse("multipart/form-data"), model.getName());
+        Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranslations(multipartBody, modelBody);
+        return whisperResponse.blockingGet();
+    }
+
+    /**
+     * 简易版 语音翻译：目前仅支持翻译为英文
+     *
+     * @param file 语音文件 最大支持25MB
+     * @return 翻译后文本
+     */
+    public WhisperResponse speechToTextTranslations(java.io.File file) {
+        return this.speechToTextTranslations(file, Whisper.Model.WHISPER_1);
+    }
+
+    /**
+     * 校验语音文件大小给出提示，目前官方限制25MB，后续可能会改动所以不报错只做提示
+     * @param file
+     */
+    private void checkSpeechFileSize(java.io.File file) {
+        if (file.length() > 25 * 1204 * 1024) {
+            log.warn("2023-03-02官方文档提示：文件不能超出25MB");
+        }
     }
 }
