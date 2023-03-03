@@ -5,7 +5,7 @@ it’s an “unofficial" or "community-maintained” library.
 - [x] 1.0.0   支持所有的OpenAI官方接口
 - [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
 - [x] 1.0.2   支持Stream流式输出，参考：OpenAiStreamClient
-- [x] 1.0.3   支持最新的gpt-3.5-turbo模型，chat相关Api。OpenAiClient和OpenAiStreamClient支持Builder构造，支持代理。
+- [x] 1.0.3   支持最新的GPT-3.5-Turbo模型和Whisper-1模型，支持语音功能转文字，语音翻译。OpenAiClient和OpenAiStreamClient支持Builder构造，支持代理。
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
 
@@ -25,8 +25,8 @@ Q | A
 如何实现连续对话？ | issues：https://github.com/Grt1228/chatgpt-java/issues/8
 如何实现流式输出？ | 升级1.0.2版本，参考源码：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/)
 如何整合SpringBoot实现流式输出的Api接口？ | 参考另外一个项目：[chatgpt-steam-output](https://github.com/Grt1228/chatgpt-steam-output)
-最新版GPT-3.5-TURBO是否支持？ | 已经支持：参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
-最新版语言转文字和语言翻译是否支持？ | 已经支持：参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
+最新版GPT-3.5-TURBO是否支持？ | 已经支持ChatCompletion, 参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
+最新版语言转文字和语言翻译是否支持？ | 已经支持whisper参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
 ---
 # 工程简介
 
@@ -60,7 +60,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
