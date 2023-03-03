@@ -7,6 +7,8 @@ import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
@@ -22,10 +24,19 @@ public class OpenAiStreamClientTest {
 
     @Before
     public void before() {
-        client = new OpenAiStreamClient("sk-****************************",
-                60,
-                60,
-                60);
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+//        client = new OpenAiStreamClient("sk-**********************",
+//                60,
+//                60,
+//                60,
+//                proxy);
+        client = OpenAiStreamClient.builder()
+                .connectTimeout(50)
+                .readTimeout(50)
+                .writeTimeout(50)
+                .apiKey("sk-******************************")
+                .proxy(proxy)
+                .build();
     }
 
 

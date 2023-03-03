@@ -9,16 +9,17 @@ import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import okhttp3.*;
 import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
 import okhttp3.sse.EventSources;
+import org.jetbrains.annotations.NotNull;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +35,48 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class OpenAiStreamClient {
     @Getter
-    private final String apiKey;
-
+    @NotNull
+    private String apiKey;
+    @Getter
     private OkHttpClient okHttpClient;
+    /**
+     * 连接超时
+     */
+    @Getter
+    private long connectTimeout;
+    /**
+     * 写超时
+     */
+    @Getter
+    private long writeTimeout;
+    /**
+     * 读超时
+     */
+    @Getter
+    private long readTimeout;
+    /**
+     * okhttp 代理
+     */
+    @Getter
+    private Proxy proxy;
+
+    /**
+     * 创建OpenAiClient，自定义OkHttpClient
+     *
+     * @param apiKey         key
+     * @param connectTimeout 连接超时时间 单位秒
+     * @param writeTimeout   写超时 单位秒
+     * @param readTimeout    超时 单位秒
+     * @param proxy          代理
+     */
+    public OpenAiStreamClient(String apiKey, long connectTimeout, long writeTimeout, long readTimeout, Proxy proxy) {
+        this.apiKey = apiKey;
+        this.connectTimeout = connectTimeout;
+        this.writeTimeout = writeTimeout;
+        this.readTimeout = readTimeout;
+        this.proxy = proxy;
+        this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy);
+    }
 
     /**
      * 创建OpenAiClient，自定义OkHttpClient
@@ -48,7 +88,10 @@ public class OpenAiStreamClient {
      */
     public OpenAiStreamClient(String apiKey, long connectTimeout, long writeTimeout, long readTimeout) {
         this.apiKey = apiKey;
-        this.okHttpClient(connectTimeout, writeTimeout, readTimeout);
+        this.connectTimeout = connectTimeout;
+        this.writeTimeout = writeTimeout;
+        this.readTimeout = readTimeout;
+        this.okHttpClient(connectTimeout, writeTimeout, readTimeout, null);
     }
 
     /**
@@ -59,17 +102,46 @@ public class OpenAiStreamClient {
      */
     public OpenAiStreamClient(String apiKey) {
         this.apiKey = apiKey;
-        this.okHttpClient();
+        this.okHttpClient(30, 30, 30, null);
     }
-
 
     /**
-     * 创建 OkHttpClient，默认超时时间30秒
+     * 创建OpenAiClient，使用默认的超时时间
+     * 注意当超时时间过短，长的文本输出问答系统可能超时。
+     *
+     * @param apiKey key
+     * @param proxy  网络代理
      */
-    private void okHttpClient() {
-        this.okHttpClient(30, 30, 30);
+    public OpenAiStreamClient(String apiKey, Proxy proxy) {
+        this.apiKey = apiKey;
+        this.proxy = proxy;
+        this.okHttpClient(30, 30, 30, proxy);
     }
 
+    private OpenAiStreamClient(Builder builder) {
+        if (StrUtil.isBlank(builder.apiKey)) {
+            throw new BaseException(CommonError.API_KEYS_NOT_NUL);
+        }
+        apiKey = builder.apiKey;
+
+        if (Objects.isNull(builder.connectTimeout)) {
+            builder.connectTimeout(30);
+        }
+        connectTimeout = builder.connectTimeout;
+
+        if (Objects.isNull(builder.writeTimeout)) {
+            builder.writeTimeout(30);
+        }
+        writeTimeout = builder.writeTimeout;
+
+        if (Objects.isNull(builder.readTimeout)) {
+            builder.readTimeout(30);
+        }
+        readTimeout = builder.readTimeout;
+        proxy = builder.proxy;
+        this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy);
+
+    }
 
     /**
      * 创建 OkHttpClient，自定义超时时间和拦截器
@@ -78,11 +150,14 @@ public class OpenAiStreamClient {
      * @param writeTimeout   默认30秒
      * @param readTimeout    默认30秒
      */
-    private void okHttpClient(long connectTimeout, long writeTimeout, long readTimeout) {
+    private void okHttpClient(long connectTimeout, long writeTimeout, long readTimeout, Proxy proxy) {
         OkHttpClient.Builder client = new OkHttpClient.Builder();
         client.connectTimeout(connectTimeout, TimeUnit.SECONDS);
         client.writeTimeout(writeTimeout, TimeUnit.SECONDS);
         client.readTimeout(readTimeout, TimeUnit.SECONDS);
+        if (Objects.nonNull(proxy)) {
+            client.proxy(proxy);
+        }
         this.okHttpClient = client.build();
     }
 
@@ -91,7 +166,7 @@ public class OpenAiStreamClient {
      *
      * @param completion          open ai 参数
      * @param eventSourceListener sse监听器
-     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
+     * @see ConsoleEventSourceListener
      */
     public void streamCompletions(Completion completion, EventSourceListener eventSourceListener) {
         if (Objects.isNull(eventSourceListener)) {
@@ -130,7 +205,7 @@ public class OpenAiStreamClient {
      *
      * @param question            请求参数
      * @param eventSourceListener sse监听器
-     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
+     * @see ConsoleEventSourceListener
      */
     public void streamCompletions(String question, EventSourceListener eventSourceListener) {
         Completion q = Completion.builder()
@@ -145,7 +220,7 @@ public class OpenAiStreamClient {
      *
      * @param chatCompletion      问答参数
      * @param eventSourceListener sse监听器
-     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
+     * @see ConsoleEventSourceListener
      */
     public void streamChatCompletion(ChatCompletion chatCompletion, EventSourceListener eventSourceListener) {
         if (Objects.isNull(eventSourceListener)) {
@@ -180,7 +255,7 @@ public class OpenAiStreamClient {
      *
      * @param messages            问答列表
      * @param eventSourceListener sse监听器
-     * @see com.unfbx.chatgpt.sse.ConsoleEventSourceListener
+     * @see ConsoleEventSourceListener
      */
     public void streamChatCompletion(List<Message> messages, EventSourceListener eventSourceListener) {
         ChatCompletion chatCompletion = ChatCompletion.builder()
@@ -188,5 +263,53 @@ public class OpenAiStreamClient {
                 .stream(true)
                 .build();
         this.streamChatCompletion(chatCompletion, eventSourceListener);
+    }
+
+    /**
+     * 构造
+     *
+     * @return
+     */
+    public static OpenAiStreamClient.Builder builder() {
+        return new OpenAiStreamClient.Builder();
+    }
+
+    public static final class Builder {
+        private @NotNull String apiKey;
+        private long connectTimeout;
+        private long writeTimeout;
+        private long readTimeout;
+        private Proxy proxy;
+
+        public Builder() {
+        }
+
+        public Builder apiKey(@NotNull String val) {
+            apiKey = val;
+            return this;
+        }
+        public Builder connectTimeout(long val) {
+            connectTimeout = val;
+            return this;
+        }
+
+        public Builder writeTimeout(long val) {
+            writeTimeout = val;
+            return this;
+        }
+
+        public Builder readTimeout(long val) {
+            readTimeout = val;
+            return this;
+        }
+
+        public Builder proxy(Proxy val) {
+            proxy = val;
+            return this;
+        }
+
+        public OpenAiStreamClient build() {
+            return new OpenAiStreamClient(this);
+        }
     }
 }

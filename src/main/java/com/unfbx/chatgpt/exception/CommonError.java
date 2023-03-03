@@ -7,6 +7,7 @@ package com.unfbx.chatgpt.exception;
  *  2023-02-11
  */
 public enum CommonError implements IError {
+    API_KEYS_NOT_NUL(500, "API KEYS 不能为空"),
     SYS_ERROR(500, "系统繁忙"),
     PARAM_ERROR(501, "参数异常"),
     RETRY_ERROR(502, "请求异常，请重试~"),

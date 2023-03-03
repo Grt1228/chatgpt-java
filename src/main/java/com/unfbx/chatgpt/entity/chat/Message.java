@@ -1,7 +1,6 @@
 package com.unfbx.chatgpt.entity.chat;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 @Data
 public class Message {
     @NotNull
+    /**
+     * 目前支持三中角色参考官网，进行情景输入：https://platform.openai.com/docs/guides/chat/introduction
+     */
     private String role;
     @NotNull
     private String content;
@@ -26,12 +28,15 @@ public class Message {
     /**
      * 构造函数
      *
-     * @param role    目前支持三中角色参考官网，进行情景输入：https://platform.openai.com/docs/guides/chat/introduction
+     * @param role
      * @param content 描述主题信息
      */
-    public Message(Role role, String content) {
-        this.role = role.getName();
+    public Message(String role, String content) {
+        this.role = role;
         this.content = content;
+    }
+
+    public Message() {
     }
 
     private Message(Builder builder) {
