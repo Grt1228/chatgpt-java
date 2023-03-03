@@ -1,5 +1,8 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
+import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
 import com.unfbx.chatgpt.entity.edits.Edit;
@@ -17,11 +20,15 @@ import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
-import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
+import com.unfbx.chatgpt.entity.whisper.Whisper;
+import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
+import com.unfbx.chatgpt.interceptor.OpenAILogger;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,9 +44,56 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        v2 = new OpenAiClient("sk-******************************************");
-//        v2 = new OpenAiClient("sk-******************************************",60,60,60);
-        v2 = new OpenAiClient("sk-*****************",60,60,60,null);
+//        v2 = new OpenAiClient("sk-******************************************", null, null);
+//        v2 = new OpenAiClient("sk-**********************************",
+//                120,
+//                120,
+//                120,
+//                proxy,
+//                httpLoggingInterceptor);
+
+        v2 = OpenAiClient.builder()
+                .apiKey("sk-***************************")
+                .connectTimeout(50)
+                .writeTimeout(50)
+                .readTimeout(50)
+                .interceptor(Arrays.asList(httpLoggingInterceptor))
+                .proxy(proxy)
+                .build();
+    }
+
+
+    @Test
+    public void speechToTextTranscriptions() {
+        //语音转文字
+        WhisperResponse whisperResponse =
+                v2.speechToTextTranscriptions(new java.io.File("C:\\***********\\1.m4a")
+                , Whisper.Model.WHISPER_1);
+        System.out.println(whisperResponse.getText());
+    }
+
+    @Test
+    public void speechToTextTranslations() {
+        //语音转文字
+        WhisperResponse whisperResponse =
+                v2.speechToTextTranslations(new java.io.File("C:\\***********\\1.m4a")
+                        , Whisper.Model.WHISPER_1);
+        System.out.println(whisperResponse.getText());
+    }
+
+    @Test
+    public void chat() {
+        //聊天模型：gpt-3.5
+        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
+        ChatCompletionResponse chatCompletionResponse = v2.chatCompletion(chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            System.out.println(e.getMessage());
+        });
     }
 
     @Test

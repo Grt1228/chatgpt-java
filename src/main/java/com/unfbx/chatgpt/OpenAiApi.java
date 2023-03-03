@@ -1,5 +1,7 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
@@ -20,6 +22,7 @@ import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -255,4 +258,38 @@ public interface OpenAiApi {
     @Deprecated
     @GET("v1/engines/{engine_id}")
     Single<Engine> engine(@Path("engine_id") String engineId);
+
+
+    /**
+     * 最新版的GPT-3.5 chat completion 更加贴近官方网站的问答模型
+     * @param chatCompletion chat completion
+     * @return 返回答案
+     */
+    @POST("v1/chat/completions")
+    Single<ChatCompletionResponse> chatCompletion(@Body ChatCompletion chatCompletion);
+
+
+    /**
+     * 语音转文字
+     *
+     * @param model 模型
+     * @param file  语音文件
+     * @return 文本
+     */
+    @Multipart
+    @POST("v1/audio/transcriptions")
+    Single<WhisperResponse> speechToTextTranscriptions(@Part MultipartBody.Part file,
+                                                       @Part("model") RequestBody model);
+
+    /**
+     * 语音翻译：目前仅支持翻译为英文
+     *
+     * @param model 模型
+     * @param file  语音文件
+     * @return 文本
+     */
+    @Multipart
+    @POST("v1/audio/translations")
+    Single<WhisperResponse> speechToTextTranslations(@Part MultipartBody.Part file,
+                                                     @Part("model") RequestBody model);
 }

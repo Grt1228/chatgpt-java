@@ -40,10 +40,15 @@ public class ConsoleEventSourceListener extends EventSourceListener {
     @SneakyThrows
     @Override
     public void onFailure(EventSource eventSource, Throwable t, Response response) {
+        if(Objects.isNull(response)){
+            log.error("OpenAI  sse连接异常:{}", t);
+            eventSource.cancel();
+            return;
+        }
         ResponseBody body = response.body();
         if (Objects.nonNull(body)) {
             log.error("OpenAI  sse连接异常data：{}，异常：{}", body.string(), t);
-        }else {
+        } else {
             log.error("OpenAI  sse连接异常data：{}，异常：{}", response, t);
         }
         eventSource.cancel();

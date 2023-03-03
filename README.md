@@ -5,7 +5,7 @@ it’s an “unofficial" or "community-maintained” library.
 - [x] 1.0.0   支持所有的OpenAI官方接口
 - [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
 - [x] 1.0.2   支持Stream流式输出，参考：OpenAiStreamClient
-- [ ] 1.0.3   近期支持最新的gpt-3.5-turbo模型，chat相关Api
+- [x] 1.0.3   支持最新的gpt-3.5-turbo模型，chat相关Api。OpenAiClient和OpenAiStreamClient支持Builder构造，支持代理。
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
 
@@ -25,6 +25,8 @@ Q | A
 如何实现连续对话？ | issues：https://github.com/Grt1228/chatgpt-java/issues/8
 如何实现流式输出？ | 升级1.0.2版本，参考源码：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/)
 如何整合SpringBoot实现流式输出的Api接口？ | 参考另外一个项目：[chatgpt-steam-output](https://github.com/Grt1228/chatgpt-steam-output)
+最新版GPT-3.5-TURBO是否支持？ | 已经支持：参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
+最新版语言转文字和语言翻译是否支持？ | 已经支持：参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
 ---
 # 工程简介
 
@@ -47,6 +49,8 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] Fine-tune
 - [x] Moderations
 - [x] Engines
+- [x] Chat
+- [x] Speech To Text
 
 # 快速开始
 
@@ -60,7 +64,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 </dependency>
 ```
 
-使用示例：
+常规客户端使用示例：
 ```
 package com.unfbx.eventTest.test;
 import com.unfbx.chatgpt.OpenAiClient;
@@ -70,9 +74,22 @@ import java.util.Arrays;
 public class TestB {
     public static void main(String[] args) {
         //配置api keys
-        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60);
+        //代理可以为null
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+        //日志输出可以不添加
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60);
 //        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60,null);
 //        OpenAiClient openAiClient = new OpenAiClient("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");
+        OpenAiClient openAiClient = OpenAiClient.builder()
+            .apiKey("sk-***************************")
+            .connectTimeout(50)
+            .writeTimeout(50)
+            .readTimeout(50)
+            .interceptor(Arrays.asList(httpLoggingInterceptor))
+            .proxy(proxy)
+            .build();
         CompletionResponse completions = openAiClient.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
         Arrays.stream(completions.getChoices()).forEach(System.out::println);
     }
@@ -126,9 +143,36 @@ public class OpenAiStreamClientTest {
 
     @Before
     public void before() {
-        client = new OpenAiStreamClient("****************", 60, 60, 60);
+        //代理可以不设置
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+//        client = new OpenAiStreamClient("sk-**********************",
+//                60,
+//                60,
+//                60,
+//                proxy);
+        //推荐这种构造方式
+        client = OpenAiStreamClient.builder()
+                .connectTimeout(50)
+                .readTimeout(50)
+                .writeTimeout(50)
+                .apiKey("sk-******************************")
+                .proxy(proxy)
+                .build();
     }
-
+    
+    @Test
+    public void chatCompletions() {
+        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
+        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
+        client.streamChatCompletion(chatCompletion, eventSourceListener);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void completions() {
