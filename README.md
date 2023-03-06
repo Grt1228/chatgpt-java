@@ -37,7 +37,7 @@ OpenAI官方Api的Java SDK
 
 目前支持api-keys的方式调用，获取api-keys可以百度或者csdn查一下。
 
-**api-keys的方式调用目前不用梯子即可访问。**
+**api-keys的方式调用目前需要用梯子才可访问。**
 
 
 OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
