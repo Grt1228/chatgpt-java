@@ -23,6 +23,7 @@ import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
 import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +39,7 @@ import java.util.List;
  * @author https:www.unfbx.com
  *  2023-02-11
  */
+@Slf4j
 public class OpenAiClientTest {
 
     private OpenAiClient v2;
