@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
@@ -37,6 +38,12 @@ public class OpenAiStreamClient {
     @Getter
     @NotNull
     private String apiKey;
+    /**
+     * 自定义api host使用builder的方式构造client
+     */
+    @Getter
+    private String apiHost = OpenAIConst.OPENAI_HOST;
+
     @Getter
     private OkHttpClient okHttpClient;
     /**
@@ -124,6 +131,11 @@ public class OpenAiStreamClient {
         }
         apiKey = builder.apiKey;
 
+        if (StrUtil.isBlank(builder.apiHost)) {
+            builder.apiHost = OpenAIConst.OPENAI_HOST;
+        }
+        apiHost = builder.apiHost;
+
         if (Objects.isNull(builder.connectTimeout)) {
             builder.connectTimeout(30);
         }
@@ -185,7 +197,7 @@ public class OpenAiStreamClient {
             ObjectMapper mapper = new ObjectMapper();
             String requestBody = mapper.writeValueAsString(completion);
             Request request = new Request.Builder()
-                    .url("https://api.openai.com/v1/completions")
+                    .url(this.apiHost + "v1/completions")
                     .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), requestBody))
                     .header("Authorization", "Bearer " + this.apiKey)
                     .build();
@@ -235,7 +247,7 @@ public class OpenAiStreamClient {
             ObjectMapper mapper = new ObjectMapper();
             String requestBody = mapper.writeValueAsString(chatCompletion);
             Request request = new Request.Builder()
-                    .url("https://api.openai.com/v1/chat/completions")
+                    .url(this.apiHost + "v1/chat/completions")
                     .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), requestBody))
                     .header("Authorization", "Bearer " + this.apiKey)
                     .build();
@@ -276,6 +288,12 @@ public class OpenAiStreamClient {
 
     public static final class Builder {
         private @NotNull String apiKey;
+        /**
+         * api请求地址，结尾处有斜杠
+         *
+         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         */
+        private String apiHost;
         private long connectTimeout;
         private long writeTimeout;
         private long readTimeout;
@@ -288,6 +306,17 @@ public class OpenAiStreamClient {
             apiKey = val;
             return this;
         }
+
+        /**
+         * @param val api请求地址，结尾处有斜杠
+         * @return
+         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         */
+        public Builder apiHost(String val) {
+            apiHost = val;
+            return this;
+        }
+
         public Builder connectTimeout(long val) {
             connectTimeout = val;
             return this;

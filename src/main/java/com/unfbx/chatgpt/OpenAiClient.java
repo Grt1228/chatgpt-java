@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
 import cn.hutool.json.JSONUtil;
+import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
@@ -59,6 +60,11 @@ public class OpenAiClient {
     @Getter
     @NotNull
     private String apiKey;
+    /**
+     * 自定义api host使用builder的方式构造client
+     */
+    @Getter
+    private String apiHost = OpenAIConst.OPENAI_HOST;
     @Getter
     private OpenAiApi openAiApi;
     @Getter
@@ -103,7 +109,7 @@ public class OpenAiClient {
         this.apiKey = apiKey;
         this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy, interceptor);
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl(this.apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -120,7 +126,7 @@ public class OpenAiClient {
         this.apiKey = apiKey;
         this.okHttpClient = this.okHttpClient(30, 30, 30, null, null);
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl(this.apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -138,7 +144,7 @@ public class OpenAiClient {
         this.apiKey = apiKey;
         this.okHttpClient = this.okHttpClient(30, 30, 30, proxy, null);
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl(this.apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -158,7 +164,7 @@ public class OpenAiClient {
         this.apiKey = apiKey;
         this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy, null);
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl(this.apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -178,7 +184,7 @@ public class OpenAiClient {
         this.apiKey = apiKey;
         this.okHttpClient = this.okHttpClient(30, 30, 30, proxy, interceptor);
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl(this.apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -187,14 +193,16 @@ public class OpenAiClient {
 
     /**
      * 构造
+     *
      * @return
      */
-    public static OpenAiClient.Builder builder(){
+    public static OpenAiClient.Builder builder() {
         return new OpenAiClient.Builder();
     }
 
     /**
      * 构造
+     *
      * @param builder
      */
     private OpenAiClient(Builder builder) {
@@ -202,6 +210,11 @@ public class OpenAiClient {
             throw new BaseException(CommonError.API_KEYS_NOT_NUL);
         }
         apiKey = builder.apiKey;
+
+        if (StrUtil.isBlank(builder.apiHost)) {
+            builder.apiHost = OpenAIConst.OPENAI_HOST;
+        }
+        apiHost = builder.apiHost;
 
         if (Objects.isNull(builder.connectTimeout)) {
             builder.connectTimeout(30);
@@ -225,7 +238,7 @@ public class OpenAiClient {
         }
         this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy, interceptorArray);
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl("https://api.openai.com/")
+                .baseUrl(this.apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -829,6 +842,12 @@ public class OpenAiClient {
          */
         private @NotNull String apiKey;
         /**
+         * api请求地址，结尾处有斜杠
+         *
+         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         */
+        private String apiHost;
+        /**
          * 连接超时
          */
         private Long connectTimeout;
@@ -850,6 +869,16 @@ public class OpenAiClient {
         private List<Interceptor> interceptor;
 
         public Builder() {
+        }
+
+        /**
+         * @param val api请求地址，结尾处有斜杠
+         * @return
+         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         */
+        public Builder apiHost(String val) {
+            apiHost = val;
+            return this;
         }
 
         public Builder apiKey(@NotNull String val) {

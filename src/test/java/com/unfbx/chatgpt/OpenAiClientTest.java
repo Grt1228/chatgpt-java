@@ -63,6 +63,7 @@ public class OpenAiClientTest {
                 .readTimeout(50)
                 .interceptor(Arrays.asList(httpLoggingInterceptor))
                 .proxy(proxy)
+                .apiHost("https://api.openai.com/")
                 .build();
     }
 

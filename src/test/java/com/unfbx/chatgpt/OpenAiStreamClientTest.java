@@ -36,6 +36,7 @@ public class OpenAiStreamClientTest {
                 .writeTimeout(50)
                 .apiKey("sk-******************************")
                 .proxy(proxy)
+                .apiHost("https://api.openai.com/")
                 .build();
     }
 

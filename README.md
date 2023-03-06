@@ -7,6 +7,7 @@ it’s an “unofficial" or "community-maintained” library.
 - [x] 1.0.2   支持Stream流式输出，参考：OpenAiStreamClient
 - [x] 1.0.3   支持最新的GPT-3.5-Turbo模型和Whisper-1模型，支持语音功能转文字，语音翻译。OpenAiClient和OpenAiStreamClient支持Builder构造，支持代理。
 - [x] 1.0.4   官方最新的ChatGPT Stream模式下的Api返回值改动。
+- [x] 1.0.5   支持自定义Api Host，使用Builder构建。参考下面的快速开始部分代码。
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
 
@@ -61,7 +62,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
@@ -90,6 +91,7 @@ public class TestB {
             .readTimeout(50)
             .interceptor(Arrays.asList(httpLoggingInterceptor))
             .proxy(proxy)
+            .apiHost("https://api.openai.com/")
             .build();
         CompletionResponse completions = openAiClient.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
         Arrays.stream(completions.getChoices()).forEach(System.out::println);
@@ -158,6 +160,7 @@ public class OpenAiStreamClientTest {
                 .writeTimeout(50)
                 .apiKey("sk-******************************")
                 .proxy(proxy)
+                .apiHost("https://api.openai.com/")
                 .build();
     }
     
