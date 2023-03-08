@@ -228,3 +228,7 @@ Process finished with exit code -1
 
 创建客户端配置api-key
 完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest 和 com.unfbx.chatgpt.OpenAiStreamClientTest
+
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Grt1228/chatgpt-java&type=Date)](https://star-history.com/#Grt1228/chatgpt-java&Date)
