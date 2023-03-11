@@ -4,7 +4,7 @@ it’s an “unofficial" or "community-maintained” library.
 
 **国内访问可以看下这个解决方案**：https://github.com/noobnooc/noobnooc/discussions/9
 
-## 整合Spring Boot 实现CahtGPT对话模式，可以参考下我写的这个项目：https://github.com/Grt1228/chatgpt-steam-output，简单版页面很简陋。
+### 整合Spring Boot 实现CahtGPT对话模式，可以参考下我写的这个项目简单版页面很简陋：https://github.com/Grt1228/chatgpt-steam-output
 
 ## 更新日志
 - [x] 1.0.0   支持所有的OpenAI官方接口
