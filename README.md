@@ -16,6 +16,12 @@ it’s an “unofficial" or "community-maintained” library.
 - [ ] 1.0.6   更新支持最新GPT-4相关Api。
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
+交流群：
+![4fad8419a64f65d8e6cc1c8dbe5be9e](https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg)
+
+群满加微信拉：
+![493faa544dcd9bb970af35d75860627](https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg)
+
 
 注意：由于这个接口：
 
