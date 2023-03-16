@@ -17,9 +17,9 @@ it’s an “unofficial" or "community-maintained” library.
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
 交流群：
-<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="200" height="300" alt="二维码" />
+<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" />
 群满加微信拉：
-<img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="200" height="300" alt="二维码" />
+<img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
 
 注意：由于这个接口：
 
