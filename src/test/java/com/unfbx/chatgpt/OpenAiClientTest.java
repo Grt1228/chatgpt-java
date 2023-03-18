@@ -50,23 +50,14 @@ public class OpenAiClientTest {
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        v2 = new OpenAiClient("sk-******************************************");
-//        v2 = new OpenAiClient("sk-******************************************", null, null);
-//        v2 = new OpenAiClient("sk-**********************************",
-//                120,
-//                120,
-//                120,
-//                proxy,
-//                httpLoggingInterceptor);
-
         v2 = OpenAiClient.builder()
-                .apiKey("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")
+                .apiKey("sk-***************************")
                 .connectTimeout(50)
                 .writeTimeout(50)
                 .readTimeout(50)
                 .interceptor(Arrays.asList(httpLoggingInterceptor))
-//                .proxy(proxy)
-                .apiHost("https://dgr.life/")
+                .proxy(proxy)
+                .apiHost("https://api.openai.com/")
                 .build();
         CreditGrantsResponse creditGrantsResponse = v2.creditGrants();
         log.info("账户总余额（美元）：{}", creditGrantsResponse.getTotalGranted());
