@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
@@ -59,14 +60,18 @@ public class OpenAiClientTest {
 //                httpLoggingInterceptor);
 
         v2 = OpenAiClient.builder()
-                .apiKey("sk-***************************")
+                .apiKey("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")
                 .connectTimeout(50)
                 .writeTimeout(50)
                 .readTimeout(50)
                 .interceptor(Arrays.asList(httpLoggingInterceptor))
-                .proxy(proxy)
-                .apiHost("https://api.openai.com/")
+//                .proxy(proxy)
+                .apiHost("https://dgr.life/")
                 .build();
+        CreditGrantsResponse creditGrantsResponse = v2.creditGrants();
+        log.info("账户总余额（美元）：{}", creditGrantsResponse.getTotalGranted());
+        log.info("账户总使用金额（美元）：{}", creditGrantsResponse.getTotalUsed());
+        log.info("账户总剩余金额（美元）：{}", creditGrantsResponse.getTotalAvailable());
     }
 
 

@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
@@ -292,4 +293,12 @@ public interface OpenAiApi {
     @POST("v1/audio/translations")
     Single<WhisperResponse> speechToTextTranslations(@Part MultipartBody.Part file,
                                                      @Part("model") RequestBody model);
+
+    /**
+     * 余额查询
+     *
+     * @return 余额结果
+     */
+    @GET("dashboard/billing/credit_grants")
+    Single<CreditGrantsResponse> creditGrants();
 }

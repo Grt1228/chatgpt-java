@@ -5,6 +5,7 @@ import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
@@ -833,6 +834,15 @@ public class OpenAiClient {
         if (file.length() > 25 * 1204 * 1024) {
             log.warn("2023-03-02官方文档提示：文件不能超出25MB");
         }
+    }
+
+    /**
+     * OpenAi账户余额查询
+     * @return
+     */
+    public CreditGrantsResponse creditGrants(){
+        Single<CreditGrantsResponse> creditGrants = this.openAiApi.creditGrants();
+        return creditGrants.blockingGet();
     }
 
 
