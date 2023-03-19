@@ -3,6 +3,8 @@ package com.unfbx.chatgpt.entity.images;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -11,7 +13,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum ResponseFormat{
+public enum ResponseFormat implements Serializable {
     URL("url"),
     B64_JSON("urlb64_json"),
     ;

@@ -4,6 +4,9 @@ package com.unfbx.chatgpt.entity.edits;
 import com.unfbx.chatgpt.entity.common.Choice;
 import com.unfbx.chatgpt.entity.common.Usage;
 import lombok.Data;
+
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -11,7 +14,7 @@ import lombok.Data;
  *  2023-02-15
  */
 @Data
-public class EditResponse {
+public class EditResponse implements Serializable {
     private String id;
     private String object;
     private long created;

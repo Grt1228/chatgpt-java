@@ -4,6 +4,9 @@ import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.common.Choice;
 import com.unfbx.chatgpt.entity.common.Usage;
 import lombok.Data;
+
+import java.io.Serializable;
+
 /**
  * 描述： 答案类
  *
@@ -11,7 +14,7 @@ import lombok.Data;
  *  2023-02-11
  */
 @Data
-public class CompletionResponse extends OpenAiResponse {
+public class CompletionResponse extends OpenAiResponse implements Serializable {
     private String id;
     private String object;
     private long created;

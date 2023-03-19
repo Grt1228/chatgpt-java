@@ -3,6 +3,7 @@ package com.unfbx.chatgpt.entity.embeddings;
 import com.unfbx.chatgpt.entity.common.Usage;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
  *  2023-02-15
  */
 @Data
-public class EmbeddingResponse {
+public class EmbeddingResponse implements Serializable {
 
     private String object;
     private List<Item> data;

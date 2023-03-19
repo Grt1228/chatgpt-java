@@ -2,6 +2,8 @@ package com.unfbx.chatgpt.entity.images;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -9,6 +11,6 @@ import lombok.Data;
  *  2023-02-15
  */
 @Data
-public class Item{
+public class Item implements Serializable {
     private String url;
 }

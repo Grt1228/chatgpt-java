@@ -3,8 +3,10 @@ package com.unfbx.chatgpt.entity.fineTune;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class HyperParam {
+public class HyperParam implements Serializable {
 
     @JsonProperty("batch_size")
     private Integer batchSize;

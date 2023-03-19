@@ -3,6 +3,8 @@ package com.unfbx.chatgpt.entity.moderations;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -10,7 +12,7 @@ import lombok.Data;
  *  2023-02-15
  */
 @Data
-public class Categories {
+public class Categories implements Serializable {
     /**
      * 表达、煽动或宣扬基于种族、性别、民族、宗教、国籍、性取向、残疾状况或种姓的仇恨的内容。
      */

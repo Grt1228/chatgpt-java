@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -16,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Builder
 @Slf4j
-public class Edit {
+public class Edit implements Serializable {
     /**
      * 编辑模型，目前支持两种
      */
