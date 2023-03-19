@@ -13,7 +13,7 @@ it’s an “unofficial" or "community-maintained” library.
 - [x] 1.0.3   支持最新的GPT-3.5-Turbo模型和Whisper-1模型，支持语音功能转文字，语音翻译。OpenAiClient和OpenAiStreamClient支持Builder构造，支持代理。
 - [x] 1.0.4   官方最新的ChatGPT Stream模式下的Api返回值改动。
 - [x] 1.0.5   支持自定义Api Host，使用Builder构建。参考下面的快速开始部分代码。
-- [ ] 1.0.6   更新支持最新GPT-4相关Api。
+- [x] 1.0.6   支持余额查询参考：[OpenAiClientTest]() 和[OpenAiStreamClientTest]() creditGrants方法,支持最新GPT-4模型，参考：[Model](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/)构建消息体传入模型即可。
 ---
 #### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
 交流群：
