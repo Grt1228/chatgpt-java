@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Objects;
 @Slf4j
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Embedding {
+public class Embedding implements Serializable {
     @NonNull
     @Builder.Default
     private String model = Model.TEXT_EMBEDDING_ADA_002.getName();

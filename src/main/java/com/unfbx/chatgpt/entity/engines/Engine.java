@@ -2,6 +2,8 @@ package com.unfbx.chatgpt.entity.engines;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -9,7 +11,7 @@ import lombok.Data;
  *  2023-02-15
  */
 @Data
-public class Engine {
+public class Engine implements Serializable {
 
     private String id;
     private String object;

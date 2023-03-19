@@ -2,6 +2,7 @@ package com.unfbx.chatgpt.entity.common;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 /**
  * 描述：
@@ -10,7 +11,7 @@ import java.util.List;
  *  2023-02-15
  */
 @Data
-public class OpenAiResponse<T> {
+public class OpenAiResponse<T> implements Serializable {
     private String object;
     private List<T> data;
     private Error error;

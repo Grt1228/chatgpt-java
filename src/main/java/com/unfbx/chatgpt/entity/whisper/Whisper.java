@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 /**
  * 描述：语音转文字
  *
@@ -11,7 +13,7 @@ import lombok.Getter;
  * @since  2023-03-02
  */
 @Data
-public class Whisper {
+public class Whisper implements Serializable {
 
 
     @Getter

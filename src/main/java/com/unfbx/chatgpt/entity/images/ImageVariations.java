@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Objects;
 @Slf4j
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ImageVariations {
+public class ImageVariations implements Serializable {
     /**
      * 为每个提示生成的完成次数。
      */

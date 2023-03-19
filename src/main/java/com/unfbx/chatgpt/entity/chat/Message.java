@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -12,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @since 2023-03-02
  */
 @Data
-public class Message {
+public class Message implements Serializable {
     @NotNull
     /**
      * 目前支持三中角色参考官网，进行情景输入：https://platform.openai.com/docs/guides/chat/introduction
@@ -21,7 +23,7 @@ public class Message {
     @NotNull
     private String content;
 
-    public static Builder builder(){
+    public static Builder builder() {
         return new Builder();
     }
 

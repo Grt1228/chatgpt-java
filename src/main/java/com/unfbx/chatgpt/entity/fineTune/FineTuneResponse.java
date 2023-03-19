@@ -3,10 +3,11 @@ package com.unfbx.chatgpt.entity.fineTune;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class FineTuneResponse {
+public class FineTuneResponse implements Serializable {
 
     private String id;
 

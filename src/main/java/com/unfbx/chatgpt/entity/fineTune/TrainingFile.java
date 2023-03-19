@@ -3,8 +3,10 @@ package com.unfbx.chatgpt.entity.fineTune;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class TrainingFile {
+public class TrainingFile implements Serializable {
 
     private String id;
     private String object;

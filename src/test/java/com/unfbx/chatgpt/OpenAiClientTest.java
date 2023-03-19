@@ -52,7 +52,7 @@ public class OpenAiClientTest {
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         v2 = OpenAiClient.builder()
-                .apiKey("sk-***************************")
+                .apiKey("sk-****************************")
                 .connectTimeout(50)
                 .writeTimeout(50)
                 .readTimeout(50)

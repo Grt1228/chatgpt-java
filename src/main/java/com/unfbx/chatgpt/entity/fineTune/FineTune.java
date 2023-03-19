@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ import java.util.Objects;
 @Slf4j
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class FineTune {
+public class FineTune implements Serializable {
 
     /**
      * 上传的文件ID

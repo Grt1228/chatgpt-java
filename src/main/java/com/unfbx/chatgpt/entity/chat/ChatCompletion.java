@@ -44,7 +44,7 @@ public class ChatCompletion implements Serializable {
      */
     @JsonProperty("top_p")
     @Builder.Default
-    private Integer topP = 1;
+    private Double topP = 1d;
 
 
     /**
@@ -129,7 +129,7 @@ public class ChatCompletion implements Serializable {
         this.stop = stop;
     }
 
-    public void setTopP(Integer topP) {
+    public void setTopP(Double topP) {
         this.topP = topP;
     }
 

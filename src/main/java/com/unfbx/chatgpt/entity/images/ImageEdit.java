@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Objects;
 @Slf4j
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ImageEdit {
+public class ImageEdit implements Serializable {
     /**
      * 必选项：描述文字，最多1000字符
      */

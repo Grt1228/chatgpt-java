@@ -2,13 +2,15 @@ package com.unfbx.chatgpt.entity.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
  * @author https:www.unfbx.com
  *  2023-02-15
  */
-public class Permission {
+public class Permission implements Serializable {
     private String id;
     private String object;
     private long created;

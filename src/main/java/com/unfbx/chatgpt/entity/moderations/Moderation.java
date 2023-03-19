@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -19,7 +20,7 @@ import java.util.Objects;
 @Getter
 @Builder
 @Slf4j
-public class Moderation {
+public class Moderation implements Serializable {
 
     @NonNull
     private String input;

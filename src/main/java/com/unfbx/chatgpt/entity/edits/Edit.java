@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
+
 /**
  * 描述：
  *
@@ -16,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Builder
 @Slf4j
-public class Edit {
+public class Edit implements Serializable {
     /**
      * 编辑模型，目前支持两种
      */
@@ -47,7 +49,7 @@ public class Edit {
      */
     @JsonProperty("top_p")
     @Builder.Default
-    private Integer topP = 1;
+    private Double topP = 1d;
 
     /**
      * 为每个提示生成的完成次数。
@@ -74,7 +76,7 @@ public class Edit {
     }
 
 
-    public void setTopP(Integer topP) {
+    public void setTopP(Double topP) {
         this.topP = topP;
     }
 
