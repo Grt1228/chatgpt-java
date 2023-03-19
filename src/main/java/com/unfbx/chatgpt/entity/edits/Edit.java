@@ -49,7 +49,7 @@ public class Edit implements Serializable {
      */
     @JsonProperty("top_p")
     @Builder.Default
-    private Integer topP = 1;
+    private Double topP = 1d;
 
     /**
      * 为每个提示生成的完成次数。
@@ -76,7 +76,7 @@ public class Edit implements Serializable {
     }
 
 
-    public void setTopP(Integer topP) {
+    public void setTopP(Double topP) {
         this.topP = topP;
     }
 
