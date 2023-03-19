@@ -1,9 +1,11 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,28 +20,32 @@ import java.util.concurrent.CountDownLatch;
  * @author https:www.unfbx.com
  * 2023-02-28
  */
+@Slf4j
 public class OpenAiStreamClientTest {
 
     private OpenAiStreamClient client;
 
     @Before
     public void before() {
+        //可以为null
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
-//        client = new OpenAiStreamClient("sk-**********************",
-//                60,
-//                60,
-//                60,
-//                proxy);
         client = OpenAiStreamClient.builder()
                 .connectTimeout(50)
                 .readTimeout(50)
                 .writeTimeout(50)
-                .apiKey("sk-******************************")
+                .apiKey("sk-****************")
                 .proxy(proxy)
+                //自己做了代理就传代理地址
                 .apiHost("https://api.openai.com/")
                 .build();
     }
-
+    @Test
+    public void creditGrants() {
+        CreditGrantsResponse creditGrantsResponse = client.creditGrants();
+        log.info("账户总余额（美元）：{}", creditGrantsResponse.getTotalGranted());
+        log.info("账户总使用金额（美元）：{}", creditGrantsResponse.getTotalUsed());
+        log.info("账户总剩余金额（美元）：{}", creditGrantsResponse.getTotalAvailable());
+    }
 
     @Test
     public void chatCompletions() {

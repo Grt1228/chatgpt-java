@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
@@ -46,18 +47,10 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
+        //可以为null
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        v2 = new OpenAiClient("sk-******************************************");
-//        v2 = new OpenAiClient("sk-******************************************", null, null);
-//        v2 = new OpenAiClient("sk-**********************************",
-//                120,
-//                120,
-//                120,
-//                proxy,
-//                httpLoggingInterceptor);
-
         v2 = OpenAiClient.builder()
                 .apiKey("sk-***************************")
                 .connectTimeout(50)
@@ -69,7 +62,13 @@ public class OpenAiClientTest {
                 .build();
     }
 
-
+    @Test
+    public void creditGrants() {
+        CreditGrantsResponse creditGrantsResponse = v2.creditGrants();
+        log.info("账户总余额（美元）：{}", creditGrantsResponse.getTotalGranted());
+        log.info("账户总使用金额（美元）：{}", creditGrantsResponse.getTotalUsed());
+        log.info("账户总剩余金额（美元）：{}", creditGrantsResponse.getTotalAvailable());
+    }
     @Test
     public void speechToTextTranscriptions() {
         //语音转文字
