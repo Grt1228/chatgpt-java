@@ -72,7 +72,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 </dependency>
 ```
 
