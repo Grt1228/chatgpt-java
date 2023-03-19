@@ -47,6 +47,7 @@ public class OpenAiClientTest {
 
     @Before
     public void before() {
+        //可以为null
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -59,13 +60,15 @@ public class OpenAiClientTest {
                 .proxy(proxy)
                 .apiHost("https://api.openai.com/")
                 .build();
+    }
+
+    @Test
+    public void creditGrants() {
         CreditGrantsResponse creditGrantsResponse = v2.creditGrants();
         log.info("账户总余额（美元）：{}", creditGrantsResponse.getTotalGranted());
         log.info("账户总使用金额（美元）：{}", creditGrantsResponse.getTotalUsed());
         log.info("账户总剩余金额（美元）：{}", creditGrantsResponse.getTotalAvailable());
     }
-
-
     @Test
     public void speechToTextTranscriptions() {
         //语音转文字

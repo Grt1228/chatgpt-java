@@ -1,17 +1,27 @@
 package com.unfbx.chatgpt;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.ContentType;
+import cn.hutool.http.*;
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unfbx.chatgpt.config.ChatGPTUrl;
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
+import com.unfbx.chatgpt.entity.common.Choice;
+import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
+import com.unfbx.chatgpt.entity.completions.CompletionResponse;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
+import io.reactivex.Single;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import okhttp3.sse.EventSource;
@@ -21,9 +31,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -275,6 +287,42 @@ public class OpenAiStreamClient {
                 .stream(true)
                 .build();
         this.streamChatCompletion(chatCompletion, eventSourceListener);
+    }
+
+    /**
+     * OpenAi账户余额查询
+     *
+     * @return 余额信息
+     */
+    @SneakyThrows
+    public CreditGrantsResponse creditGrants() {
+        HttpResponse response = HttpRequest
+                .get(this.apiHost + "dashboard/billing/credit_grants")
+                .header(Header.AUTHORIZATION.getValue(), "Bearer " + this.apiKey)
+                .execute();
+        String body = response.body();
+        log.info("调用查询余额请求返回值：{}", body);
+        if (!response.isOk()) {
+            if (response.getStatus() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
+                    || response.getStatus() == CommonError.OPENAI_LIMIT_ERROR.code()
+                    || response.getStatus() == CommonError.OPENAI_SERVER_ERROR.code()) {
+                OpenAiResponse openAiResponse = JSONUtil.toBean(response.body(), OpenAiResponse.class);
+                log.error(openAiResponse.getError().getMessage());
+                throw new BaseException(openAiResponse.getError().getMessage());
+            }
+            String errorMsg = response.body();
+            log.error("询余额请求异常：{}", errorMsg);
+            OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
+            if (Objects.nonNull(openAiResponse.getError())) {
+                log.error(openAiResponse.getError().getMessage());
+                throw new BaseException(openAiResponse.getError().getMessage());
+            }
+            throw new BaseException(CommonError.RETRY_ERROR);
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        // 读取Json 返回值
+        CreditGrantsResponse completionResponse = mapper.readValue(body, CreditGrantsResponse.class);
+        return completionResponse;
     }
 
     /**
