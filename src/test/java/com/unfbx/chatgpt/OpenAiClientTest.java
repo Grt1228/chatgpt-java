@@ -48,17 +48,17 @@ public class OpenAiClientTest {
     @Before
     public void before() {
         //可以为null
-//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         v2 = OpenAiClient.builder()
-                .apiKey("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")
+                .apiKey("sk-****************************")
                 .connectTimeout(50)
                 .writeTimeout(50)
                 .readTimeout(50)
                 .interceptor(Arrays.asList(httpLoggingInterceptor))
-//                .proxy(proxy)
-                .apiHost("https://dgr.life/")
+                .proxy(proxy)
+                .apiHost("https://api.openai.com/")
                 .build();
     }
 
