@@ -91,9 +91,6 @@ public class TestB {
         //日志输出可以不添加
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60);
-//        OpenAiClient openAiClient = new OpenAiClient("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",60,60,60,null);
-//        OpenAiClient openAiClient = new OpenAiClient("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");
         OpenAiClient openAiClient = OpenAiClient.builder()
             .apiKey("sk-***************************")
             .connectTimeout(50)
@@ -158,11 +155,6 @@ public class OpenAiStreamClientTest {
     public void before() {
         //代理可以不设置
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
-//        client = new OpenAiStreamClient("sk-**********************",
-//                60,
-//                60,
-//                60,
-//                proxy);
         //推荐这种构造方式
         client = OpenAiStreamClient.builder()
                 .connectTimeout(50)
