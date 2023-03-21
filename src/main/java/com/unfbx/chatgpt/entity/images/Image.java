@@ -90,13 +90,4 @@ public class Image implements Serializable {
         this.user = user;
     }
 
-    @AllArgsConstructor
-    @Getter
-    public enum ResponseFormat{
-        URL("url"),
-        B64_JSON("urlb64_json"),
-        ;
-
-        private String name;
-    }
 }

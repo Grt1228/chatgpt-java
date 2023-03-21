@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Getter
 public enum ResponseFormat implements Serializable {
     URL("url"),
-    B64_JSON("urlb64_json"),
+    B64_JSON("b64_json"),
     ;
 
     private String name;
