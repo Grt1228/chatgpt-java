@@ -17,8 +17,12 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 
 **国内访问可以看下这个解决方案**：https://github.com/noobnooc/noobnooc/discussions/9
 
-### 整合Spring Boot 实现CahtGPT对话模式，可以参考下我写的这个项目简单版页面很简陋：https://github.com/Grt1228/chatgpt-steam-output
-
+### 整合Spring Boot 实现CahtGPT对话模式，思路可以参考：https://github.com/Grt1228/chatgpt-steam-output
+### 有bug欢迎朋友们指出，互相学习。
+一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群满请加微信拉
+---|---
+<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" /> | <img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
+---
 ## 更新日志
 - [x] 1.0.0   支持所有的OpenAI官方接口
 - [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
@@ -27,11 +31,6 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] 1.0.4   官方最新的ChatGPT Stream模式下的Api返回值改动。
 - [x] 1.0.5   支持自定义Api Host，使用Builder构建。参考下面的快速开始部分代码。
 - [x] 1.0.6   支持余额查询参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) creditGrants方法,支持最新GPT-4模型，参考：[ChatCompletion.Model](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/entity/chat/ChatCompletion.java/)构建消息体传入模型即可。感谢群友提供的余额接口地址以及[@PlexPt](https://github.com/PlexPt) 提供的模型参数
----
-#### 已经支持OpenAI官方的全部api，有bug欢迎朋友们指出，互相学习。
-一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群满请加微信拉
----|---
-<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" /> | <img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
 ---
 注意：由于这个接口：
 
