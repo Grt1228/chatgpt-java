@@ -1,7 +1,19 @@
 it’s an “unofficial" or "community-maintained” library.
 
 这是一个非官方的社区维护的库。
-
+OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
+## 此项目不单单支持chat对话模型，支持openai官方所有api，包括
+- [x] Billing           余额查询
+- [x] Models            模型检索
+- [x] Completions       chatgpt对话
+- [x] Images            图片模型
+- [x] Embeddings    
+- [x] Files             文件上传自定义模型
+- [x] Fine-tune         微调
+- [x] Moderations       文本审核，敏感词鉴别
+- [x] Engines           官方已移除
+- [x] Chat              gpt-3.5对话模型
+- [x] Speech To Text    语音转文字，语音翻译
 
 **国内访问可以看下这个解决方案**：https://github.com/noobnooc/noobnooc/discussions/9
 
@@ -50,19 +62,7 @@ OpenAI官方Api的Java SDK
 
 **api-keys的方式调用目前需要用梯子才可访问。**
 
-
 OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
-**已完成接口列表：**
-- [x] Models
-- [x] Completions
-- [x] Images
-- [x] Embeddings
-- [x] Files
-- [x] Fine-tune
-- [x] Moderations
-- [x] Engines
-- [x] Chat
-- [x] Speech To Text
 
 # 快速开始
 
