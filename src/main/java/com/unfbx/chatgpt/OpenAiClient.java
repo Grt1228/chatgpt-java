@@ -434,7 +434,7 @@ public class OpenAiClient {
         MultipartBody.Part maskMultipartBody = null;
         if (Objects.nonNull(mask)) {
             RequestBody maskBody = RequestBody.create(MediaType.parse("multipart/form-data"), mask);
-            maskMultipartBody = MultipartBody.Part.createFormData("mask", image.getName(), maskBody);
+            maskMultipartBody = MultipartBody.Part.createFormData("mask", mask.getName(), maskBody);
         }
         Map<String, RequestBody> requestBodyMap = new HashMap<>();
         requestBodyMap.put("prompt", RequestBody.create(MediaType.parse("multipart/form-data"), imageEdit.getPrompt()));
