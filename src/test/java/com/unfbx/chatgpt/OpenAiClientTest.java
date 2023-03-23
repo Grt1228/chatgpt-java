@@ -1,5 +1,10 @@
 package com.unfbx.chatgpt;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
@@ -33,6 +38,8 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * 描述： 测试类
@@ -48,18 +55,37 @@ public class OpenAiClientTest {
     @Before
     public void before() {
         //可以为null
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         v2 = OpenAiClient.builder()
-                .apiKey("sk-****************************")
+                .apiKey("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")
                 .connectTimeout(50)
                 .writeTimeout(50)
                 .readTimeout(50)
                 .interceptor(Arrays.asList(httpLoggingInterceptor))
-                .proxy(proxy)
-                .apiHost("https://api.openai.com/")
+//                .proxy(proxy)
+                .apiHost("https://dgr.life/")
                 .build();
+    }
+
+    @Test
+    public void testJson() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(SerializationFeature.INDENT_OUTPUT, true)
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .setTimeZone(TimeZone.getTimeZone("GMT+8"))
+                .setLocale(Locale.CHINA);
+
+        Completion completion = Completion.builder().prompt("你好啊").build();
+
+
+        String jsonStr = objectMapper.writeValueAsString(completion);
+
+        Completion completion1 = objectMapper.readValue(jsonStr, Completion.class);
+
     }
 
     @Test
@@ -187,7 +213,7 @@ public class OpenAiClientTest {
     @Test
     public void editImageV2() {
         ImageEdit imageEdit = ImageEdit.builder().prompt("去除图片中的文字").build();
-        List<Item> images = v2.editImages(new java.io.File("C:\\Users\\***\\Desktop\\1.png"),
+        List<Item> images = v2.editImages(new java.io.File("C:\\Users\\FLJS188\\Desktop\\o.png"),
                 imageEdit);
         System.out.println(images);
     }

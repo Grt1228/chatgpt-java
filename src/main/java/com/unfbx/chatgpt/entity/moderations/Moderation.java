@@ -2,10 +2,7 @@ package com.unfbx.chatgpt.entity.moderations;
 
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -20,6 +17,8 @@ import java.util.Objects;
 @Getter
 @Builder
 @Slf4j
+@NoArgsConstructor
+@AllArgsConstructor
 public class Moderation implements Serializable {
 
     @NonNull
