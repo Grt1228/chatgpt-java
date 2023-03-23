@@ -18,6 +18,12 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 **国内访问可以看下这个解决方案**：https://github.com/noobnooc/noobnooc/discussions/9
 
 ### 整合Spring Boot 实现CahtGPT对话模式，思路可以参考：https://github.com/Grt1228/chatgpt-steam-output
+此项目支持两种流式输出有完整示例代码可参考 。
+
+流式输出实现方式 | 小程序 | 安卓 | ios | H5 
+---|---|---|---|---
+SSE参考：[OpenAISSEEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAISSEEventSourceListener.java) | 不支持| 支持| 支持 | 支持
+WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAIWebSocketEventSourceListener.java) | 支持| 支持| 支持| 支持
 ### 有bug欢迎朋友们指出，互相学习。
 一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群满请加微信拉
 ---|---
