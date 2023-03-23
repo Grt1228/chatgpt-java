@@ -296,21 +296,24 @@ public class OpenAiStreamClient {
      */
     @SneakyThrows
     public CreditGrantsResponse creditGrants() {
-        HttpResponse response = HttpRequest
-                .get(this.apiHost + "dashboard/billing/credit_grants")
-                .header(Header.AUTHORIZATION.getValue(), "Bearer " + this.apiKey)
-                .execute();
-        String body = response.body();
-        log.info("调用查询余额请求返回值：{}", body);
-        if (!response.isOk()) {
-            if (response.getStatus() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
-                    || response.getStatus() == CommonError.OPENAI_LIMIT_ERROR.code()
-                    || response.getStatus() == CommonError.OPENAI_SERVER_ERROR.code()) {
-                OpenAiResponse openAiResponse = JSONUtil.toBean(response.body(), OpenAiResponse.class);
+        Request request = new Request.Builder()
+                .url(this.apiHost + "dashboard/billing/credit_grants")
+                .get()
+                .header("Authorization", "Bearer " + this.apiKey)
+                .build();
+        Response response = this.okHttpClient.newCall(request).execute();
+        ResponseBody body = response.body();
+        String bodyStr = body.string();
+//        log.info("调用查询余额请求返回值：{}", bodyStr);
+        if (!response.isSuccessful()) {
+            if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
+                    || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()
+                    || response.code() == CommonError.OPENAI_SERVER_ERROR.code()) {
+                OpenAiResponse openAiResponse = JSONUtil.toBean(bodyStr, OpenAiResponse.class);
                 log.error(openAiResponse.getError().getMessage());
                 throw new BaseException(openAiResponse.getError().getMessage());
             }
-            String errorMsg = response.body();
+            String errorMsg = bodyStr;
             log.error("询余额请求异常：{}", errorMsg);
             OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
             if (Objects.nonNull(openAiResponse.getError())) {
@@ -321,7 +324,7 @@ public class OpenAiStreamClient {
         }
         ObjectMapper mapper = new ObjectMapper();
         // 读取Json 返回值
-        CreditGrantsResponse completionResponse = mapper.readValue(body, CreditGrantsResponse.class);
+        CreditGrantsResponse completionResponse = mapper.readValue(bodyStr, CreditGrantsResponse.class);
         return completionResponse;
     }
 
