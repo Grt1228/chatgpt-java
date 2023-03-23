@@ -31,7 +31,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] 1.0.4   官方最新的ChatGPT Stream模式下的Api返回值改动。
 - [x] 1.0.5   支持自定义Api Host，使用Builder构建。参考下面的快速开始部分代码。
 - [x] 1.0.6   支持余额查询参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) creditGrants方法,支持最新GPT-4模型，参考：[ChatCompletion.Model](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/entity/chat/ChatCompletion.java/)构建消息体传入模型即可。感谢群友提供的余额接口地址以及[@PlexPt](https://github.com/PlexPt) 提供的模型参数
-- [x] 1.0.6   修复反序列化报错Bug：https://github.com/Grt1228/chatgpt-java/issues/79 ，Image SDK枚举值bug：https://github.com/Grt1228/chatgpt-java/issues/76
+- [x] 1.0.6   修复反序列化报错Bug：https://github.com/Grt1228/chatgpt-java/issues/79 ，Image SDK枚举值bug：https://github.com/Grt1228/chatgpt-java/issues/76 ，感谢两位朋友指出：[@CCc3120](https://github.com/CCc3120) 、[@seven-cm](https://github.com/seven-cm)
 ---
 注意：由于这个接口：
 
