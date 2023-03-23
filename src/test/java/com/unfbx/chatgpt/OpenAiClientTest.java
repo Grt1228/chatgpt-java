@@ -55,17 +55,17 @@ public class OpenAiClientTest {
     @Before
     public void before() {
         //可以为null
-//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         v2 = OpenAiClient.builder()
-                .apiKey("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")
+                .apiKey("sk-***************************")
                 .connectTimeout(50)
                 .writeTimeout(50)
                 .readTimeout(50)
                 .interceptor(Arrays.asList(httpLoggingInterceptor))
-//                .proxy(proxy)
-                .apiHost("https://dgr.life/")
+                .proxy(proxy)
+                .apiHost("https://api.openai.com/")
                 .build();
     }
 
@@ -129,7 +129,7 @@ public class OpenAiClientTest {
         List<Model> models = v2.models();
         models.forEach(e -> {
             System.out.print(e.getOwnedBy() + " ");
-            System.out.print(e.getID() + " ");
+            System.out.print(e.getId() + " ");
             System.out.println(e.getObject() + " ");
         });
     }
