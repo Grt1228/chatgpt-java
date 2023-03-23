@@ -19,6 +19,8 @@ import java.util.Map;
 @Builder
 @Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatCompletion implements Serializable {
 
     @NonNull

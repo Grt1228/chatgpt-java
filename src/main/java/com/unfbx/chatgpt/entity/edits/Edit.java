@@ -1,10 +1,7 @@
 package com.unfbx.chatgpt.entity.edits;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -18,6 +15,8 @@ import java.io.Serializable;
 @Getter
 @Builder
 @Slf4j
+@NoArgsConstructor
+@AllArgsConstructor
 public class Edit implements Serializable {
     /**
      * 编辑模型，目前支持两种

@@ -20,6 +20,8 @@ import java.util.*;
 @Builder
 @Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Completion implements Serializable {
 
     @NonNull
