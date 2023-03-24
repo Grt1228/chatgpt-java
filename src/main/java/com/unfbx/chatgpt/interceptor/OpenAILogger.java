@@ -13,6 +13,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class OpenAILogger implements HttpLoggingInterceptor.Logger {
     @Override
     public void log(String message) {
-        log.info("OkHttp-------->:{}", message);
+        if (log.isDebugEnabled()){
+            log.debug("OkHttp-------->:{}", message);
+        }
     }
 }
