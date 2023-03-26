@@ -7,7 +7,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] Models            模型检索
 - [x] Completions       chatgpt对话
 - [x] Images            图片模型
-- [x] Embeddings    
+- [x] Embeddings        模型自定义训练
 - [x] Files             文件上传自定义模型
 - [x] Fine-tune         微调
 - [x] Moderations       文本审核，敏感词鉴别
@@ -32,16 +32,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 - [x] 1.0.5   支持自定义Api Host，使用Builder构建。参考下面的快速开始部分代码。
 - [x] 1.0.6   支持余额查询参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) creditGrants方法,支持最新GPT-4模型，参考：[ChatCompletion.Model](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/entity/chat/ChatCompletion.java/)构建消息体传入模型即可。感谢群友提供的余额接口地址以及[@PlexPt](https://github.com/PlexPt) 提供的模型参数
 - [x] 1.0.7   修复反序列化报错Bug：https://github.com/Grt1228/chatgpt-java/issues/79 ，Image SDK枚举值bug：https://github.com/Grt1228/chatgpt-java/issues/76 ，感谢两位朋友指出：[@CCc3120](https://github.com/CCc3120) 、[@seven-cm](https://github.com/seven-cm)
----
-注意：由于这个接口：
-
-https://platform.openai.com/docs/api-reference/files/retrieve-content
-
-**免费用户无法使用，所以并未经过测试！！！**（哪位朋友有收费版keys也可以提供下）
-
-**完整测试案例参考源码中的：com.unfbx.chatgpt.OpenAiClientTest**和
-**com.unfbx.chatgpt.OpenAiStreamClientTest**
-
+- [ ] 1.0.8   修改OpenAiClient和OpenAiStreamClient的自定义相关实现，超时设置，代理设置，自定义拦截器设置改为通过自定义OkHttpClient实现，将OkHttpClient交由用户自定义控制更加合理，可以实现更多的参数自定义。
 ---
 
 Q | A
@@ -65,109 +56,27 @@ OpenAI官方Api的Java SDK
 OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 
 # 快速开始
-
-## 方式一
-导入pom依赖
+本项目支持**默认输出**和**流式输出**
+## 1、导入pom依赖
 ```
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 </dependency>
 ```
-
-常规客户端使用示例：
+## 2、流式客户端使用示例：
+更多SDK示例参考：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) 
+### 默认OkHttpClient
 ```
-package com.unfbx.eventTest.test;
-import com.unfbx.chatgpt.OpenAiClient;
-import com.unfbx.chatgpt.entity.completions.CompletionResponse;
-import java.util.Arrays;
-
-public class TestB {
+public class Test {
     public static void main(String[] args) {
-        //配置api keys
-        //代理可以为null
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
-        //日志输出可以不添加
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OpenAiClient openAiClient = OpenAiClient.builder()
-            .apiKey("sk-***************************")
-            .connectTimeout(50)
-            .writeTimeout(50)
-            .readTimeout(50)
-            .interceptor(Arrays.asList(httpLoggingInterceptor))
-            .proxy(proxy)
-            .apiHost("https://api.openai.com/")
-            .build();
-        CompletionResponse completions = openAiClient.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
-        Arrays.stream(completions.getChoices()).forEach(System.out::println);
-    }
-}
-```
-
-输出：
-```
-Choice(text=
-
-尊敬的领导：
-
-您好！
-
-我是XX，目前就读于XX大学计算机专业，现在我想申请转专业，从计算机专业转到会计学专业。
-
-我有着良好的学习习惯，在计算机专业的学习中，我取得了良好的成绩，并且拥有了一定的计算机基础知识。在这一年的学习中，我发现自己对计算机的兴趣不太浓厚，而对会计学的兴趣却很浓厚，我觉得会计学是一个很有前景的专业，而且也是我的兴趣所在，我想把自己的未来打造成一个会计学专业的专家。
-
-因此，我希望能够申请转专业，从计算机专业转到会计学专业，我会努力学习，努力完成学业，让自己成为一个优秀的会计学专业的专家。
-
-最后，我再次表达我申请转专业的请求，希望能够得到您的认可和批准。
-
-谨上
-
-XX, index=0, logprobs=null, finishReason=stop)
-
-Process finished with exit code 0
-
-```
-流式输出代码：
-
-```
-package com.unfbx.chatgpt;
-
-import com.unfbx.chatgpt.entity.completions.Completion;
-import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.concurrent.CountDownLatch;
-
-/**
- * 描述： 测试类
- *
- * @author https:www.unfbx.com
- * 2023-02-28
- */
-public class OpenAiStreamClientTest {
-
-    private OpenAiStreamClient client;
-
-    @Before
-    public void before() {
-        //代理可以不设置
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
-        //推荐这种构造方式
-        client = OpenAiStreamClient.builder()
-                .connectTimeout(50)
-                .readTimeout(50)
-                .writeTimeout(50)
-                .apiKey("sk-******************************")
-                .proxy(proxy)
-                .apiHost("https://api.openai.com/")
+        OpenAiStreamClient client = OpenAiStreamClient.builder()
+                .apiKey("sk-***********************************")
+                //自己做了代理就传代理地址，没有可不不传
+//                .apiHost("https://自己代理的服务器地址/")
                 .build();
-    }
-    
-    @Test
-    public void chatCompletions() {
+        //聊天模型：gpt-3.5
         ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
         Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
         ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
@@ -179,25 +88,89 @@ public class OpenAiStreamClientTest {
             e.printStackTrace();
         }
     }
-
-    @Test
-    public void completions() {
-        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
-        Completion q = Completion.builder()
-                .prompt("一句话描述下开心的心情")
-                .stream(true)
+}
+```
+### 自定义OkHttpClient客户端使用示例：
+```
+public class Test {
+    public static void main(String[] args) {
+        //国内访问需要做代理，国外服务器不需要
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
+                .proxy(proxy)//自定义代理
+                .addInterceptor(httpLoggingInterceptor)//自定义日志
+                .connectTimeout(30, TimeUnit.SECONDS)//自定义超时时间
+                .writeTimeout(30, TimeUnit.SECONDS)//自定义超时时间
+                .readTimeout(30, TimeUnit.SECONDS)//自定义超时时间
                 .build();
-        client.streamCompletions(q, eventSourceListener);
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        OpenAiStreamClient client = OpenAiStreamClient.builder()
+                .apiKey("sk-*************************************")
+                .okHttpClient(okHttpClient)
+                //自己做了代理就传代理地址，没有可不不传
+//                .apiHost("https://自己代理的服务器地址/")
+                .build();
     }
 }
 ```
 
+## 3、默认客户端使用示例（支持全部API）：
+更多SDK示例参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 
+### 默认OkHttpClient
+```
+public class Test {
+    public static void main(String[] args) {
+        OpenAiClient openAiClient = OpenAiClient.builder()
+                .apiKey("sk-*********************************")
+                //自己做了代理就传代理地址，没有可不不传
+//                .apiHost("https://自己代理的服务器地址/")
+                .build();
+                //聊天模型：gpt-3.5
+        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
+        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            System.out.println(e.getMessage());
+        });
+    }
+}
+```
+### 自定义OkHttpClient客户端使用示例：
+```
+public class Test {
+    public static void main(String[] args) {
+        //国内访问需要做代理，国外服务器不需要
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
+                .proxy(proxy)//自定义代理
+                .addInterceptor(httpLoggingInterceptor)//自定义日志输出
+                .addInterceptor(new OpenAiResponseInterceptor())//自定义返回值拦截
+                .connectTimeout(10, TimeUnit.SECONDS)//自定义超时时间
+                .writeTimeout(30, TimeUnit.SECONDS)//自定义超时时间
+                .readTimeout(30, TimeUnit.SECONDS)//自定义超时时间
+                .build();
+        //构建客户端
+        OpenAiClient openAiClient = OpenAiClient.builder()
+                .apiKey("sk-*********************************")
+                .okHttpClient(okHttpClient)
+                //自己做了代理就传代理地址，没有可不不传
+//                .apiHost("https://自己代理的服务器地址/")
+                .build();
+                //聊天模型：gpt-3.5
+        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
+        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            System.out.println(e.getMessage());
+        });
+    }
+}
+```
 输出日志（text是持续输出的）：
 ```
 23:03:59.158 [OkHttp https://api.openai.com/...] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI建立sse连接...
@@ -225,9 +198,17 @@ Process finished with exit code -1
 ## 方式二（下载源码直接运行）
 
 ### **OpenAI全部接口支持调用**
-
-创建客户端配置api-key
 完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest 和 com.unfbx.chatgpt.OpenAiStreamClientTest
+
+--- 
+注意：由于这个接口：
+
+https://platform.openai.com/docs/api-reference/files/retrieve-content
+
+**免费用户无法使用，所以并未经过测试！！！**（哪位朋友有收费版keys也可以提供下）
+
+**完整测试案例参考源码中的：com.unfbx.chatgpt.OpenAiClientTest**和
+**com.unfbx.chatgpt.OpenAiStreamClientTest**
 
 # Star History
 

@@ -28,8 +28,11 @@ import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
 import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
+import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
+import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 描述： 测试类
@@ -55,18 +59,31 @@ public class OpenAiClientTest {
     @Before
     public void before() {
         //可以为null
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        v2 = OpenAiClient.builder()
-                .apiKey("sk-***************************")
-                .connectTimeout(50)
-                .writeTimeout(50)
-                .readTimeout(50)
-                .interceptor(Arrays.asList(httpLoggingInterceptor))
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
                 .proxy(proxy)
-                .apiHost("https://api.openai.com/")
+                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(new OpenAiResponseInterceptor())
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .build();
+        OpenAiClient openAiClient = OpenAiClient.builder()
+                .apiKey("sk-****************************")
+                .okHttpClient(okHttpClient)
+                //自己做了代理就传代理地址，没有可不不传
+//                .apiHost("https://自己代理的服务器地址/")
+                .build();
+        //聊天模型：gpt-3.5
+        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
+        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            System.out.println(e.getMessage());
+        });
     }
 
     @Test
@@ -78,14 +95,9 @@ public class OpenAiClientTest {
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .setTimeZone(TimeZone.getTimeZone("GMT+8"))
                 .setLocale(Locale.CHINA);
-
         Completion completion = Completion.builder().prompt("你好啊").build();
-
-
         String jsonStr = objectMapper.writeValueAsString(completion);
-
         Completion completion1 = objectMapper.readValue(jsonStr, Completion.class);
-
     }
 
     @Test

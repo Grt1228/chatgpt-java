@@ -4,8 +4,12 @@ import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
+import com.unfbx.chatgpt.interceptor.OpenAILogger;
+import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,6 +17,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 描述： 测试类
@@ -27,16 +32,23 @@ public class OpenAiStreamClientTest {
 
     @Before
     public void before() {
-        //可以为null
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.1.111", 7890));
-        client = OpenAiStreamClient.builder()
-                .connectTimeout(50)
-                .readTimeout(50)
-                .writeTimeout(50)
-                .apiKey("sk-****************")
+        //国内访问需要做代理，国外服务器不需要
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
                 .proxy(proxy)
-                //自己做了代理就传代理地址
-                .apiHost("https://api.openai.com/")
+                .addInterceptor(httpLoggingInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+        client = OpenAiStreamClient.builder()
+                .apiKey("sk-*************************************")
+                .okHttpClient(okHttpClient)
+                //自己做了代理就传代理地址，没有可不不传
+//                .apiHost("https://自己代理的服务器地址/")
                 .build();
     }
     @Test
