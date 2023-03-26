@@ -2,7 +2,7 @@ it’s an “unofficial" or "community-maintained” library.
 
 这是一个非官方的社区维护的库。
 OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
-## 此项目不单单支持chat对话模型，支持openai官方所有api，包括
+## 此项目不仅仅支持chat对话模型，支持openai官方所有api，包括
 - [x] Billing           余额查询
 - [x] Models            模型检索
 - [x] Completions       chatgpt对话
