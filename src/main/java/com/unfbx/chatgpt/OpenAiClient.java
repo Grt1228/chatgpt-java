@@ -1,9 +1,8 @@
 package com.unfbx.chatgpt;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.ContentType;
-import cn.hutool.http.Header;
-import cn.hutool.json.JSONUtil;
+
 import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
@@ -32,6 +31,8 @@ import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
+import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import io.reactivex.Single;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * 描述： open ai 客户端
  *
  * @author https:www.unfbx.com
- * 2023-02-11
+ * @since 2023-02-11
  */
 
 @Slf4j
@@ -60,140 +61,23 @@ public class OpenAiClient {
      */
     @Getter
     @NotNull
-    private String apiKey;
+    private List<String> apiKey;
     /**
      * 自定义api host使用builder的方式构造client
      */
     @Getter
-    private String apiHost = OpenAIConst.OPENAI_HOST;
+    private String apiHost;
     @Getter
     private OpenAiApi openAiApi;
+    /**
+     * 自定义的okHttpClient
+     * 如果不自定义 ，就是用sdk默认的OkHttpClient实例
+     */
     @Getter
     private OkHttpClient okHttpClient;
-    /**
-     * 连接超时
-     */
-    @Getter
-    private long connectTimeout;
-    /**
-     * 写超时
-     */
-    @Getter
-    private long writeTimeout;
-    /**
-     * 读超时
-     */
-    @Getter
-    private long readTimeout;
-    /**
-     * okhttp 代理
-     */
-    @Getter
-    private Proxy proxy;
-    /**
-     * 自定义okhttp拦截器
-     */
-    @Getter
-    private List<Interceptor> interceptor;
 
     /**
-     * 创建OpenAiClient，自定义OkHttpClient
-     *
-     * @param apiKey         key
-     * @param connectTimeout 连接超时时间 单位秒
-     * @param writeTimeout   写超时 单位秒
-     * @param readTimeout    读超时 单位秒
-     * @param proxy          代理
-     * @param interceptor    自定义拦截器
-     */
-    public OpenAiClient(String apiKey, long connectTimeout, long writeTimeout, long readTimeout, Proxy proxy, Interceptor... interceptor) {
-        this.apiKey = apiKey;
-        this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy, interceptor);
-        this.openAiApi = new Retrofit.Builder()
-                .baseUrl(this.apiHost)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build().create(OpenAiApi.class);
-    }
-
-    /**
-     * 创建OpenAiClient，使用默认的超时时间
-     * 注意当超时时间过短，长的文本输出问答系统可能超时。
-     *
-     * @param apiKey key
-     */
-    public OpenAiClient(String apiKey) {
-        this.apiKey = apiKey;
-        this.okHttpClient = this.okHttpClient(30, 30, 30, null, null);
-        this.openAiApi = new Retrofit.Builder()
-                .baseUrl(this.apiHost)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build().create(OpenAiApi.class);
-    }
-
-    /**
-     * 创建OpenAiClient，使用默认的超时时间
-     * 注意当超时时间过短，长的文本输出问答系统可能超时。
-     *
-     * @param apiKey key
-     * @param proxy  proxy代理对象
-     */
-    public OpenAiClient(String apiKey, Proxy proxy) {
-        this.apiKey = apiKey;
-        this.okHttpClient = this.okHttpClient(30, 30, 30, proxy, null);
-        this.openAiApi = new Retrofit.Builder()
-                .baseUrl(this.apiHost)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build().create(OpenAiApi.class);
-    }
-
-    /**
-     * 创建OpenAiClient，自定义OkHttpClient
-     *
-     * @param apiKey         key
-     * @param connectTimeout 连接超时时间 单位秒
-     * @param writeTimeout   写超时 单位秒
-     * @param readTimeout    读超时 单位秒
-     * @param proxy          代理对象
-     */
-    public OpenAiClient(String apiKey, long connectTimeout, long writeTimeout, long readTimeout, Proxy proxy) {
-        this.apiKey = apiKey;
-        this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy, null);
-        this.openAiApi = new Retrofit.Builder()
-                .baseUrl(this.apiHost)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build().create(OpenAiApi.class);
-    }
-
-
-    /**
-     * 创建OpenAiClient，使用默认的超时时间
-     * 注意当超时时间过短，长的文本输出问答系统可能超时。
-     *
-     * @param apiKey      key
-     * @param interceptor 自定义拦截器
-     * @param proxy       代理对象
-     */
-    public OpenAiClient(String apiKey, Proxy proxy, Interceptor... interceptor) {
-        this.apiKey = apiKey;
-        this.okHttpClient = this.okHttpClient(30, 30, 30, proxy, interceptor);
-        this.openAiApi = new Retrofit.Builder()
-                .baseUrl(this.apiHost)
-                .client(okHttpClient)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create())
-                .build().create(OpenAiApi.class);
-    }
-
-    /**
-     * 构造
+     * 构造器
      *
      * @return
      */
@@ -207,7 +91,7 @@ public class OpenAiClient {
      * @param builder
      */
     private OpenAiClient(Builder builder) {
-        if (StrUtil.isBlank(builder.apiKey)) {
+        if (CollectionUtil.isEmpty(builder.apiKey)) {
             throw new BaseException(CommonError.API_KEYS_NOT_NUL);
         }
         apiKey = builder.apiKey;
@@ -217,29 +101,18 @@ public class OpenAiClient {
         }
         apiHost = builder.apiHost;
 
-        if (Objects.isNull(builder.connectTimeout)) {
-            builder.connectTimeout(30);
+        if (Objects.isNull(builder.okHttpClient)) {
+            builder.okHttpClient = this.okHttpClient();
+        }else {
+            //自定义的okhttpClient  需要增加api keys
+            builder.okHttpClient = builder.okHttpClient
+                    .newBuilder()
+                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                    .build();
         }
-        connectTimeout = builder.connectTimeout;
-
-        if (Objects.isNull(builder.writeTimeout)) {
-            builder.writeTimeout(30);
-        }
-        writeTimeout = builder.writeTimeout;
-
-        if (Objects.isNull(builder.readTimeout)) {
-            builder.readTimeout(30);
-        }
-        readTimeout = builder.readTimeout;
-        proxy = builder.proxy;
-        interceptor = builder.interceptor;
-        Interceptor[] interceptorArray = null;
-        if (Objects.nonNull(interceptor) && interceptor.size() > 0) {
-            interceptorArray = interceptor.stream().toArray(Interceptor[]::new);
-        }
-        this.okHttpClient = this.okHttpClient(connectTimeout, writeTimeout, readTimeout, proxy, interceptorArray);
+        okHttpClient = builder.okHttpClient;
         this.openAiApi = new Retrofit.Builder()
-                .baseUrl(this.apiHost)
+                .baseUrl(apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -248,58 +121,19 @@ public class OpenAiClient {
 
 
     /**
-     * 创建 OkHttpClient，自定义超时时间和拦截器
+     * 创建默认OkHttpClient
      *
-     * @param connectTimeout 默认30秒
-     * @param writeTimeout   默认30秒
-     * @param readTimeout    默认30秒
-     * @param proxy          代理对象
-     * @param interceptor    自定义拦截器
      * @return
      */
-    private OkHttpClient okHttpClient(long connectTimeout, long writeTimeout, long readTimeout, Proxy proxy, Interceptor... interceptor) {
-        OkHttpClient.Builder client = new OkHttpClient.Builder();
-        client.addInterceptor(chain -> {
-            Request original = chain.request();
-            Request request = original.newBuilder()
-                    .header(Header.AUTHORIZATION.getValue(), "Bearer " + apiKey)
-                    .header(Header.CONTENT_TYPE.getValue(), ContentType.JSON.getValue())
-                    .method(original.method(), original.body())
-                    .build();
-            return chain.proceed(request);
-        }).addInterceptor(chain -> {
-            Request original = chain.request();
-            Response response = chain.proceed(original);
-            if (!response.isSuccessful()) {
-                if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
-                        || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()
-                        || response.code() == CommonError.OPENAI_SERVER_ERROR.code()) {
-                    OpenAiResponse openAiResponse = JSONUtil.toBean(response.body().string(), OpenAiResponse.class);
-                    log.error(openAiResponse.getError().getMessage());
-                    throw new BaseException(openAiResponse.getError().getMessage());
-                }
-                String errorMsg = response.body().string();
-                log.error("请求异常：{}", errorMsg);
-                OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
-                if (Objects.nonNull(openAiResponse.getError())) {
-                    log.error(openAiResponse.getError().getMessage());
-                    throw new BaseException(openAiResponse.getError().getMessage());
-                }
-                throw new BaseException(CommonError.RETRY_ERROR);
-            }
-            return response;
-        });
-        if (Objects.nonNull(interceptor) && interceptor.length > 0) {
-            Arrays.stream(interceptor).forEach(e -> client.addInterceptor(e));
-        }
-        client.connectTimeout(connectTimeout, TimeUnit.SECONDS);
-        client.writeTimeout(writeTimeout, TimeUnit.SECONDS);
-        client.readTimeout(readTimeout, TimeUnit.SECONDS);
-        if (Objects.nonNull(proxy)) {
-            client.proxy(proxy);
-        }
-        OkHttpClient httpClient = client.build();
-        return httpClient;
+    private OkHttpClient okHttpClient() {
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
+                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                .addInterceptor(new OpenAiResponseInterceptor())
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS).build();
+        return okHttpClient;
     }
 
     /**
@@ -838,9 +672,10 @@ public class OpenAiClient {
 
     /**
      * OpenAi账户余额查询
+     *
      * @return
      */
-    public CreditGrantsResponse creditGrants(){
+    public CreditGrantsResponse creditGrants() {
         Single<CreditGrantsResponse> creditGrants = this.openAiApi.creditGrants();
         return creditGrants.blockingGet();
     }
@@ -850,7 +685,7 @@ public class OpenAiClient {
         /**
          * api keys
          */
-        private @NotNull String apiKey;
+        private @NotNull List<String> apiKey;
         /**
          * api请求地址，结尾处有斜杠
          *
@@ -858,25 +693,9 @@ public class OpenAiClient {
          */
         private String apiHost;
         /**
-         * 连接超时
+         * 自定义OkhttpClient
          */
-        private Long connectTimeout;
-        /**
-         * 写超时
-         */
-        private Long writeTimeout;
-        /**
-         * 读超时
-         */
-        private Long readTimeout;
-        /**
-         * okhttp 代理
-         */
-        private Proxy proxy;
-        /**
-         * 自定义okhttp拦截器
-         */
-        private List<Interceptor> interceptor;
+        private OkHttpClient okHttpClient;
 
         public Builder() {
         }
@@ -891,33 +710,13 @@ public class OpenAiClient {
             return this;
         }
 
-        public Builder apiKey(@NotNull String val) {
+        public Builder apiKey(@NotNull List<String> val) {
             apiKey = val;
             return this;
         }
 
-        public Builder connectTimeout(long val) {
-            connectTimeout = val;
-            return this;
-        }
-
-        public Builder writeTimeout(long val) {
-            writeTimeout = val;
-            return this;
-        }
-
-        public Builder readTimeout(long val) {
-            readTimeout = val;
-            return this;
-        }
-
-        public Builder proxy(Proxy val) {
-            proxy = val;
-            return this;
-        }
-
-        public Builder interceptor(List<Interceptor> val) {
-            interceptor = val;
+        public Builder okHttpClient(OkHttpClient val) {
+            okHttpClient = val;
             return this;
         }
 
