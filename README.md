@@ -72,7 +72,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 public class Test {
     public static void main(String[] args) {
         OpenAiStreamClient client = OpenAiStreamClient.builder()
-                .apiKey("sk-***********************************")
+                .apiKey(Arrays.asList("sk-********","sk-********"))
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
@@ -107,7 +107,7 @@ public class Test {
                 .readTimeout(30, TimeUnit.SECONDS)//自定义超时时间
                 .build();
         OpenAiStreamClient client = OpenAiStreamClient.builder()
-                .apiKey("sk-*************************************")
+                .apiKey(Arrays.asList("sk-********","sk-********"))
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
@@ -141,7 +141,7 @@ public class Test {
 public class Test {
     public static void main(String[] args) {
         OpenAiClient openAiClient = OpenAiClient.builder()
-                .apiKey("sk-*********************************")
+                .apiKey(Arrays.asList("sk-********","sk-********"))
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
@@ -174,7 +174,7 @@ public class Test {
                 .build();
         //构建客户端
         OpenAiClient openAiClient = OpenAiClient.builder()
-                .apiKey("sk-*********************************")
+                .apiKey(Arrays.asList("sk-********","sk-********"))
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
