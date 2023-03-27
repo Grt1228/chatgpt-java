@@ -1,9 +1,8 @@
 package com.unfbx.chatgpt;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.ContentType;
-import cn.hutool.http.Header;
-import cn.hutool.json.JSONUtil;
+
 import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
@@ -62,7 +61,7 @@ public class OpenAiClient {
      */
     @Getter
     @NotNull
-    private String apiKey;
+    private List<String> apiKey;
     /**
      * 自定义api host使用builder的方式构造client
      */
@@ -92,7 +91,7 @@ public class OpenAiClient {
      * @param builder
      */
     private OpenAiClient(Builder builder) {
-        if (StrUtil.isBlank(builder.apiKey)) {
+        if (CollectionUtil.isEmpty(builder.apiKey)) {
             throw new BaseException(CommonError.API_KEYS_NOT_NUL);
         }
         apiKey = builder.apiKey;
@@ -686,7 +685,7 @@ public class OpenAiClient {
         /**
          * api keys
          */
-        private @NotNull String apiKey;
+        private @NotNull List<String> apiKey;
         /**
          * api请求地址，结尾处有斜杠
          *
@@ -711,7 +710,7 @@ public class OpenAiClient {
             return this;
         }
 
-        public Builder apiKey(@NotNull String val) {
+        public Builder apiKey(@NotNull List<String> val) {
             apiKey = val;
             return this;
         }

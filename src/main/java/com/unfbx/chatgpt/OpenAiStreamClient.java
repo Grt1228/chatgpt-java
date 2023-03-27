@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.json.JSONUtil;
@@ -14,7 +15,6 @@ import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
-import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class OpenAiStreamClient {
     @Getter
     @NotNull
-    private String apiKey;
+    private List<String> apiKey;
     /**
      * 自定义api host使用builder的方式构造client
      */
@@ -60,7 +60,7 @@ public class OpenAiStreamClient {
      * @param builder
      */
     private OpenAiStreamClient(Builder builder) {
-        if (StrUtil.isBlank(builder.apiKey)) {
+        if (CollectionUtil.isEmpty(builder.apiKey)) {
             throw new BaseException(CommonError.API_KEYS_NOT_NUL);
         }
         apiKey = builder.apiKey;
@@ -72,6 +72,12 @@ public class OpenAiStreamClient {
 
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
+        }else {
+            //自定义的okhttpClient  需要增加api keys
+            builder.okHttpClient = builder.okHttpClient
+                    .newBuilder()
+                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                    .build();
         }
         okHttpClient = builder.okHttpClient;
     }
@@ -82,9 +88,11 @@ public class OpenAiStreamClient {
     private OkHttpClient okHttpClient() {
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
+                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(50, TimeUnit.SECONDS)
-                .readTimeout(50, TimeUnit.SECONDS).build();
+                .readTimeout(50, TimeUnit.SECONDS)
+                .build();
         return okHttpClient;
     }
 
@@ -114,7 +122,6 @@ public class OpenAiStreamClient {
             Request request = new Request.Builder()
                     .url(this.apiHost + "v1/completions")
                     .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), requestBody))
-                    .header("Authorization", "Bearer " + this.apiKey)
                     .build();
             //创建事件
             EventSource eventSource = factory.newEventSource(request, eventSourceListener);
@@ -164,7 +171,6 @@ public class OpenAiStreamClient {
             Request request = new Request.Builder()
                     .url(this.apiHost + "v1/chat/completions")
                     .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), requestBody))
-                    .header("Authorization", "Bearer " + this.apiKey)
                     .build();
             //创建事件
             EventSource eventSource = factory.newEventSource(request, eventSourceListener);
@@ -202,7 +208,6 @@ public class OpenAiStreamClient {
         Request request = new Request.Builder()
                 .url(this.apiHost + "dashboard/billing/credit_grants")
                 .get()
-                .header("Authorization", "Bearer " + this.apiKey)
                 .build();
         Response response = this.okHttpClient.newCall(request).execute();
         ResponseBody body = response.body();
@@ -241,7 +246,7 @@ public class OpenAiStreamClient {
     }
 
     public static final class Builder {
-        private @NotNull String apiKey;
+        private @NotNull List<String> apiKey;
         /**
          * api请求地址，结尾处有斜杠
          *
@@ -257,7 +262,7 @@ public class OpenAiStreamClient {
         public Builder() {
         }
 
-        public Builder apiKey(@NotNull String val) {
+        public Builder apiKey(@NotNull List<String> val) {
             apiKey = val;
             return this;
         }

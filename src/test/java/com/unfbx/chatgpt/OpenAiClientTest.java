@@ -71,19 +71,13 @@ public class OpenAiClientTest {
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
-        OpenAiClient openAiClient = OpenAiClient.builder()
-                .apiKey("sk-****************************")
+        v2 = OpenAiClient.builder()
+                //支持多key传入，请求时候随机选择
+                .apiKey(Arrays.asList("sk-********","sk-********"))
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
-        //聊天模型：gpt-3.5
-        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
-        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
-        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
-        chatCompletionResponse.getChoices().forEach(e -> {
-            System.out.println(e.getMessage());
-        });
     }
 
     @Test
