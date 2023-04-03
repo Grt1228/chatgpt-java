@@ -32,6 +32,8 @@ import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import com.unfbx.chatgpt.function.KeyRandomStrategy;
+import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import io.reactivex.Single;
@@ -43,7 +45,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.net.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -76,6 +77,11 @@ public class OpenAiClient {
      */
     @Getter
     private OkHttpClient okHttpClient;
+    /**
+     * api key的获取策略
+     */
+    @Getter
+    private KeyStrategyFunction<List<String>, String> keyStrategy;
 
     /**
      * 构造器
@@ -101,6 +107,12 @@ public class OpenAiClient {
             builder.apiHost = OpenAIConst.OPENAI_HOST;
         }
         apiHost = builder.apiHost;
+
+        if (Objects.isNull(builder.keyStrategy)) {
+            builder.keyStrategy = new KeyRandomStrategy();
+        }
+        keyStrategy = builder.keyStrategy;
+
 
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
@@ -713,6 +725,11 @@ public class OpenAiClient {
          */
         private OkHttpClient okHttpClient;
 
+        /**
+         * api key的获取策略
+         */
+        private KeyStrategyFunction keyStrategy;
+
         public Builder() {
         }
 
@@ -728,6 +745,11 @@ public class OpenAiClient {
 
         public Builder apiKey(@NotNull List<String> val) {
             apiKey = val;
+            return this;
+        }
+
+        public Builder keyStrategy(KeyStrategyFunction val) {
+            keyStrategy = val;
             return this;
         }
 

@@ -23,15 +23,13 @@ import java.util.stream.Collectors;
 @Getter
 public class HeaderAuthorizationInterceptor implements Interceptor {
 
-    private List<String> apiKey;
     /**
-     * key是否有效
+     * key 集合
      */
-    private Map<String,Boolean> apiKeyMap;
+    private List<String> apiKey;
 
     public HeaderAuthorizationInterceptor(List<String> apiKey) {
         this.apiKey = apiKey;
-        apiKeyMap = apiKey.stream().collect(Collectors.toMap(Function.identity(), s -> true));
     }
 
     @Override
