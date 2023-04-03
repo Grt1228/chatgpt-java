@@ -1,7 +1,5 @@
 package com.unfbx.chatgpt;
 
-import com.unfbx.chatgpt.entity.images.ImageEdit;
-
 /**
  * 描述： 测试类
  *
@@ -9,6 +7,13 @@ import com.unfbx.chatgpt.entity.images.ImageEdit;
  *  2023-02-11
  */
 public class ChatGPTTest {
+    /**
+     * 已经弃用，请使用下面的实现方式：
+     * @see OpenAiClient
+     * @see OpenAiStreamClient
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         ChatGPTClient client = new ChatGPTClient("*********************");
         String body = client.askQuestion("简单描述下三体这本书");

@@ -20,7 +20,7 @@ public class Message implements Serializable {
      * 目前支持三中角色参考官网，进行情景输入：https://platform.openai.com/docs/guides/chat/introduction
      */
     private String role;
-    @NotNull
+
     private String content;
 
     public static Builder builder() {
@@ -60,7 +60,7 @@ public class Message implements Serializable {
 
     public static final class Builder {
         private @NotNull String role;
-        private @NotNull String content;
+        private String content;
 
         public Builder() {
         }
@@ -70,7 +70,7 @@ public class Message implements Serializable {
             return this;
         }
 
-        public Builder content(@NotNull String content) {
+        public Builder content(String content) {
             this.content = content;
             return this;
         }

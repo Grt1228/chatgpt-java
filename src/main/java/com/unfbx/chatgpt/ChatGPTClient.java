@@ -20,7 +20,9 @@ import java.util.stream.Collectors;
 
 /**
  * 描述： chatgpt客户端
- *
+ * 已经弃用，请使用下面的实现方式：
+ * @see OpenAiClient
+ * @see OpenAiStreamClient
  * @author https:www.unfbx.com
  *  2023-02-11
  */
@@ -34,6 +36,14 @@ public class ChatGPTClient {
         this.apiKey = apiKey;
     }
 
+    /**
+     * 已经弃用，请使用下面的实现方式：
+     * @see OpenAiClient
+     * @see OpenAiStreamClient
+     * @param question
+     * @return
+     */
+    @Deprecated
     public String askQuestion(String question) {
         Completion q = Completion.builder()
                 .prompt(question)
