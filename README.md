@@ -79,6 +79,9 @@ public class Test {
     public static void main(String[] args) {
         OpenAiStreamClient client = OpenAiStreamClient.builder()
                 .apiKey(Arrays.asList("sk-********","sk-********"))
+                //自定义key的获取策略：默认KeyRandomStrategy
+                //.keyStrategy(new KeyRandomStrategy())
+                .keyStrategy(new FirstKeyStrategy())
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
@@ -114,6 +117,9 @@ public class Test {
                 .build();
         OpenAiStreamClient client = OpenAiStreamClient.builder()
                 .apiKey(Arrays.asList("sk-********","sk-********"))
+                //自定义key的获取策略：默认KeyRandomStrategy
+                //.keyStrategy(new KeyRandomStrategy())
+                .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
@@ -148,6 +154,9 @@ public class Test {
     public static void main(String[] args) {
         OpenAiClient openAiClient = OpenAiClient.builder()
                 .apiKey(Arrays.asList("sk-********","sk-********"))
+                //自定义key的获取策略：默认KeyRandomStrategy
+                //.keyStrategy(new KeyRandomStrategy())
+                .keyStrategy(new FirstKeyStrategy())
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
@@ -181,6 +190,9 @@ public class Test {
         //构建客户端
         OpenAiClient openAiClient = OpenAiClient.builder()
                 .apiKey(Arrays.asList("sk-********","sk-********"))
+                //自定义key的获取策略：默认KeyRandomStrategy
+                //.keyStrategy(new KeyRandomStrategy())
+                .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
