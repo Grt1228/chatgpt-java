@@ -21,6 +21,7 @@ import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
 import com.unfbx.chatgpt.entity.fineTune.Event;
 import com.unfbx.chatgpt.entity.fineTune.FineTune;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneDeleteResponse;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
@@ -377,7 +378,7 @@ public class OpenAiClientTest {
 
     @Test
     public void deleteFineTuneModel() {
-        DeleteResponse deleteResponse = v2.deleteFineTuneModel("ft-KohbEOCbPyNTyQmt5UV1F1cb");
+        FineTuneDeleteResponse deleteResponse = v2.deleteFineTuneModel("curie:ft-winter-2023-02-16-10-24-10");
         System.out.println(deleteResponse);
     }
 }

@@ -21,6 +21,7 @@ import com.unfbx.chatgpt.entity.files.File;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
 import com.unfbx.chatgpt.entity.fineTune.Event;
 import com.unfbx.chatgpt.entity.fineTune.FineTune;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneDeleteResponse;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
@@ -551,10 +552,10 @@ public class OpenAiClient {
      * Delete a fine-tuned model. You must have the Owner role in your organization.
      *
      * @param model
-     * @return DeleteResponse
+     * @return FineTuneDeleteResponse
      */
-    public DeleteResponse deleteFineTuneModel(String model) {
-        Single<DeleteResponse> delete = this.openAiApi.deleteFineTuneModel(model);
+    public FineTuneDeleteResponse deleteFineTuneModel(String model) {
+        Single<FineTuneDeleteResponse> delete = this.openAiApi.deleteFineTuneModel(model);
         return delete.blockingGet();
     }
 
@@ -671,10 +672,12 @@ public class OpenAiClient {
     }
 
     /**
+     * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
      *
      * @return
      */
+    @Deprecated
     public CreditGrantsResponse creditGrants() {
         Single<CreditGrantsResponse> creditGrants = this.openAiApi.creditGrants();
         return creditGrants.blockingGet();

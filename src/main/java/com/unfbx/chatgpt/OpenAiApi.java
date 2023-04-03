@@ -16,6 +16,7 @@ import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
 import com.unfbx.chatgpt.entity.fineTune.Event;
 import com.unfbx.chatgpt.entity.fineTune.FineTune;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneDeleteResponse;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.Image;
 import com.unfbx.chatgpt.entity.images.ImageResponse;
@@ -237,7 +238,7 @@ public interface OpenAiApi {
      * @return Single DeleteResponse
      */
     @GET("v1/models/{model}")
-    Single<DeleteResponse> deleteFineTuneModel(@Path("model") String model);
+    Single<FineTuneDeleteResponse> deleteFineTuneModel(@Path("model") String model);
 
 
     /**

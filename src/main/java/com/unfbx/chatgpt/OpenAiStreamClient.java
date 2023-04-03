@@ -199,11 +199,12 @@ public class OpenAiStreamClient {
     }
 
     /**
+     * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
-     *
      * @return 余额信息
      */
     @SneakyThrows
+    @Deprecated
     public CreditGrantsResponse creditGrants() {
         Request request = new Request.Builder()
                 .url(this.apiHost + "dashboard/billing/credit_grants")
