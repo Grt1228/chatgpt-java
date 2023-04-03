@@ -24,10 +24,10 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 ---|---|---|---|---
 SSE参考：[OpenAISSEEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAISSEEventSourceListener.java) | 不支持| 支持| 支持 | 支持
 WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAIWebSocketEventSourceListener.java) | 支持| 支持| 支持| 支持
-### 有bug欢迎朋友们指出，互相学习。
-一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群满请加微信拉
----|---
-<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" /> | <img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
+### 有bug欢迎朋友们指出，互相学习，所有咨询全部免费。
+一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群失效关注公众号恢复：chatgpt-java | 个人微信
+---|---|---
+<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" />  | <img src="https://g-photo.oss-cn-shanghai.aliyuncs.com/hd15.jpg" width="210" height="210" alt="二维码" /> | <img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
 ---
 ## 更新日志
 - [x] 1.0.0   支持所有的OpenAI官方接口
