@@ -29,7 +29,6 @@ import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
 import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
-import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +73,10 @@ public class OpenAiClientTest {
                 .build();
         v2 = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("sk-********","sk-********"))
+                .apiKey(Arrays.asList("sk-***********","sk-*********"))
+                //自定义key的获取策略：默认KeyRandomStrategy
+//                .keyStrategy(new KeyRandomStrategy())
+                .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
@@ -316,8 +318,15 @@ public class OpenAiClientTest {
     }
 
     @Test
+    public void moderationsv3() {
+        List<String> list = Arrays.asList("I want to kill them.");
+        ModerationResponse moderations = v2.moderations(list);
+        System.out.println(moderations);
+    }
+
+    @Test
     public void moderationsV2() {
-        Moderation moderation = Moderation.builder().input("I want to kill them.").build();
+        Moderation moderation = Moderation.builder().input(Arrays.asList("I want to kill them.")).build();
         ModerationResponse moderations = v2.moderations(moderation);
         System.out.println(moderations);
     }

@@ -116,11 +116,11 @@ public class OpenAiClient {
 
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
-        }else {
+        } else {
             //自定义的okhttpClient  需要增加api keys
             builder.okHttpClient = builder.okHttpClient
                     .newBuilder()
-                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
                     .build();
         }
         okHttpClient = builder.okHttpClient;
@@ -141,7 +141,7 @@ public class OpenAiClient {
     private OkHttpClient okHttpClient() {
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey,this.keyStrategy))
                 .addInterceptor(new OpenAiResponseInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)

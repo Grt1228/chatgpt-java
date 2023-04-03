@@ -14,6 +14,8 @@ import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import com.unfbx.chatgpt.function.KeyRandomStrategy;
+import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.Getter;
@@ -55,6 +57,12 @@ public class OpenAiStreamClient {
     private OkHttpClient okHttpClient;
 
     /**
+     * api key的获取策略
+     */
+    @Getter
+    private KeyStrategyFunction<List<String>, String> keyStrategy;
+
+    /**
      * 构造实例对象
      *
      * @param builder
@@ -70,13 +78,18 @@ public class OpenAiStreamClient {
         }
         apiHost = builder.apiHost;
 
+        if (Objects.isNull(builder.keyStrategy)) {
+            builder.keyStrategy = new KeyRandomStrategy();
+        }
+        keyStrategy = builder.keyStrategy;
+
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
-        }else {
+        } else {
             //自定义的okhttpClient  需要增加api keys
             builder.okHttpClient = builder.okHttpClient
                     .newBuilder()
-                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
                     .build();
         }
         okHttpClient = builder.okHttpClient;
@@ -88,7 +101,7 @@ public class OpenAiStreamClient {
     private OkHttpClient okHttpClient() {
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(50, TimeUnit.SECONDS)
                 .readTimeout(50, TimeUnit.SECONDS)
@@ -201,6 +214,7 @@ public class OpenAiStreamClient {
     /**
      * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
+     *
      * @return 余额信息
      */
     @SneakyThrows
@@ -260,6 +274,13 @@ public class OpenAiStreamClient {
          */
         private OkHttpClient okHttpClient;
 
+
+        /**
+         * api key的获取策略
+         */
+        private KeyStrategyFunction keyStrategy;
+
+
         public Builder() {
         }
 
@@ -275,6 +296,11 @@ public class OpenAiStreamClient {
          */
         public Builder apiHost(String val) {
             apiHost = val;
+            return this;
+        }
+
+        public Builder keyStrategy(KeyStrategyFunction val) {
+            keyStrategy = val;
             return this;
         }
 

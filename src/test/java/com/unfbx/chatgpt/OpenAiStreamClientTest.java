@@ -45,7 +45,10 @@ public class OpenAiStreamClientTest {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
         client = OpenAiStreamClient.builder()
-                .apiKey(Arrays.asList("*************","*******"))
+                .apiKey(Arrays.asList("sk-***********","sk-*********"))
+                //自定义key的获取策略：默认KeyRandomStrategy
+//                .keyStrategy(new KeyRandomStrategy())
+                .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
@@ -62,7 +65,7 @@ public class OpenAiStreamClientTest {
     @Test
     public void chatCompletions() {
         ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
-        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
+        Message message = Message.builder().role(Message.Role.USER).content("random one word！").build();
         ChatCompletion chatCompletion = ChatCompletion
                 .builder()
                 .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
