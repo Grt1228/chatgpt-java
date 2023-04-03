@@ -39,6 +39,7 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 - [x] 1.0.6   支持余额查询参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) creditGrants方法,支持最新GPT-4模型，参考：[ChatCompletion.Model](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/entity/chat/ChatCompletion.java/)构建消息体传入模型即可。感谢群友提供的余额接口地址以及[@PlexPt](https://github.com/PlexPt) 提供的模型参数
 - [x] 1.0.7   修复反序列化报错Bug：https://github.com/Grt1228/chatgpt-java/issues/79 ，Image SDK枚举值bug：https://github.com/Grt1228/chatgpt-java/issues/76 ，感谢两位朋友指出：[@CCc3120](https://github.com/CCc3120) 、[@seven-cm](https://github.com/seven-cm)
 - [x] 1.0.8   修改OpenAiClient和OpenAiStreamClient的自定义相关实现，超时设置，代理设置，自定义拦截器设置改为通过自定义OkHttpClient实现，将OkHttpClient交由用户自定义控制更加合理，可以实现更多的参数自定义。支持多Api Keys配置。
+- [x] 1.0.9   支持自定义key使用策略参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) ，弃用ChatGPTClient，优化Moderation接口
 ---
 
 Q | A
@@ -68,7 +69,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.8</version>
+    <version>1.0.9</version>
 </dependency>
 ```
 ## 2、流式客户端使用示例：
