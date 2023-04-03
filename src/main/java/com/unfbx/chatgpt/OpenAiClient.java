@@ -463,10 +463,23 @@ public class OpenAiClient {
     /**
      * 文本审核
      *
-     * @param input
+     * @param input 待检测数据
      * @return ModerationResponse
      */
     public ModerationResponse moderations(String input) {
+        List<String> content = new ArrayList<>(1);
+        content.add(input);
+        Moderation moderation = Moderation.builder().input(content).build();
+        return this.moderations(moderation);
+    }
+
+    /**
+     * 文本审核
+     *
+     * @param input 待检测数据集合
+     * @return ModerationResponse
+     */
+    public ModerationResponse moderations(List<String> input) {
         Moderation moderation = Moderation.builder().input(input).build();
         return this.moderations(moderation);
     }

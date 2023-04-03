@@ -6,10 +6,11 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
- * 描述：
+ * 描述：文本审核，敏感词鉴别
  *
  * @author https:www.unfbx.com
  *  2023-02-15
@@ -22,12 +23,12 @@ import java.util.Objects;
 public class Moderation implements Serializable {
 
     @NonNull
-    private String input;
+    private List<String> input;
     @Builder.Default
     private String model = Model.TEXT_MODERATION_LATEST.getName();
 
-    public void setInput(String input) {
-        if (Objects.isNull(input) || "".equals(input)) {
+    public void setInput(List<String> input) {
+        if (Objects.isNull(input) || input.size() == 0) {
             log.error("input不能为空");
             throw new BaseException(CommonError.PARAM_ERROR);
         }
