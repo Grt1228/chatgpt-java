@@ -21,6 +21,7 @@ import com.unfbx.chatgpt.entity.files.File;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
 import com.unfbx.chatgpt.entity.fineTune.Event;
 import com.unfbx.chatgpt.entity.fineTune.FineTune;
+import com.unfbx.chatgpt.entity.fineTune.FineTuneDeleteResponse;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
@@ -31,6 +32,8 @@ import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import com.unfbx.chatgpt.function.KeyRandomStrategy;
+import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import io.reactivex.Single;
@@ -42,7 +45,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.net.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -75,6 +77,11 @@ public class OpenAiClient {
      */
     @Getter
     private OkHttpClient okHttpClient;
+    /**
+     * api key的获取策略
+     */
+    @Getter
+    private KeyStrategyFunction<List<String>, String> keyStrategy;
 
     /**
      * 构造器
@@ -101,13 +108,19 @@ public class OpenAiClient {
         }
         apiHost = builder.apiHost;
 
+        if (Objects.isNull(builder.keyStrategy)) {
+            builder.keyStrategy = new KeyRandomStrategy();
+        }
+        keyStrategy = builder.keyStrategy;
+
+
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
-        }else {
+        } else {
             //自定义的okhttpClient  需要增加api keys
             builder.okHttpClient = builder.okHttpClient
                     .newBuilder()
-                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
                     .build();
         }
         okHttpClient = builder.okHttpClient;
@@ -128,7 +141,7 @@ public class OpenAiClient {
     private OkHttpClient okHttpClient() {
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey))
+                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey,this.keyStrategy))
                 .addInterceptor(new OpenAiResponseInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
@@ -462,10 +475,23 @@ public class OpenAiClient {
     /**
      * 文本审核
      *
-     * @param input
+     * @param input 待检测数据
      * @return ModerationResponse
      */
     public ModerationResponse moderations(String input) {
+        List<String> content = new ArrayList<>(1);
+        content.add(input);
+        Moderation moderation = Moderation.builder().input(content).build();
+        return this.moderations(moderation);
+    }
+
+    /**
+     * 文本审核
+     *
+     * @param input 待检测数据集合
+     * @return ModerationResponse
+     */
+    public ModerationResponse moderations(List<String> input) {
         Moderation moderation = Moderation.builder().input(input).build();
         return this.moderations(moderation);
     }
@@ -551,10 +577,10 @@ public class OpenAiClient {
      * Delete a fine-tuned model. You must have the Owner role in your organization.
      *
      * @param model
-     * @return DeleteResponse
+     * @return FineTuneDeleteResponse
      */
-    public DeleteResponse deleteFineTuneModel(String model) {
-        Single<DeleteResponse> delete = this.openAiApi.deleteFineTuneModel(model);
+    public FineTuneDeleteResponse deleteFineTuneModel(String model) {
+        Single<FineTuneDeleteResponse> delete = this.openAiApi.deleteFineTuneModel(model);
         return delete.blockingGet();
     }
 
@@ -671,10 +697,12 @@ public class OpenAiClient {
     }
 
     /**
+     * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
      *
      * @return
      */
+    @Deprecated
     public CreditGrantsResponse creditGrants() {
         Single<CreditGrantsResponse> creditGrants = this.openAiApi.creditGrants();
         return creditGrants.blockingGet();
@@ -697,6 +725,11 @@ public class OpenAiClient {
          */
         private OkHttpClient okHttpClient;
 
+        /**
+         * api key的获取策略
+         */
+        private KeyStrategyFunction keyStrategy;
+
         public Builder() {
         }
 
@@ -712,6 +745,11 @@ public class OpenAiClient {
 
         public Builder apiKey(@NotNull List<String> val) {
             apiKey = val;
+            return this;
+        }
+
+        public Builder keyStrategy(KeyStrategyFunction val) {
+            keyStrategy = val;
             return this;
         }
 

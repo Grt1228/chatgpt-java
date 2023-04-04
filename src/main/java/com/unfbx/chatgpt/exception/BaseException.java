@@ -1,11 +1,14 @@
 package com.unfbx.chatgpt.exception;
 
+import lombok.Getter;
+
 /**
  * 描述： 异常
  *
  * @author https:www.unfbx.com
  *  2023-02-11
  */
+@Getter
 public class BaseException extends RuntimeException {
 
     private String msg;
