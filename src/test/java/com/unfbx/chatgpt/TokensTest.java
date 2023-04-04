@@ -25,21 +25,28 @@ import java.util.List;
  */
 @Slf4j
 public class TokensTest {
+    String text;
+    List<Message> message;
+
+    @Before
+    public void prepareData() {
+        text = "关注微信公众号：程序员的黑洞。进入chatgpt-java交流群获取最新版本更新通知。";
+        message = new ArrayList<>(2);
+        message.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
+        message.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
+
+    }
 
     @Test
     public void byEncodingTest() throws JsonProcessingException {
         EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
         Encoding enc = registry.getEncoding(EncodingType.P50K_BASE);
-        String text = "关注微信公众号：程序员的黑洞。进入chatgpt-java交流群获取最新版本更新通知。";
         List<Integer> encode = TikTokensUtil.encode(enc, text);
         log.info(encode.toString());
         long tokens = TikTokensUtil.tokens(enc, text);
         log.info("单句文本：【{}】", text);
         log.info("总tokens数{}", tokens);
         log.info("--------------------------------------------------------------");
-        List<Message> message = new ArrayList<>(2);
-        message.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
-        message.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
         TikTokensUtil.tokens(enc, message);
         log.info("Message集合文本：【{}】", message, tokens);
         log.info("总tokens数{}", tokens);
@@ -47,7 +54,6 @@ public class TokensTest {
 
     @Test
     public void byEncodingTypeTest() throws JsonProcessingException {
-        String text = "关注微信公众号：程序员的黑洞。进入chatgpt-java交流群获取最新版本更新通知。";
         List<Integer> encode = TikTokensUtil.encode(EncodingType.CL100K_BASE, text);
         log.info(encode.toString());
         long tokens = TikTokensUtil.tokens(EncodingType.CL100K_BASE, text);
@@ -55,8 +61,6 @@ public class TokensTest {
         log.info("总tokens数{}", tokens);
         log.info("--------------------------------------------------------------");
         List<Message> message = new ArrayList<>(2);
-        message.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
-        message.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
         TikTokensUtil.tokens(EncodingType.CL100K_BASE, message);
         log.info("Message集合文本：【{}】", message, tokens);
         log.info("总tokens数{}", tokens);
@@ -65,7 +69,6 @@ public class TokensTest {
 
     @Test
     public void byModelNameTest() throws JsonProcessingException {
-        String text = "关注微信公众号：程序员的黑洞。进入chatgpt-java交流群获取最新版本更新通知。";
 //        String modelName = ChatCompletion.Model.GPT_3_5_TURBO.getName();
         String modelName = Completion.Model.DAVINCI_003.getName();
         List<Integer> encode = TikTokensUtil.encode(modelName, text);
@@ -75,32 +78,8 @@ public class TokensTest {
         log.info("总tokens数{}", tokens);
         log.info("--------------------------------------------------------------");
         List<Message> message = new ArrayList<>(2);
-        message.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
-        message.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
         TikTokensUtil.tokens(modelName, message);
         log.info("Message集合文本：【{}】", message, tokens);
         log.info("总tokens数{}", tokens);
-    }
-
-
-    @Test
-    public void testJson() throws JsonProcessingException {
-        EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
-        Encoding enc = registry.getEncoding(EncodingType.P50K_BASE);
-        ModelType modelType = ModelType.valueOf("text-davinci-003");
-        List<Integer> encoded = enc.encode("我爱你中国。");
-        System.out.println(encoded.toString());
-        // encoded = [2028, 374, 264, 6205, 11914, 13]
-
-        String decoded = enc.decode(encoded);
-        System.out.println(decoded);
-
-        // decoded = "This is a sample sentence."
-
-        // Or get the tokenizer based on the model type
-        Encoding secondEnc = registry.getEncodingForModel(ModelType.TEXT_DAVINCI_003);
-        System.out.println(secondEnc);
-        System.out.println(1);
-        // enc == secondEnc
     }
 }
