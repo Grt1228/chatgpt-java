@@ -24,7 +24,7 @@ import java.util.List;
  * @sine 2023-04-05
  */
 @Slf4j
-public class TokensTest {
+public class TikTokensTest {
     String text;
     List<Message> message;
 
@@ -38,7 +38,24 @@ public class TokensTest {
     }
 
     @Test
-    public void byEncodingTest() throws JsonProcessingException {
+    public void chatCompletionTokensTest() {
+        ChatCompletion completion = ChatCompletion.builder().messages(message).build();
+        long tokens = completion.tokens();
+        log.info("Message集合文本：【{}】", message, tokens);
+        log.info("总tokens数{}", tokens);
+    }
+
+    @Test
+    public void completionTokensTest() {
+        Completion completion = Completion.builder().prompt(text).build();
+        long tokens = completion.tokens();
+        log.info("单句文本：【{}】", text);
+        log.info("总tokens数{}", tokens);
+    }
+
+
+    @Test
+    public void byEncodingTest() {
         EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
         Encoding enc = registry.getEncoding(EncodingType.P50K_BASE);
         List<Integer> encode = TikTokensUtil.encode(enc, text);
@@ -53,7 +70,7 @@ public class TokensTest {
     }
 
     @Test
-    public void byEncodingTypeTest() throws JsonProcessingException {
+    public void byEncodingTypeTest() {
         List<Integer> encode = TikTokensUtil.encode(EncodingType.CL100K_BASE, text);
         log.info(encode.toString());
         long tokens = TikTokensUtil.tokens(EncodingType.CL100K_BASE, text);
@@ -68,9 +85,9 @@ public class TokensTest {
 
 
     @Test
-    public void byModelNameTest() throws JsonProcessingException {
-//        String modelName = ChatCompletion.Model.GPT_3_5_TURBO.getName();
-        String modelName = Completion.Model.DAVINCI_003.getName();
+    public void byModelNameTest() {
+        String modelName = ChatCompletion.Model.GPT_3_5_TURBO.getName();
+//        String modelName = Completion.Model.DAVINCI_003.getName();
         List<Integer> encode = TikTokensUtil.encode(modelName, text);
         log.info(encode.toString());
         long tokens = TikTokensUtil.tokens(modelName, text);
