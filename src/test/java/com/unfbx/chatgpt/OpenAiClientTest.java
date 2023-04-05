@@ -31,6 +31,7 @@ import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
+import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -39,10 +40,7 @@ import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -81,6 +79,27 @@ public class OpenAiClientTest {
                 //自己做了代理就传代理地址，没有可不不传
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
+    }
+
+    @Test
+    public void chatTokensTest() {
+        //聊天模型：gpt-3.5
+        List<Message> messages = new ArrayList<>(2);
+        messages.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
+        messages.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
+        //获取请求的tokens数量
+        long tokens = chatCompletion.tokens();
+        //这种方式也可以
+//        long tokens = TikTokensUtil.tokens(chatCompletion.getModel(),messages);
+        log.info("Message集合文本：【{}】", messages, tokens);
+        log.info("本地计算总tokens数{}", tokens);
+        ChatCompletionResponse chatCompletionResponse = v2.chatCompletion(chatCompletion);
+        long promptTokens = chatCompletionResponse.getUsage().getPromptTokens();
+        log.info("Open AI 官方计算的返回的tokens数{}", promptTokens);
+        chatCompletionResponse.getChoices().forEach(e -> {
+            System.out.println(e.getMessage());
+        });
     }
 
     @Test

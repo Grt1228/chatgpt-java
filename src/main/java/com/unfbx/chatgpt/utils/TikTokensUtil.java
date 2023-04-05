@@ -30,7 +30,7 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static List<Integer> encode(@NotNull Encoding enc, @NotNull String text) {
+    public static List<Integer> encode(@NotNull Encoding enc, String text) {
         return StrUtil.isBlank(text) ? new ArrayList<>() : enc.encode(text);
     }
 
@@ -41,19 +41,8 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static long tokens(@NotNull Encoding enc, @NotNull String text) {
+    public static long tokens(@NotNull Encoding enc, String text) {
         return encode(enc, text).size();
-    }
-
-    /**
-     * 通过Encoding计算messages获取编码数组
-     *
-     * @param enc
-     * @param messages
-     * @return
-     */
-    public static long tokens(@NotNull Encoding enc, @NotNull List<Message> messages) {
-        return messages.stream().mapToLong(msg -> tokens(enc, msg.getContent())).sum();
     }
 
 
@@ -86,7 +75,7 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static List<Integer> encode(@NotNull EncodingType encodingType, @NotNull String text) {
+    public static List<Integer> encode(@NotNull EncodingType encodingType, String text) {
         if (StrUtil.isBlank(text)) {
             return new ArrayList<>();
         }
@@ -102,22 +91,10 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static long tokens(@NotNull EncodingType encodingType, @NotNull String text) {
-        Encoding enc = getEncoding(encodingType);
-        List<Integer> encoded = enc.encode(text);
-        return encoded.size();
+    public static long tokens(@NotNull EncodingType encodingType, String text) {
+        return encode(encodingType, text).size();
     }
 
-    /**
-     * 通过encodingType计算messages获取编码数组
-     *
-     * @param encodingType
-     * @param messages
-     * @return
-     */
-    public static long tokens(@NotNull EncodingType encodingType, @NotNull List<Message> messages) {
-        return messages.stream().mapToLong(msg -> tokens(encodingType, msg.getContent())).sum();
-    }
 
     /**
      * 通过EncodingType和encoded编码数组，反推字符串文本
@@ -154,7 +131,7 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static List<Integer> encode(@NotNull String modelName, @NotNull String text) {
+    public static List<Integer> encode(@NotNull String modelName, String text) {
         if (StrUtil.isBlank(text)) {
             return new ArrayList<>();
         }
@@ -174,22 +151,45 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static long tokens(@NotNull String modelName, @NotNull String text) {
-        Encoding enc = getEncoding(modelName);
-        List<Integer> encoded = enc.encode(text);
-        return encoded.size();
+    public static long tokens(@NotNull String modelName, String text) {
+        return encode(modelName, text).size();
     }
 
 
     /**
      * 通过模型名称计算messages获取编码数组
+     * 参考官方的处理逻辑：
+     * <a href=https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb>https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb</a>
      *
-     * @param modelName
-     * @param messages
+     * @param modelName 模型名称
+     * @param messages  消息体
      * @return
      */
     public static long tokens(@NotNull String modelName, @NotNull List<Message> messages) {
-        return messages.stream().mapToLong(msg -> tokens(modelName, msg.getContent())).sum();
+        long tokensPerMessage = 0;
+        long tokensPerName = 0;
+        //3.5统一处理
+        if (modelName.equals("gpt-3.5-turbo-0301") || modelName.equals("gpt-3.5-turbo")) {
+            tokensPerMessage = 4;
+            tokensPerName = -1;
+        }
+        //4.0统一处理
+        if (modelName.equals("gpt-4") || modelName.equals("gpt-4-0314")) {
+            tokensPerMessage = 3;
+            tokensPerName = 1;
+        }
+        long sum = 0;
+        for (Message msg : messages) {
+            sum += tokensPerMessage;
+            sum += tokens(modelName, msg.getContent());
+            sum += tokens(modelName, msg.getRole());
+            sum += tokens(modelName, msg.getName());
+            if (StrUtil.isNotBlank(msg.getName())) {
+                sum += tokensPerName;
+            }
+        }
+        sum += 3;
+        return sum;
     }
 
     /**
