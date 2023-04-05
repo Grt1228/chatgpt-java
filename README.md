@@ -70,7 +70,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.9</version>
+    <version>1.0.10</version>
 </dependency>
 ```
 ## 2、流式客户端使用示例：
@@ -227,3 +227,11 @@ https://platform.openai.com/docs/api-reference/files/retrieve-content
 # Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Grt1228/chatgpt-java&type=Date)](https://star-history.com/#Grt1228/chatgpt-java&Date)
+
+
+# 站在巨人的肩膀
+鸣谢：
+OpenAi：https://openai.com/
+
+[knuddelsgmbh](https://github.com/knuddelsgmbh) 的[jtokkit](https://github.com/knuddelsgmbh/jtokkit) 的开源计算算法。
+
