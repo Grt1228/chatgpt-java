@@ -34,6 +34,9 @@ public class TikTokensTest {
         messages.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
     }
 
+    /**
+     * gpt-3.5和gpt4.0聊天模型接口计算推荐这种方法
+     */
     @Test
     public void chatCompletionTokensTest() {
         ChatCompletion completion = ChatCompletion.builder().messages(messages).build();
@@ -41,7 +44,9 @@ public class TikTokensTest {
         log.info("Message集合文本：【{}】", messages, tokens);
         log.info("总tokens数{}", tokens);
     }
-
+    /**
+     * Completion 接口计算推荐使用这种方法
+     */
     @Test
     public void completionTokensTest() {
         Completion completion = Completion.builder().prompt(text).build();
@@ -49,7 +54,9 @@ public class TikTokensTest {
         log.info("单句文本：【{}】", text);
         log.info("总tokens数{}", tokens);
     }
-
+    /**
+     * 通过模型模型名称计算
+     */
     @Test
     public void byModelNameTest() {
         String modelName = ChatCompletion.Model.GPT_4.getName();
@@ -66,6 +73,9 @@ public class TikTokensTest {
     }
 
 
+    /**
+     * 通过Encoding计算
+     */
     @Test
     public void byEncodingTest() {
         EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
@@ -77,6 +87,9 @@ public class TikTokensTest {
         log.info("总tokens数{}", tokens);
     }
 
+    /**
+     * 通过EncodingType计算
+     */
     @Test
     public void byEncodingTypeTest() {
         List<Integer> encode = TikTokensUtil.encode(EncodingType.CL100K_BASE, text);
