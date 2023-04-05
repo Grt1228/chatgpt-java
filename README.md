@@ -226,3 +226,7 @@ https://platform.openai.com/docs/api-reference/files/retrieve-content
 # Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Grt1228/chatgpt-java&type=Date)](https://star-history.com/#Grt1228/chatgpt-java&Date)
+
+# 如果项目对你有帮助，可以选择请我喝杯奶茶
+
+<img width="156" alt="微信截图_20230405222411" src="https://user-images.githubusercontent.com/27008803/230111508-3179cf30-e128-4b2e-9645-157266c491ce.png"><img width="164" alt="微信截图_20230405222357" src="https://user-images.githubusercontent.com/27008803/230111525-322f5036-d06d-46bb-94d1-db8ce9ed2adf.png">
