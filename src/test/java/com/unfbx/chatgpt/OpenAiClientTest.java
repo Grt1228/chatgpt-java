@@ -87,7 +87,11 @@ public class OpenAiClientTest {
         List<Message> messages = new ArrayList<>(2);
         messages.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
         messages.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
-        ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
+        ChatCompletion chatCompletion = ChatCompletion
+                .builder()
+                .messages(messages)
+                .maxTokens((4096 - TikTokensUtil.tokens(ChatCompletion.Model.GPT_3_5_TURBO.getName(),messages)))
+                .build();
         ChatCompletionResponse chatCompletionResponse = v2.chatCompletion(chatCompletion);
         //获取请求的tokens数量
         long tokens = chatCompletion.tokens();

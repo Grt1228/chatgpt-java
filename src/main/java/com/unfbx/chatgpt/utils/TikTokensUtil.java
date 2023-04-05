@@ -41,7 +41,7 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static long tokens(@NotNull Encoding enc, String text) {
+    public static int tokens(@NotNull Encoding enc, String text) {
         return encode(enc, text).size();
     }
 
@@ -91,7 +91,7 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static long tokens(@NotNull EncodingType encodingType, String text) {
+    public static int tokens(@NotNull EncodingType encodingType, String text) {
         return encode(encodingType, text).size();
     }
 
@@ -151,7 +151,7 @@ public class TikTokensUtil {
      * @param text
      * @return
      */
-    public static long tokens(@NotNull String modelName, String text) {
+    public static int tokens(@NotNull String modelName, String text) {
         return encode(modelName, text).size();
     }
 
@@ -165,9 +165,9 @@ public class TikTokensUtil {
      * @param messages  消息体
      * @return
      */
-    public static long tokens(@NotNull String modelName, @NotNull List<Message> messages) {
-        long tokensPerMessage = 0;
-        long tokensPerName = 0;
+    public static int tokens(@NotNull String modelName, @NotNull List<Message> messages) {
+        int tokensPerMessage = 0;
+        int tokensPerName = 0;
         //3.5统一处理
         if (modelName.equals("gpt-3.5-turbo-0301") || modelName.equals("gpt-3.5-turbo")) {
             tokensPerMessage = 4;
@@ -178,7 +178,7 @@ public class TikTokensUtil {
             tokensPerMessage = 3;
             tokensPerName = 1;
         }
-        long sum = 0;
+        int sum = 0;
         for (Message msg : messages) {
             sum += tokensPerMessage;
             sum += tokens(modelName, msg.getContent());
