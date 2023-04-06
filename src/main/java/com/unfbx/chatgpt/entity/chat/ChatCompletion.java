@@ -1,7 +1,10 @@
 package com.unfbx.chatgpt.entity.chat;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +16,7 @@ import java.util.Map;
  * 描述： chat
  *
  * @author https:www.unfbx.com
- * 2023-03-02
+ * @since 2023-03-02
  */
 @Data
 @Builder
@@ -94,87 +97,19 @@ public class ChatCompletion implements Serializable {
      */
     private String user;
 
-
-    public void setModel(Model model) {
-        this.model = model.getName();
-    }
-
-    public void setMaxTokens(Integer maxTokens) {
-        if (maxTokens > 4096) {
-            log.error("maxTokens参数异常，不能超过4096");
-            this.maxTokens = 4096;
-            return;
+    /**
+     * 获取当前参数的tokens数
+     *
+     * @return
+     */
+    public long tokens() {
+        if (CollectionUtil.isEmpty(this.messages) || StrUtil.isBlank(this.model)) {
+            log.warn("参数异常model：{}，prompt：{}", this.model, this.messages);
+            return 0;
         }
-        if (maxTokens <= 0) {
-            log.error("maxTokens参数异常，不能小于0");
-            this.maxTokens = 64;
-            return;
-        }
-        this.maxTokens = maxTokens;
+        return TikTokensUtil.tokens(this.model, this.messages);
     }
 
-    public void setTemperature(double temperature) {
-        if (temperature > 2 || temperature < 0) {
-            log.error("temperature参数异常，temperature属于[0,2]");
-            this.temperature = 2;
-            return;
-        }
-        if (temperature < 0) {
-            log.error("temperature参数异常，temperature属于[0,2]");
-            this.temperature = 0;
-            return;
-        }
-        this.temperature = temperature;
-    }
-
-    public void setStop(List<String> stop) {
-        this.stop = stop;
-    }
-
-    public void setTopP(Double topP) {
-        this.topP = topP;
-    }
-
-    public void setN(Integer n) {
-        this.n = n;
-    }
-
-    public void setStream(boolean stream) {
-        this.stream = stream;
-    }
-
-    public void setPresencePenalty(double presencePenalty) {
-        if (presencePenalty < -2.0) {
-            this.presencePenalty = -2.0;
-            return;
-        }
-        if (presencePenalty > 2.0) {
-            this.presencePenalty = 2.0;
-            return;
-        }
-        this.presencePenalty = presencePenalty;
-    }
-
-    public void setFrequencyPenalty(double frequencyPenalty) {
-        if (frequencyPenalty < -2.0) {
-            this.frequencyPenalty = -2.0;
-            return;
-        }
-        if (frequencyPenalty > 2.0) {
-            this.frequencyPenalty = 2.0;
-            return;
-        }
-        this.frequencyPenalty = frequencyPenalty;
-    }
-
-
-    public void setLogitBias(Map logitBias) {
-        this.logitBias = logitBias;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
 
     @Getter
     @AllArgsConstructor
@@ -187,7 +122,7 @@ public class ChatCompletion implements Serializable {
          * 临时模型，不建议使用
          */
         GPT_3_5_TURBO_0301("gpt-3.5-turbo-0301"),
-         /**
+        /**
          * GPT4.0
          */
         GPT_4("gpt-4"),
@@ -201,7 +136,7 @@ public class ChatCompletion implements Serializable {
         GPT_4_32K("gpt-4-32k"),
         /**
          * 临时模型，不建议使用
-         */ 
+         */
         GPT_4_32K_0314("gpt-4-32k-0314"),
         ;
         private String name;

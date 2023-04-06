@@ -1,9 +1,11 @@
 package com.unfbx.chatgpt.entity.completions;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
+import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +16,7 @@ import java.util.*;
  * 描述： 问题类
  *
  * @author https:www.unfbx.com
- *  2023-02-11
+ * 2023-02-11
  */
 @Data
 @Builder
@@ -100,114 +102,18 @@ public class Completion implements Serializable {
      */
     private String user;
 
-    public void setPrompt(String prompt) {
-        if (Objects.isNull(prompt) || "".equals(prompt)) {
-            log.error("prompt参数异常");
-            throw new BaseException(CommonError.PARAM_ERROR);
+    /**
+     * 获取当前参数的tokens数
+     * @return
+     */
+    public long tokens() {
+        if (StrUtil.isBlank(this.prompt) || StrUtil.isBlank(this.model)) {
+            log.warn("参数异常model：{}，prompt：{}", this.model, this.prompt);
+            return 0;
         }
-        this.prompt = prompt;
+        return TikTokensUtil.tokens(this.model, this.prompt);
     }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
-
-    public void setMaxTokens(Integer maxTokens) {
-        if (maxTokens > 4096) {
-            log.error("maxTokens参数异常，不能超过4096");
-            this.maxTokens = 4096;
-            return;
-        }
-        if (maxTokens <= 0) {
-            log.error("maxTokens参数异常，不能小于0");
-            this.maxTokens = 64;
-            return;
-        }
-        this.maxTokens = maxTokens;
-    }
-
-    public void setTemperature(double temperature) {
-        if (temperature > 2 || temperature < 0) {
-            log.error("temperature参数异常，temperature属于[0,2]");
-            this.temperature = 2;
-            return;
-        }
-        if (temperature < 0) {
-            log.error("temperature参数异常，temperature属于[0,2]");
-            this.temperature = 0;
-            return;
-        }
-        this.temperature = temperature;
-    }
-
-    public void setStop(List<String> stop) {
-        this.stop = stop;
-    }
-
-    public void setTopP(Double topP) {
-        this.topP = topP;
-    }
-
-    public void setN(Integer n) {
-        this.n = n;
-    }
-
-    public void setStream(boolean stream) {
-        this.stream = stream;
-    }
-
-    public void setLogprobs(Integer logprobs) {
-        if (logprobs > 5) {
-            log.error("logprobs参数异常，logprobs最大值==5");
-            this.logprobs = 5;
-            return;
-        }
-        this.logprobs = logprobs;
-    }
-
-    public void setEcho(boolean echo) {
-        this.echo = echo;
-    }
-
-    public void setPresencePenalty(double presencePenalty) {
-        if (presencePenalty < -2.0) {
-            this.presencePenalty = -2.0;
-            return;
-        }
-        if (presencePenalty > 2.0) {
-            this.presencePenalty = 2.0;
-            return;
-        }
-        this.presencePenalty = presencePenalty;
-    }
-
-    public void setFrequencyPenalty(double frequencyPenalty) {
-        if (frequencyPenalty < -2.0) {
-            this.frequencyPenalty = -2.0;
-            return;
-        }
-        if (frequencyPenalty > 2.0) {
-            this.frequencyPenalty = 2.0;
-            return;
-        }
-        this.frequencyPenalty = frequencyPenalty;
-    }
-
-    public void setBestOf(Integer bestOf) {
-        this.bestOf = bestOf;
-    }
-
-    public void setLogitBias(Map logitBias) {
-        this.logitBias = logitBias;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
     @Getter
     @AllArgsConstructor
     public enum Model {
