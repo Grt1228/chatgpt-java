@@ -59,7 +59,9 @@ public class OpenAiClientTest {
         //可以为null
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        //！！！！千万别再生产或者测试环境打开BODY级别日志！！！！
+        //！！！生产或者测试环境建议设置为这三种级别：NONE,BASIC,HEADERS,！！！
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
                 .proxy(proxy)
