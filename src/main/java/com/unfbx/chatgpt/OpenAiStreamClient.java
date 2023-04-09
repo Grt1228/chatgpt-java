@@ -7,7 +7,9 @@ import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
+import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
@@ -18,6 +20,7 @@ import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
+import io.reactivex.Single;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +29,11 @@ import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
 import okhttp3.sse.EventSources;
 import org.jetbrains.annotations.NotNull;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +69,9 @@ public class OpenAiStreamClient {
     @Getter
     private KeyStrategyFunction<List<String>, String> keyStrategy;
 
+    @Getter
+    private OpenAiApi openAiApi;
+
     /**
      * 构造实例对象
      *
@@ -93,6 +103,13 @@ public class OpenAiStreamClient {
                     .build();
         }
         okHttpClient = builder.okHttpClient;
+
+        this.openAiApi = new Retrofit.Builder()
+                .baseUrl(apiHost)
+                .client(okHttpClient)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
+                .build().create(OpenAiApi.class);
     }
 
     /**
@@ -249,6 +266,28 @@ public class OpenAiStreamClient {
         // 读取Json 返回值
         CreditGrantsResponse completionResponse = mapper.readValue(bodyStr, CreditGrantsResponse.class);
         return completionResponse;
+    }
+
+    /**
+     * 账户信息查询：里面包含总金额等信息
+     *
+     * @return
+     */
+    public Subscription subscription() {
+        Single<Subscription> subscription = this.openAiApi.subscription();
+        return subscription.blockingGet();
+    }
+
+    /**
+     * 账户调用接口消耗金额信息查询
+     * 最多查询100天
+     * @param starDate  开始时间
+     * @param endDate   结束时间
+     * @return
+     */
+    public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
+        Single<BillingUsage> billingUsage = this.openAiApi.billingUsage(starDate, endDate);
+        return billingUsage.blockingGet();
     }
 
     /**

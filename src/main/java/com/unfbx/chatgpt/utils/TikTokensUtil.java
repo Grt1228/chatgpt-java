@@ -6,6 +6,7 @@ import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.EncodingType;
 import com.knuddels.jtokkit.api.ModelType;
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -166,6 +167,7 @@ public class TikTokensUtil {
      * @return
      */
     public static int tokens(@NotNull String modelName, @NotNull List<Message> messages) {
+        Encoding encoding = getEncoding(modelName);
         int tokensPerMessage = 0;
         int tokensPerName = 0;
         //3.5统一处理
@@ -181,9 +183,9 @@ public class TikTokensUtil {
         int sum = 0;
         for (Message msg : messages) {
             sum += tokensPerMessage;
-            sum += tokens(modelName, msg.getContent());
-            sum += tokens(modelName, msg.getRole());
-            sum += tokens(modelName, msg.getName());
+            sum += tokens(encoding, msg.getContent());
+            sum += tokens(encoding, msg.getRole());
+            sum += tokens(encoding, msg.getName());
             if (StrUtil.isNotBlank(msg.getName())) {
                 sum += tokensPerName;
             }
@@ -212,8 +214,18 @@ public class TikTokensUtil {
      * @return
      */
     private static ModelType getModelTypeByName(String name) {
+        if(ChatCompletion.Model.GPT_3_5_TURBO_0301.getName().equals(name)){
+            return ModelType.GPT_3_5_TURBO;
+        }
+        if(ChatCompletion.Model.GPT_4.getName().equals(name)
+                || ChatCompletion.Model.GPT_4_32K.getName().equals(name)
+                || ChatCompletion.Model.GPT_4_32K_0314.getName().equals(name)
+                || ChatCompletion.Model.GPT_4_0314.getName().equals(name)){
+            return ModelType.GPT_4;
+        }
+
         for (ModelType modelType : ModelType.values()) {
-            if (modelType.getName().equals(name)) {
+            if (modelType.getName().equals(name) ) {
                 return modelType;
             }
         }

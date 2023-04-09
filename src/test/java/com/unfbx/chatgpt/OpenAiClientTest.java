@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
+import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
@@ -40,6 +42,7 @@ import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -78,10 +81,26 @@ public class OpenAiClientTest {
                 //.keyStrategy(new KeyRandomStrategy())
                 .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
-                //自己做了代理就传代理地址，没有可不不传
+                //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
     }
+    @Test
+    public void subscription() {
+        Subscription subscription = v2.subscription();
+        log.info("用户名：{}", subscription.getAccountName());
+        log.info("用户总余额（美元）：{}", subscription.getHardLimitUsd());
+        log.info("更多信息看Subscription类");
+    }
+
+    @Test
+    public void billingUsage() {
+        LocalDate start = LocalDate.of(2023, 3, 7);
+        BillingUsage billingUsage = v2.billingUsage(start, LocalDate.now());
+        log.info("总使用金额（美分）：{}", billingUsage.getTotalUsage());
+        log.info("更多信息看BillingUsage类");
+    }
+
 
     @Test
     public void chatTokensTest() {
@@ -229,7 +248,7 @@ public class OpenAiClientTest {
 
     @Test
     public void genImages() {
-        Image image = Image.builder().prompt("电脑画面").build();
+        Image image = Image.builder().prompt("电脑画面").responseFormat(ResponseFormat.B64_JSON.getName()).build();
         ImageResponse imageResponse = v2.genImages(image);
         System.out.println(imageResponse);
     }
@@ -283,15 +302,20 @@ public class OpenAiClientTest {
 
     @Test
     public void embeddingsV2() {
-        Embedding embedding = Embedding.builder().input("我爱你亲爱的姑娘").build();
+        Embedding embedding = Embedding.builder().input(Arrays.asList("我爱你亲爱的姑娘", "i love you")).build();
         EmbeddingResponse embeddings = v2.embeddings(embedding);
         System.out.println(embeddings);
     }
 
+    @Test
+    public void embeddingsV3() {
+        EmbeddingResponse embeddings = v2.embeddings(Arrays.asList("我爱你亲爱的姑娘", "i love you"));
+        System.out.println(embeddings);
+    }
 
     @Test
     public void embeddings() {
-        EmbeddingResponse embeddings = v2.embeddings("The food was delicious and the waiter...");
+        EmbeddingResponse embeddings = v2.embeddings("我爱你");
         System.out.println(embeddings);
     }
 

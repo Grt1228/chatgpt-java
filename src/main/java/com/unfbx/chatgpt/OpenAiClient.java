@@ -4,7 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
+import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
@@ -45,6 +47,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -379,12 +382,25 @@ public class OpenAiClient {
     }
 
     /**
-     * Creates an embedding vector representing the input text.
+     * 向量计算：单文本
      *
      * @param input
      * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(String input) {
+        List<String> inputs = new ArrayList<>(1);
+        inputs.add(input);
+        Embedding embedding = Embedding.builder().input(inputs).build();
+        return this.embeddings(embedding);
+    }
+
+    /**
+     * 向量计算：集合文本
+     *
+     * @param input
+     * @return EmbeddingResponse
+     */
+    public EmbeddingResponse embeddings(List<String> input) {
         Embedding embedding = Embedding.builder().input(input).build();
         return this.embeddings(embedding);
     }
@@ -699,13 +715,36 @@ public class OpenAiClient {
     /**
      * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
-     *
+     * @see #subscription()
+     * @see #billingUsage(LocalDate, LocalDate)
      * @return
      */
     @Deprecated
     public CreditGrantsResponse creditGrants() {
         Single<CreditGrantsResponse> creditGrants = this.openAiApi.creditGrants();
         return creditGrants.blockingGet();
+    }
+
+    /**
+     * 账户信息查询：里面包含总金额等信息
+     *
+     * @return
+     */
+    public Subscription subscription() {
+        Single<Subscription> subscription = this.openAiApi.subscription();
+        return subscription.blockingGet();
+    }
+
+    /**
+     * 账户调用接口消耗金额信息查询
+     * 最多查询100天
+     * @param starDate  开始时间
+     * @param endDate   结束时间
+     * @return
+     */
+    public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
+        Single<BillingUsage> billingUsage = this.openAiApi.billingUsage(starDate, endDate);
+        return billingUsage.blockingGet();
     }
 
 
