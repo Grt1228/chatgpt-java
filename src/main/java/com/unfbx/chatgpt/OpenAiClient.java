@@ -382,12 +382,25 @@ public class OpenAiClient {
     }
 
     /**
-     * Creates an embedding vector representing the input text.
+     * 向量计算：单文本
      *
      * @param input
      * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(String input) {
+        List<String> inputs = new ArrayList<>(1);
+        inputs.add(input);
+        Embedding embedding = Embedding.builder().input(inputs).build();
+        return this.embeddings(embedding);
+    }
+
+    /**
+     * 向量计算：集合文本
+     *
+     * @param input
+     * @return EmbeddingResponse
+     */
+    public EmbeddingResponse embeddings(List<String> input) {
         Embedding embedding = Embedding.builder().input(input).build();
         return this.embeddings(embedding);
     }

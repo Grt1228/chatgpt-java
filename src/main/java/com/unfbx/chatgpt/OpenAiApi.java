@@ -120,7 +120,7 @@ public interface OpenAiApi {
     );
 
     /**
-     * Creates an embedding vector representing the input text.
+     * 文本向量计算
      *
      * @param embedding
      * @return Single EmbeddingResponse

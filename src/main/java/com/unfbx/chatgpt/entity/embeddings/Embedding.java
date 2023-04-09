@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,7 +30,7 @@ public class Embedding implements Serializable {
      * 必选项：长度不能超过：8192
      */
     @NonNull
-    private String input;
+    private List<String> input;
 
     private String user;
 
@@ -40,17 +41,6 @@ public class Embedding implements Serializable {
         this.model = model.getName();
     }
 
-    public void setInput(String input) {
-        if (input == null || "".equals(input)) {
-            log.error("input不能为空");
-            throw new BaseException(CommonError.PARAM_ERROR);
-        }
-        if (input.length() > 8192) {
-            log.error("input超长");
-            throw new BaseException(CommonError.PARAM_ERROR);
-        }
-        this.input = input;
-    }
 
     public void setUser(String user) {
         this.user = user;

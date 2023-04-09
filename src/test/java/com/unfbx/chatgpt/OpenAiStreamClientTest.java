@@ -1,6 +1,8 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
+import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
@@ -15,6 +17,7 @@ import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,14 +36,14 @@ public class OpenAiStreamClientTest {
     @Before
     public void before() {
         //国内访问需要做代理，国外服务器不需要
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         //！！！！千万别再生产或者测试环境打开BODY级别日志！！！！
         //！！！生产或者测试环境建议设置为这三种级别：NONE,BASIC,HEADERS,！！！
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .proxy(proxy)
+//                .proxy(proxy)
                 .addInterceptor(httpLoggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
@@ -52,9 +55,25 @@ public class OpenAiStreamClientTest {
 //                .keyStrategy(new KeyRandomStrategy())
                 .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
-                //自己做了代理就传代理地址，没有可不不传
+                //自己做了代理就传代理地址，没有可不不传（(关注公众号回复：openai ，获取免费的测试代理地址)）
 //                .apiHost("https://自己代理的服务器地址/")
                 .build();
+    }
+
+    @Test
+    public void subscription() {
+        Subscription subscription = client.subscription();
+        log.info("用户名：{}", subscription.getAccountName());
+        log.info("用户总余额（美元）：{}", subscription.getHardLimitUsd());
+        log.info("更多信息看Subscription类");
+    }
+
+    @Test
+    public void billingUsage() {
+        LocalDate start = LocalDate.of(2023, 3, 7);
+        BillingUsage billingUsage = client.billingUsage(start, LocalDate.now());
+        log.info("总使用金额（美分）：{}", billingUsage.getTotalUsage());
+        log.info("更多信息看BillingUsage类");
     }
     @Test
     public void creditGrants() {
