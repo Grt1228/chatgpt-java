@@ -1,6 +1,8 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
+import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
@@ -31,6 +33,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.*;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 /**
@@ -297,9 +300,30 @@ public interface OpenAiApi {
 
     /**
      * 余额查询
+     * 官方禁止访问此接口
      *
      * @return 余额结果
      */
     @GET("dashboard/billing/credit_grants")
+    @Deprecated
     Single<CreditGrantsResponse> creditGrants();
+
+    /**
+     * 账户信息查询：里面包含总金额（美元）等信息
+     *
+     * @return
+     */
+    @GET("v1/dashboard/billing/subscription")
+    Single<Subscription> subscription();
+
+    /**
+     * 账户调用接口消耗金额信息查询
+     * totalUsage = 账户总使用金额（美分）
+     *
+     * @return
+     * @param starDate
+     * @param endDate
+     */
+    @GET("v1/dashboard/billing/usage")
+    Single<BillingUsage> billingUsage(@Query("start_date") LocalDate starDate, @Query("end_date") LocalDate endDate);
 }

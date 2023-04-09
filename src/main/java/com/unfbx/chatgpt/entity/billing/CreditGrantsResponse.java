@@ -3,6 +3,7 @@ package com.unfbx.chatgpt.entity.billing;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
  * @since 2023-03-18
  */
 @Data
-public class CreditGrantsResponse {
+public class CreditGrantsResponse implements Serializable {
     private String object;
     /**
      * 总金额：美元
