@@ -240,7 +240,7 @@ public interface OpenAiApi {
      *
      * @return Single DeleteResponse
      */
-    @GET("v1/models/{model}")
+    @DELETE("v1/models/{model}")
     Single<FineTuneDeleteResponse> deleteFineTuneModel(@Path("model") String model);
 
 
