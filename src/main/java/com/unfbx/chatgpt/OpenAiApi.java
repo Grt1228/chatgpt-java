@@ -240,7 +240,7 @@ public interface OpenAiApi {
      *
      * @return Single DeleteResponse
      */
-    @GET("v1/models/{model}")
+    @DELETE("v1/models/{model}")
     Single<FineTuneDeleteResponse> deleteFineTuneModel(@Path("model") String model);
 
 
@@ -277,26 +277,26 @@ public interface OpenAiApi {
     /**
      * 语音转文字
      *
-     * @param model 模型
-     * @param file  语音文件
+     * @param file              语音文件
+     * @param requestBodyMap    参数
      * @return 文本
      */
     @Multipart
     @POST("v1/audio/transcriptions")
     Single<WhisperResponse> speechToTextTranscriptions(@Part MultipartBody.Part file,
-                                                       @Part("model") RequestBody model);
+                                                       @PartMap() Map<String, RequestBody> requestBodyMap);
 
     /**
      * 语音翻译：目前仅支持翻译为英文
      *
-     * @param model 模型
-     * @param file  语音文件
+     * @param file              语音文件
+     * @param requestBodyMap    参数
      * @return 文本
      */
     @Multipart
     @POST("v1/audio/translations")
     Single<WhisperResponse> speechToTextTranslations(@Part MultipartBody.Part file,
-                                                     @Part("model") RequestBody model);
+                                                     @PartMap() Map<String, RequestBody> requestBodyMap);
 
     /**
      * 余额查询

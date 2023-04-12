@@ -29,6 +29,8 @@ import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import com.unfbx.chatgpt.entity.whisper.Transcriptions;
+import com.unfbx.chatgpt.entity.whisper.Translations;
 import com.unfbx.chatgpt.entity.whisper.Whisper;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
@@ -148,33 +150,67 @@ public class OpenAiClientTest {
         log.info("账户总使用金额（美元）：{}", creditGrantsResponse.getTotalUsed());
         log.info("账户总剩余金额（美元）：{}", creditGrantsResponse.getTotalAvailable());
     }
-    @Test
-    public void speechToTextTranscriptions() {
-        //语音转文字
-        WhisperResponse whisperResponse =
-                v2.speechToTextTranscriptions(new java.io.File("C:\\***********\\1.m4a")
-                , Whisper.Model.WHISPER_1);
-        System.out.println(whisperResponse.getText());
-    }
 
-    @Test
-    public void speechToTextTranslations() {
-        //语音转文字
-        WhisperResponse whisperResponse =
-                v2.speechToTextTranslations(new java.io.File("C:\\***********\\1.m4a")
-                        , Whisper.Model.WHISPER_1);
-        System.out.println(whisperResponse.getText());
-    }
 
     @Test
     public void chat() {
         //聊天模型：gpt-3.5
         Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
-        ChatCompletion chatCompletion = ChatCompletion.builder().messages(Arrays.asList(message)).build();
+        ChatCompletion chatCompletion = ChatCompletion
+                .builder()
+                .messages(Arrays.asList(message))
+                .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
+                .build();
         ChatCompletionResponse chatCompletionResponse = v2.chatCompletion(chatCompletion);
         chatCompletionResponse.getChoices().forEach(e -> {
             System.out.println(e.getMessage());
         });
+    }
+
+    @Test
+    public void speechToTextTranscriptions() {
+        Transcriptions transcriptions = Transcriptions.builder()
+                .model(Whisper.Model.WHISPER_1.getName())
+                .prompt("提示语")
+                .language("zh")
+                .temperature(0.2)
+                .responseFormat(Whisper.ResponseFormat.VTT.getName())
+                .build();
+
+        //语音转文字
+        WhisperResponse whisperResponse =
+                v2.speechToTextTranscriptions(new java.io.File("C:\\Users\\grt\\Desktop\\1.m4a") , transcriptions);
+        System.out.println(whisperResponse.getText());
+    }
+
+    @Test
+    public void speechToTextTranscriptionsV2() {
+        //语音转文字
+        WhisperResponse whisperResponse =
+                v2.speechToTextTranscriptions(new java.io.File("C:\\Users\\grt\\Desktop\\1.m4a"));
+        System.out.println(whisperResponse.getText());
+    }
+
+    @Test
+    public void speechToTextTranslations() {
+        Translations translations = Translations.builder()
+                .model(Whisper.Model.WHISPER_1.getName())
+//                .prompt("提示语")
+                .temperature(0.2)
+                .responseFormat(Whisper.ResponseFormat.JSON.getName())
+                .build();
+        //语音转文字+翻译
+        WhisperResponse whisperResponse =
+                v2.speechToTextTranslations(new java.io.File("C:\\Users\\**\\Desktop\\1.m4a"), translations);
+        System.out.println(whisperResponse.getText());
+    }
+
+    @Test
+    public void speechToTextTranslationsV2() {
+        //语音转文字+翻译
+        WhisperResponse whisperResponse =
+                v2.speechToTextTranslations(new java.io.File("C:\\Users\\**\\Desktop\\1.m4a"));
+        System.out.println(whisperResponse.getText());
     }
 
     @Test
@@ -229,7 +265,8 @@ public class OpenAiClientTest {
     public void completionsV2() {
         Completion q = Completion.builder()
                 .prompt("三体人是什么？")
-                .model("ada:ft-org-DL6GzliwY20i7Lxr5pUAoKUH:2023-02-16-05-42-02")
+                .n(2)
+                .bestOf(3)
                 .build();
         CompletionResponse completions = v2.completions(q);
         System.out.println(completions);
@@ -436,7 +473,7 @@ public class OpenAiClientTest {
 
     @Test
     public void deleteFineTuneModel() {
-        FineTuneDeleteResponse deleteResponse = v2.deleteFineTuneModel("curie:ft-winter-2023-02-16-10-24-10");
+        FineTuneDeleteResponse deleteResponse = v2.deleteFineTuneModel("ada:ft-winter:grttttttttt-2023-02-17-01-29-27");
         System.out.println(deleteResponse);
     }
 }

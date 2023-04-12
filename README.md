@@ -1,9 +1,8 @@
 it’s an “unofficial" or "community-maintained” library.
-
 这是一个非官方的社区维护的库。
-OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
+> 原创发布转载注明出处！
 ## 此项目不仅仅支持chat对话模型，支持openai官方所有api，包括
-- [x] tokens计算
+- [x] tokens            计算
 - [x] Billing           余额查询
 - [x] Models            模型检索
 - [x] Completions       chatgpt对话
@@ -31,6 +30,7 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 <img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" />  | <img src="https://g-photo.oss-cn-shanghai.aliyuncs.com/hd15.jpg" width="210" height="210" alt="二维码" /> | <img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
 ---
 ## 更新日志
+- [x] 1.0.12  tokens计算优化、删除模型接口修改、语音接口更新支持官方最新参数
 - [x] 1.0.11  增加新的余额查询接口参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) ,修复tokens计算慢的问题，
 - [x] 1.0.10  支持tokens计算：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java) ，更多详细的资料参考文档：[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)
 - [x] 1.0.9   支持自定义key使用策略参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) ，弃用ChatGPTClient，优化Moderation接口
@@ -72,7 +72,7 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.11</version>
+    <version>1.0.12</version>
 </dependency>
 ```
 ## 2、流式客户端使用示例：
