@@ -91,7 +91,7 @@ public class OpenAiStreamClientTest {
                 .builder()
                 .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
                 .temperature(0.2)
-                .maxTokens(4000)
+                .maxTokens(2048)
                 .messages(Arrays.asList(message))
                 .stream(true)
                 .build();

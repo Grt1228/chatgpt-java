@@ -33,10 +33,10 @@ public class Transcriptions extends Whisper {
      * 默认值：0
      */
     @Builder.Default
-    private double temperature = 0;
+    private Double temperature = 0d;
     /**
      * 输入音频的语言,以 ISO-639-1 格式提供输入语言将提高准确性和延迟。
-     * 参考：<a href=https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>ISO-639-1</a>
+     * 参考：<a href=https://baike.baidu.com/item/ISO%20639-1/8292914>ISO-639-1</a>
      */
     private String language;
 
