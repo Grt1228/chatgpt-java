@@ -30,7 +30,8 @@ import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
-import com.unfbx.chatgpt.entity.whisper.Whisper;
+import com.unfbx.chatgpt.entity.whisper.Transcriptions;
+import com.unfbx.chatgpt.entity.whisper.Translations;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
@@ -650,16 +651,23 @@ public class OpenAiClient {
     /**
      * 语音转文字
      *
-     * @param model 模型 Whisper.Model
-     * @param file  语音文件 最大支持25MB mp3, mp4, mpeg, mpga, m4a, wav, webm
+     * @param transcriptions 参数
+     * @param file           语音文件 最大支持25MB mp3, mp4, mpeg, mpga, m4a, wav, webm
      * @return 语音文本
      */
-    public WhisperResponse speechToTextTranscriptions(java.io.File file, Whisper.Model model) {
-        checkSpeechFileSize(file);
+    public WhisperResponse speechToTextTranscriptions(java.io.File file, Transcriptions transcriptions) {
+        //文件
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
-        RequestBody modelBody = RequestBody.create(MediaType.parse("multipart/form-data"), model.getName());
-        Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranscriptions(multipartBody, modelBody);
+        //自定义参数
+        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        requestBodyMap.put(Transcriptions.Fields.language, RequestBody.create(MediaType.parse("multipart/form-data"), transcriptions.getLanguage()));
+        requestBodyMap.put(Transcriptions.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), transcriptions.getModel()));
+        requestBodyMap.put(Transcriptions.Fields.prompt, RequestBody.create(MediaType.parse("multipart/form-data"), transcriptions.getPrompt()));
+        requestBodyMap.put(Transcriptions.Fields.responseFormat, RequestBody.create(MediaType.parse("multipart/form-data"), transcriptions.getResponseFormat()));
+        requestBodyMap.put(Transcriptions.Fields.temperature, RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(transcriptions.getTemperature())));
+
+        Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranscriptions(multipartBody, requestBodyMap);
         return whisperResponse.blockingGet();
     }
 
@@ -670,7 +678,8 @@ public class OpenAiClient {
      * @return 语音文本
      */
     public WhisperResponse speechToTextTranscriptions(java.io.File file) {
-        return this.speechToTextTranscriptions(file, Whisper.Model.WHISPER_1);
+        Transcriptions transcriptions = Transcriptions.builder().build();
+        return this.speechToTextTranscriptions(file, transcriptions);
 
     }
 
@@ -678,16 +687,22 @@ public class OpenAiClient {
     /**
      * 语音翻译：目前仅支持翻译为英文
      *
-     * @param model 模型 Whisper.Model
-     * @param file  语音文件 最大支持25MB mp3, mp4, mpeg, mpga, m4a, wav, webm
+     * @param translations 参数
+     * @param file         语音文件 最大支持25MB mp3, mp4, mpeg, mpga, m4a, wav, webm
      * @return 翻译后文本
      */
-    public WhisperResponse speechToTextTranslations(java.io.File file, Whisper.Model model) {
-        checkSpeechFileSize(file);
+    public WhisperResponse speechToTextTranslations(java.io.File file, Translations translations) {
+        //文件
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
-        RequestBody modelBody = RequestBody.create(MediaType.parse("multipart/form-data"), model.getName());
-        Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranslations(multipartBody, modelBody);
+        //自定义参数
+        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
+        requestBodyMap.put(Translations.Fields.prompt, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getPrompt()));
+        requestBodyMap.put(Translations.Fields.responseFormat, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getResponseFormat()));
+        requestBodyMap.put(Translations.Fields.temperature, RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(translations.getTemperature())));
+
+        Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranslations(multipartBody, requestBodyMap);
         return whisperResponse.blockingGet();
     }
 
@@ -698,7 +713,8 @@ public class OpenAiClient {
      * @return 翻译后文本
      */
     public WhisperResponse speechToTextTranslations(java.io.File file) {
-        return this.speechToTextTranslations(file, Whisper.Model.WHISPER_1);
+        Translations translations = Translations.builder().build();
+        return this.speechToTextTranslations(file, translations);
     }
 
     /**
