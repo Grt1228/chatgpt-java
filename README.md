@@ -1,6 +1,8 @@
 it’s an “unofficial" or "community-maintained” library.
 这是一个非官方的社区维护的库。
 > **原创发布转载注明出处！** 开源协议：[LICENSE](https://github.com/Grt1228/chatgpt-java/blob/main/LICENSE) 
+
+**基于本SDK开发案例收集**：[chatgpt-java SDK案例征集](https://github.com/Grt1228/chatgpt-java/issues/87) 
 ## 此项目不仅仅支持chat对话模型，支持openai官方所有api，包括
 - [x] tokens            计算
 - [x] Billing           余额查询
