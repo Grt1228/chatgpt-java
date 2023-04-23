@@ -4,8 +4,8 @@ it’s an “unofficial" or "community-maintained” library.
 
 **基于本SDK开发案例收集**：[chatgpt-java SDK案例征集](https://github.com/Grt1228/chatgpt-java/issues/87) 
 ## 此项目不仅仅支持chat对话模型，支持openai官方所有api，包括
-- [x] tokens            计算
-- [x] Billing           余额查询
+- [x] tokens            计算——[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)
+- [x] Billing           余额查询——[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 、[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java)
 - [x] Models            模型检索
 - [x] Completions       chatgpt对话
 - [x] Images            图片模型
