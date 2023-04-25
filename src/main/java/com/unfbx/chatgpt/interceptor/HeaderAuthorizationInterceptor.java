@@ -5,6 +5,7 @@ import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import lombok.Getter;
+import lombok.Setter;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -15,19 +16,21 @@ import java.util.List;
 /**
  * 描述：请求增加header apikey
  *
- * @author grt
+ * @author https:www.unfbx.com
  * @since 2023-03-23
  */
-@Getter
 public class HeaderAuthorizationInterceptor implements Interceptor {
 
     /**
      * key 集合
      */
+    @Getter
+    @Setter
     private List<String> apiKey;
     /**
      * 自定义的key的使用策略
      */
+    @Getter
     private KeyStrategyFunction<List<String>, String> keyStrategy;
 
     /**
