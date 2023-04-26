@@ -37,7 +37,8 @@ import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
-import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
+import com.unfbx.chatgpt.interceptor.OpenAiAuthInterceptor;
+import com.unfbx.chatgpt.interceptor.DefaultOpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import io.reactivex.Single;
 import lombok.Getter;
@@ -88,6 +89,17 @@ public class OpenAiClient {
     private KeyStrategyFunction<List<String>, String> keyStrategy;
 
     /**
+     * 自定义鉴权处理拦截器<br/>
+     * 可以不设置，默认实现：DefaultOpenAiAuthInterceptor <br/>
+     * 如需自定义实现参考：DealKeyWithOpenAiAuthInterceptor
+     *
+     * @see com.unfbx.chatgpt.interceptor.DealKeyWithOpenAiAuthInterceptor
+     * @see DefaultOpenAiAuthInterceptor
+     */
+    @Getter
+    private OpenAiAuthInterceptor openAiAuthInterceptor;
+
+    /**
      * 构造器
      *
      * @return
@@ -117,6 +129,10 @@ public class OpenAiClient {
         }
         keyStrategy = builder.keyStrategy;
 
+        if (Objects.isNull(builder.openAiAuthInterceptor)) {
+            builder.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor(this.apiKey, this.keyStrategy);
+        }
+        openAiAuthInterceptor = builder.openAiAuthInterceptor;
 
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
@@ -124,7 +140,7 @@ public class OpenAiClient {
             //自定义的okhttpClient  需要增加api keys
             builder.okHttpClient = builder.okHttpClient
                     .newBuilder()
-                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
+                    .addInterceptor(openAiAuthInterceptor)
                     .build();
         }
         okHttpClient = builder.okHttpClient;
@@ -143,9 +159,10 @@ public class OpenAiClient {
      * @return
      */
     private OkHttpClient okHttpClient() {
+        this.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor(this.apiKey, this.keyStrategy);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey,this.keyStrategy))
+                .addInterceptor(this.openAiAuthInterceptor)
                 .addInterceptor(new OpenAiResponseInterceptor())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
@@ -660,7 +677,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
         if (StrUtil.isNotBlank(transcriptions.getLanguage())) {
             requestBodyMap.put(Transcriptions.Fields.language, RequestBody.create(MediaType.parse("multipart/form-data"), transcriptions.getLanguage()));
         }
@@ -705,7 +722,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
 
         if (StrUtil.isNotBlank(translations.getModel())) {
             requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
@@ -748,9 +765,10 @@ public class OpenAiClient {
     /**
      * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
+     *
+     * @return
      * @see #subscription()
      * @see #billingUsage(LocalDate, LocalDate)
-     * @return
      */
     @Deprecated
     public CreditGrantsResponse creditGrants() {
@@ -771,8 +789,9 @@ public class OpenAiClient {
     /**
      * 账户调用接口消耗金额信息查询
      * 最多查询100天
-     * @param starDate  开始时间
-     * @param endDate   结束时间
+     *
+     * @param starDate 开始时间
+     * @param endDate  结束时间
      * @return
      */
     public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
@@ -802,6 +821,11 @@ public class OpenAiClient {
          */
         private KeyStrategyFunction keyStrategy;
 
+        /**
+         * 自定义鉴权拦截器
+         */
+        private OpenAiAuthInterceptor openAiAuthInterceptor;
+
         public Builder() {
         }
 
@@ -827,6 +851,11 @@ public class OpenAiClient {
 
         public Builder okHttpClient(OkHttpClient val) {
             okHttpClient = val;
+            return this;
+        }
+
+        public Builder openAiAuthInterceptor(OpenAiAuthInterceptor val) {
+            openAiAuthInterceptor = val;
             return this;
         }
 

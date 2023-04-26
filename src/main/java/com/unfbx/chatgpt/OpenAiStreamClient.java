@@ -18,7 +18,8 @@ import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
-import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
+import com.unfbx.chatgpt.interceptor.DefaultOpenAiAuthInterceptor;
+import com.unfbx.chatgpt.interceptor.OpenAiAuthInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import io.reactivex.Single;
 import lombok.Getter;
@@ -73,6 +74,17 @@ public class OpenAiStreamClient {
     private OpenAiApi openAiApi;
 
     /**
+     * 自定义鉴权处理拦截器<br/>
+     * 可以不设置，默认实现：DefaultOpenAiAuthInterceptor <br/>
+     * 如需自定义实现参考：DealKeyWithOpenAiAuthInterceptor
+     *
+     * @see com.unfbx.chatgpt.interceptor.DealKeyWithOpenAiAuthInterceptor
+     * @see DefaultOpenAiAuthInterceptor
+     */
+    @Getter
+    private OpenAiAuthInterceptor openAiAuthInterceptor;
+
+    /**
      * 构造实例对象
      *
      * @param builder
@@ -93,13 +105,18 @@ public class OpenAiStreamClient {
         }
         keyStrategy = builder.keyStrategy;
 
+        if (Objects.isNull(builder.openAiAuthInterceptor)) {
+            builder.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor(this.apiKey, this.keyStrategy);
+        }
+        openAiAuthInterceptor = builder.openAiAuthInterceptor;
+
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
         } else {
             //自定义的okhttpClient  需要增加api keys
             builder.okHttpClient = builder.okHttpClient
                     .newBuilder()
-                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
+                    .addInterceptor(openAiAuthInterceptor)
                     .build();
         }
         okHttpClient = builder.okHttpClient;
@@ -116,9 +133,10 @@ public class OpenAiStreamClient {
      * 创建默认的OkHttpClient
      */
     private OkHttpClient okHttpClient() {
+        this.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor(this.apiKey, this.keyStrategy);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
+                .addInterceptor(this.openAiAuthInterceptor)
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(50, TimeUnit.SECONDS)
                 .readTimeout(50, TimeUnit.SECONDS)
@@ -281,8 +299,9 @@ public class OpenAiStreamClient {
     /**
      * 账户调用接口消耗金额信息查询
      * 最多查询100天
-     * @param starDate  开始时间
-     * @param endDate   结束时间
+     *
+     * @param starDate 开始时间
+     * @param endDate  结束时间
      * @return
      */
     public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
@@ -319,6 +338,10 @@ public class OpenAiStreamClient {
          */
         private KeyStrategyFunction keyStrategy;
 
+        /**
+         * 自定义鉴权拦截器
+         */
+        private DefaultOpenAiAuthInterceptor openAiAuthInterceptor;
 
         public Builder() {
         }
@@ -345,6 +368,11 @@ public class OpenAiStreamClient {
 
         public Builder okHttpClient(OkHttpClient val) {
             okHttpClient = val;
+            return this;
+        }
+
+        public Builder openAiAuthInterceptor(DefaultOpenAiAuthInterceptor val) {
+            openAiAuthInterceptor = val;
             return this;
         }
 

@@ -1,7 +1,5 @@
 package com.unfbx.chatgpt.interceptor;
 
-import cn.hutool.http.ContentType;
-import cn.hutool.http.Header;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.exception.BaseException;
@@ -14,18 +12,19 @@ import okhttp3.Response;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * 描述：动态处理key的拦截器
+ * 描述：动态处理key的鉴权拦截器
  *
  * @author https:www.unfbx.com
  * @since 2023-04-25
  */
 @Getter
 @Slf4j
-public class KeyDealInterceptor extends HeaderAuthorizationInterceptor {
+public class DealKeyWithOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
     /**
      * 账号被封了
      */
@@ -38,22 +37,29 @@ public class KeyDealInterceptor extends HeaderAuthorizationInterceptor {
     /**
      * 请求头处理
      *
-     * @param apiKey      api keys列表
-     * @param keyStrategy 自定义key的使用策略
+     * @param apiKey      apiKeys集合
+     * @param keyStrategy 请求时key的获取策略
      */
-    public KeyDealInterceptor(List<String> apiKey, KeyStrategyFunction<List<String>, String> keyStrategy) {
-        super(apiKey, keyStrategy);
+    public DealKeyWithOpenAiAuthInterceptor() {
+        this.setWarringConfig(null);
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param apiKey        apiKeys集合
+     * @param keyStrategy   请求时key的获取策略
+     * @param warringConfig 所有的key都失效后的告警参数配置
+     */
+    public DealKeyWithOpenAiAuthInterceptor(Map warringConfig) {
+        this.setWarringConfig(warringConfig);
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        String key = super.getKeyStrategy().apply(super.getApiKey());
+        String key = getKey();
         Request original = chain.request();
-        Request request = original.newBuilder()
-                .header(Header.AUTHORIZATION.getValue(), "Bearer " + key)
-                .header(Header.CONTENT_TYPE.getValue(), ContentType.JSON.getValue())
-                .method(original.method(), original.body())
-                .build();
+        Request request = this.auth(key, original);
         Response response = chain.proceed(request);
         if (!response.isSuccessful()) {
             if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
@@ -64,9 +70,7 @@ public class KeyDealInterceptor extends HeaderAuthorizationInterceptor {
                 log.error("请求openai异常，错误code：{}，错误信息：{}", errorCode, openAiResponse.getError().getMessage());
                 //账号被封或者key不正确就移除掉
                 if (ACCOUNT_DEACTIVATED.equals(errorCode) || INVALID_API_KEY.equals(errorCode)) {
-                    List<String> apiKey = super.getApiKey().stream().filter(e -> !key.equals(e)).collect(Collectors.toList());
-                    super.setApiKey(apiKey);
-                    log.error("key:[{}]失效了，移除！", key);
+                    super.setApiKey(onErrorDealApiKeys(key));
                 }
                 throw new BaseException(openAiResponse.getError().getMessage());
             }
@@ -80,5 +84,30 @@ public class KeyDealInterceptor extends HeaderAuthorizationInterceptor {
             throw new BaseException(CommonError.RETRY_ERROR);
         }
         return response;
+    }
+
+
+    @Override
+    protected List<String> onErrorDealApiKeys(String errorKey) {
+        List<String> apiKey = super.getApiKey().stream().filter(e -> !errorKey.equals(e)).collect(Collectors.toList());
+        log.error("key:[{}]失效了，移除！", errorKey);
+        return apiKey;
+    }
+
+    /**
+     * 所有的key都失效后，自定义预警配置
+     * 不配置直接return
+     *
+     * @return
+     */
+    @Override
+    protected void noHaveActiveKeyWarring() {
+        log.error("[告警]——————>没有可用的key！！！");
+        return;
+    }
+
+    @Override
+    public Request auth(String key, Request original) {
+        return super.auth(key, original);
     }
 }
