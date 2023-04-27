@@ -106,9 +106,12 @@ public class OpenAiStreamClient {
         keyStrategy = builder.keyStrategy;
 
         if (Objects.isNull(builder.openAiAuthInterceptor)) {
-            builder.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor(this.apiKey, this.keyStrategy);
+            builder.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor();
         }
         openAiAuthInterceptor = builder.openAiAuthInterceptor;
+        //设置apiKeys和key的获取策略
+        openAiAuthInterceptor.setApiKey(this.apiKey);
+        openAiAuthInterceptor.setKeyStrategy(this.keyStrategy);
 
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
@@ -133,7 +136,11 @@ public class OpenAiStreamClient {
      * 创建默认的OkHttpClient
      */
     private OkHttpClient okHttpClient() {
-        this.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor(this.apiKey, this.keyStrategy);
+        if (Objects.isNull(this.openAiAuthInterceptor)) {
+            this.openAiAuthInterceptor = new DefaultOpenAiAuthInterceptor();
+        }
+        this.openAiAuthInterceptor.setApiKey(this.apiKey);
+        this.openAiAuthInterceptor.setKeyStrategy(this.keyStrategy);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
                 .addInterceptor(this.openAiAuthInterceptor)
@@ -289,7 +296,7 @@ public class OpenAiStreamClient {
     /**
      * 账户信息查询：里面包含总金额等信息
      *
-     * @return
+     * @return 个人账户信息
      */
     public Subscription subscription() {
         Single<Subscription> subscription = this.openAiApi.subscription();
@@ -341,7 +348,7 @@ public class OpenAiStreamClient {
         /**
          * 自定义鉴权拦截器
          */
-        private DefaultOpenAiAuthInterceptor openAiAuthInterceptor;
+        private OpenAiAuthInterceptor openAiAuthInterceptor;
 
         public Builder() {
         }
@@ -371,7 +378,7 @@ public class OpenAiStreamClient {
             return this;
         }
 
-        public Builder openAiAuthInterceptor(DefaultOpenAiAuthInterceptor val) {
+        public Builder openAiAuthInterceptor(OpenAiAuthInterceptor val) {
             openAiAuthInterceptor = val;
             return this;
         }

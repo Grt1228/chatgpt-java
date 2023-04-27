@@ -43,9 +43,9 @@ public class TikTokensUtil {
     /**
      * 通过Encoding和text获取编码数组
      *
-     * @param enc
-     * @param text
-     * @return
+     * @param enc  Encoding类型
+     * @param text 文本信息
+     * @return 编码数组
      */
     public static List<Integer> encode(@NotNull Encoding enc, String text) {
         return StrUtil.isBlank(text) ? new ArrayList<>() : enc.encode(text);
@@ -54,9 +54,9 @@ public class TikTokensUtil {
     /**
      * 通过Encoding计算text信息的tokens
      *
-     * @param enc
-     * @param text
-     * @return
+     * @param enc  Encoding类型
+     * @param text 文本信息
+     * @return tokens数量
      */
     public static int tokens(@NotNull Encoding enc, String text) {
         return encode(enc, text).size();
@@ -66,9 +66,9 @@ public class TikTokensUtil {
     /**
      * 通过Encoding和encoded数组反推text信息
      *
-     * @param enc
-     * @param encoded
-     * @return
+     * @param enc     Encoding
+     * @param encoded 编码数组
+     * @return 编码数组对应的文本信息
      */
     public static String decode(@NotNull Encoding enc, @NotNull List<Integer> encoded) {
         return enc.decode(encoded);
@@ -77,8 +77,8 @@ public class TikTokensUtil {
     /**
      * 获取一个Encoding对象，通过Encoding类型
      *
-     * @param encodingType
-     * @return
+     * @param encodingType encodingType
+     * @return Encoding
      */
     public static Encoding getEncoding(@NotNull EncodingType encodingType) {
         Encoding enc = registry.getEncoding(encodingType);
@@ -88,8 +88,8 @@ public class TikTokensUtil {
     /**
      * 获取encode的编码数组
      *
-     * @param text
-     * @return
+     * @param text 文本信息
+     * @return 编码数组
      */
     public static List<Integer> encode(@NotNull EncodingType encodingType, String text) {
         if (StrUtil.isBlank(text)) {
@@ -103,9 +103,9 @@ public class TikTokensUtil {
     /**
      * 计算指定字符串的tokens，通过EncodingType
      *
-     * @param encodingType
-     * @param text
-     * @return
+     * @param encodingType encodingType
+     * @param text         文本信息
+     * @return tokens数量
      */
     public static int tokens(@NotNull EncodingType encodingType, String text) {
         return encode(encodingType, text).size();
@@ -115,9 +115,9 @@ public class TikTokensUtil {
     /**
      * 通过EncodingType和encoded编码数组，反推字符串文本
      *
-     * @param encodingType
-     * @param encoded
-     * @return
+     * @param encodingType encodingType
+     * @param encoded      编码数组
+     * @return 编码数组对应的字符串
      */
     public static String decode(@NotNull EncodingType encodingType, @NotNull List<Integer> encoded) {
         Encoding enc = getEncoding(encodingType);
@@ -128,8 +128,8 @@ public class TikTokensUtil {
     /**
      * 获取一个Encoding对象，通过模型名称
      *
-     * @param modelName
-     * @return
+     * @param modelName 模型名称
+     * @return Encoding
      */
     public static Encoding getEncoding(@NotNull String modelName) {
         return modelMap.get(modelName);
@@ -138,8 +138,8 @@ public class TikTokensUtil {
     /**
      * 获取encode的编码数组，通过模型名称
      *
-     * @param text
-     * @return
+     * @param text 文本信息
+     * @return 编码数组
      */
     public static List<Integer> encode(@NotNull String modelName, String text) {
         if (StrUtil.isBlank(text)) {
@@ -157,9 +157,9 @@ public class TikTokensUtil {
     /**
      * 通过模型名称, 计算指定字符串的tokens
      *
-     * @param modelName
-     * @param text
-     * @return
+     * @param modelName 模型名称
+     * @param text      文本信息
+     * @return tokens数量
      */
     public static int tokens(@NotNull String modelName, String text) {
         return encode(modelName, text).size();
@@ -173,7 +173,7 @@ public class TikTokensUtil {
      *
      * @param modelName 模型名称
      * @param messages  消息体
-     * @return
+     * @return tokens数量
      */
     public static int tokens(@NotNull String modelName, @NotNull List<Message> messages) {
         Encoding encoding = getEncoding(modelName);

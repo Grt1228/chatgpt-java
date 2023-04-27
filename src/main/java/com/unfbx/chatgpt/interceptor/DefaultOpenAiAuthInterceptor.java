@@ -1,6 +1,5 @@
 package com.unfbx.chatgpt.interceptor;
 
-import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,34 +18,25 @@ import java.util.Map;
 public class DefaultOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
     /**
      * 请求头处理
-     *
-     * @param apiKey      api keys列表
-     * @param keyStrategy 自定义key的使用策略
      */
-    public DefaultOpenAiAuthInterceptor(List<String> apiKey, KeyStrategyFunction<List<String>, String> keyStrategy) {
-        this.setKeyStrategy(keyStrategy);
-        super.setApiKey(apiKey);
+    public DefaultOpenAiAuthInterceptor() {
         super.setWarringConfig(null);
     }
 
     /**
      * 构造方法
      *
-     * @param apiKey        apiKeys集合
-     * @param keyStrategy   请求时key的获取策略
      * @param warringConfig 所有的key都失效后的告警参数配置
      */
-    public DefaultOpenAiAuthInterceptor(List<String> apiKey, KeyStrategyFunction<List<String>, String> keyStrategy, Map warringConfig) {
-        this.setKeyStrategy(keyStrategy);
-        super.setApiKey(apiKey);
+    public DefaultOpenAiAuthInterceptor(Map warringConfig) {
         super.setWarringConfig(warringConfig);
     }
 
     /**
      * 拦截器鉴权
      *
-     * @param chain
-     * @return
+     * @param chain Chain
+     * @return Response对象
      * @throws IOException
      */
     @Override
@@ -60,7 +50,7 @@ public class DefaultOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
      * 默认不处理
      *
      * @param apiKey 返回新的api keys集合
-     * @return
+     * @return 新的apiKey集合
      */
     @Override
     protected List<String> onErrorDealApiKeys(String apiKey) {
@@ -69,7 +59,7 @@ public class DefaultOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
 
     @Override
     protected void noHaveActiveKeyWarring() {
-        log.error("[告警]——————>没有可用的key！！！");
+        log.error("--------> [告警] 没有可用的key！！！");
         return;
     }
 }
