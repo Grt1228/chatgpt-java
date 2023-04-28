@@ -37,8 +37,9 @@ import com.unfbx.chatgpt.exception.BaseException;
 import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
-import com.unfbx.chatgpt.interceptor.HeaderAuthorizationInterceptor;
-import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
+import com.unfbx.chatgpt.interceptor.DynamicKeyOpenAiAuthInterceptor;
+import com.unfbx.chatgpt.interceptor.OpenAiAuthInterceptor;
+import com.unfbx.chatgpt.interceptor.DefaultOpenAiAuthInterceptor;
 import io.reactivex.Single;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -88,6 +89,17 @@ public class OpenAiClient {
     private KeyStrategyFunction<List<String>, String> keyStrategy;
 
     /**
+     * 自定义鉴权处理拦截器<br/>
+     * 可以不设置，默认实现：DefaultOpenAiAuthInterceptor <br/>
+     * 如需自定义实现参考：DealKeyWithOpenAiAuthInterceptor
+     *
+     * @see DynamicKeyOpenAiAuthInterceptor
+     * @see DefaultOpenAiAuthInterceptor
+     */
+    @Getter
+    private OpenAiAuthInterceptor authInterceptor;
+
+    /**
      * 构造器
      *
      * @return
@@ -117,6 +129,12 @@ public class OpenAiClient {
         }
         keyStrategy = builder.keyStrategy;
 
+        if (Objects.isNull(builder.authInterceptor)) {
+            builder.authInterceptor = new DefaultOpenAiAuthInterceptor();
+        }
+        authInterceptor = builder.authInterceptor;
+        authInterceptor.setApiKey(this.apiKey);
+        authInterceptor.setKeyStrategy(this.keyStrategy);
 
         if (Objects.isNull(builder.okHttpClient)) {
             builder.okHttpClient = this.okHttpClient();
@@ -124,7 +142,7 @@ public class OpenAiClient {
             //自定义的okhttpClient  需要增加api keys
             builder.okHttpClient = builder.okHttpClient
                     .newBuilder()
-                    .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey, this.keyStrategy))
+                    .addInterceptor(authInterceptor)
                     .build();
         }
         okHttpClient = builder.okHttpClient;
@@ -143,10 +161,14 @@ public class OpenAiClient {
      * @return
      */
     private OkHttpClient okHttpClient() {
+        if (Objects.isNull(this.authInterceptor)) {
+            this.authInterceptor = new DefaultOpenAiAuthInterceptor();
+        }
+        this.authInterceptor.setApiKey(this.apiKey);
+        this.authInterceptor.setKeyStrategy(this.keyStrategy);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .addInterceptor(new HeaderAuthorizationInterceptor(this.apiKey,this.keyStrategy))
-                .addInterceptor(new OpenAiResponseInterceptor())
+                .addInterceptor(this.authInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS).build();
@@ -182,7 +204,7 @@ public class OpenAiClient {
     /**
      * 问答接口
      *
-     * @param completion
+     * @param completion 问答参数
      * @return CompletionResponse
      */
     public CompletionResponse completions(Completion completion) {
@@ -193,7 +215,7 @@ public class OpenAiClient {
     /**
      * 问答接口-简易版
      *
-     * @param question
+     * @param question 问题描述
      * @return CompletionResponse
      */
     public CompletionResponse completions(String question) {
@@ -207,7 +229,7 @@ public class OpenAiClient {
     /**
      * 文本修改
      *
-     * @param edit
+     * @param edit 图片对象
      * @return EditResponse
      */
     public EditResponse edit(Edit edit) {
@@ -229,7 +251,7 @@ public class OpenAiClient {
     /**
      * 根据描述生成图片
      *
-     * @param image
+     * @param image 图片参数
      * @return ImageResponse
      */
     public ImageResponse genImages(Image image) {
@@ -241,8 +263,8 @@ public class OpenAiClient {
      * Creates an edited or extended image given an original image and a prompt.
      * 根据描述修改图片
      *
-     * @param image
-     * @param prompt
+     * @param image  图片对象
+     * @param prompt 描述信息
      * @return Item  list
      */
     public List<Item> editImages(java.io.File image, String prompt) {
@@ -254,8 +276,8 @@ public class OpenAiClient {
      * Creates an edited or extended image given an original image and a prompt.
      * 根据描述修改图片
      *
-     * @param image
-     * @param imageEdit
+     * @param image     图片对象
+     * @param imageEdit 图片参数
      * @return Item  list
      */
     public List<Item> editImages(java.io.File image, ImageEdit imageEdit) {
@@ -268,7 +290,7 @@ public class OpenAiClient {
      *
      * @param image     png格式的图片，最大4MB
      * @param mask      png格式的图片，最大4MB
-     * @param imageEdit
+     * @param imageEdit 图片参数
      * @return Item list
      */
     public List<Item> editImages(java.io.File image, java.io.File mask, ImageEdit imageEdit) {
@@ -308,8 +330,8 @@ public class OpenAiClient {
      * <p>
      * 变化图片，类似ai重做图片
      *
-     * @param image
-     * @param imageVariations
+     * @param image           图片对象
+     * @param imageVariations 图片参数
      * @return ImageResponse
      */
     public ImageResponse variationsImages(java.io.File image, ImageVariations imageVariations) {
@@ -335,7 +357,7 @@ public class OpenAiClient {
     /**
      * Creates a variation of a given image.
      *
-     * @param image
+     * @param image 图片对象
      * @return ImageResponse
      */
     public ImageResponse variationsImages(java.io.File image) {
@@ -398,7 +420,7 @@ public class OpenAiClient {
     /**
      * 向量计算：集合文本
      *
-     * @param input
+     * @param input 文本集合
      * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(List<String> input) {
@@ -407,9 +429,9 @@ public class OpenAiClient {
     }
 
     /**
-     * Creates an embedding vector representing the input text.
+     * 文本转换向量
      *
-     * @param embedding
+     * @param embedding 入参
      * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(Embedding embedding) {
@@ -430,7 +452,7 @@ public class OpenAiClient {
     /**
      * 删除文件
      *
-     * @param fileId
+     * @param fileId 文件id
      * @return DeleteResponse
      */
     public DeleteResponse deleteFile(String fileId) {
@@ -441,8 +463,8 @@ public class OpenAiClient {
     /**
      * 上传文件
      *
-     * @param purpose
-     * @param file
+     * @param purpose purpose
+     * @param file    文件对象
      * @return UploadFileResponse
      */
     public UploadFileResponse uploadFile(String purpose, java.io.File file) {
@@ -469,7 +491,7 @@ public class OpenAiClient {
     /**
      * 检索文件
      *
-     * @param fileId
+     * @param fileId 文件id
      * @return File
      */
     public File retrieveFile(String fileId) {
@@ -527,7 +549,7 @@ public class OpenAiClient {
     /**
      * 创建微调模型
      *
-     * @param fineTune
+     * @param fineTune 微调作业id
      * @return FineTuneResponse
      */
     public FineTuneResponse fineTune(FineTune fineTune) {
@@ -559,7 +581,7 @@ public class OpenAiClient {
     /**
      * 检索微调作业
      *
-     * @param fineTuneId
+     * @param fineTuneId 微调作业id
      * @return FineTuneResponse
      */
     public FineTuneResponse retrieveFineTune(String fineTuneId) {
@@ -581,7 +603,7 @@ public class OpenAiClient {
     /**
      * 微调作业事件列表
      *
-     * @param fineTuneId
+     * @param fineTuneId 微调作业id
      * @return Event List
      */
     public List<Event> fineTuneEvents(String fineTuneId) {
@@ -660,7 +682,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
         if (StrUtil.isNotBlank(transcriptions.getLanguage())) {
             requestBodyMap.put(Transcriptions.Fields.language, RequestBody.create(MediaType.parse("multipart/form-data"), transcriptions.getLanguage()));
         }
@@ -705,7 +727,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String,RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>();
 
         if (StrUtil.isNotBlank(translations.getModel())) {
             requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
@@ -748,9 +770,10 @@ public class OpenAiClient {
     /**
      * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
+     *
+     * @return
      * @see #subscription()
      * @see #billingUsage(LocalDate, LocalDate)
-     * @return
      */
     @Deprecated
     public CreditGrantsResponse creditGrants() {
@@ -761,7 +784,7 @@ public class OpenAiClient {
     /**
      * 账户信息查询：里面包含总金额等信息
      *
-     * @return
+     * @return 账户信息
      */
     public Subscription subscription() {
         Single<Subscription> subscription = this.openAiApi.subscription();
@@ -771,9 +794,10 @@ public class OpenAiClient {
     /**
      * 账户调用接口消耗金额信息查询
      * 最多查询100天
-     * @param starDate  开始时间
-     * @param endDate   结束时间
-     * @return
+     *
+     * @param starDate 开始时间
+     * @param endDate  结束时间
+     * @return 消耗金额信息
      */
     public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
         Single<BillingUsage> billingUsage = this.openAiApi.billingUsage(starDate, endDate);
@@ -802,12 +826,17 @@ public class OpenAiClient {
          */
         private KeyStrategyFunction keyStrategy;
 
+        /**
+         * 自定义鉴权拦截器
+         */
+        private OpenAiAuthInterceptor authInterceptor;
+
         public Builder() {
         }
 
         /**
          * @param val api请求地址，结尾处有斜杠
-         * @return
+         * @return Builder对象
          * @see com.unfbx.chatgpt.constant.OpenAIConst
          */
         public Builder apiHost(String val) {
@@ -827,6 +856,11 @@ public class OpenAiClient {
 
         public Builder okHttpClient(OkHttpClient val) {
             okHttpClient = val;
+            return this;
+        }
+
+        public Builder authInterceptor(OpenAiAuthInterceptor val) {
+            authInterceptor = val;
             return this;
         }
 

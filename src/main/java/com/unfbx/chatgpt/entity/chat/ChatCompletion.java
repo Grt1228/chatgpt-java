@@ -99,8 +99,6 @@ public class ChatCompletion implements Serializable {
 
     /**
      * 获取当前参数的tokens数
-     *
-     * @return
      */
     public long tokens() {
         if (CollectionUtil.isEmpty(this.messages) || StrUtil.isBlank(this.model)) {

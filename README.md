@@ -56,10 +56,19 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 **https://github.com/Grt1228/chatgpt-steam-output**
 
 # 🚩 特性
-
-支持多种Tokens计算方式、支持自定义OkhttpClient、支持自定义多Apikey、支持自定义ApiKey的获取策略、支持余额查询，支持个人账户信息查询、支持GPT3、GPT3.5、GPT4.0、支持全部OpenAI的Api。
+- 支持当key异常（失效、过期、封禁）时，自定义动态处理key 参考实现[DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java)
+- 支持当key异常时的告警处理（钉钉、飞书、email、企业微信等等需要自定义开发）参考实现[DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java)
+- 支持多种Tokens计算方式
+- 支持自定义OkhttpClient
+- 支持自定义多Apikey
+- 支持自定义ApiKey的获取策略
+- 支持余额查询
+- 支持个人账户信息查询
+- 支持GPT3、GPT3.5、GPT4.0
+- 支持全部OpenAI的Api
 
 # 📑 更新日志
+- [x] 1.0.13  支持当key异常（失效、过期、封禁）时，自定义动态处理key，参考实现[DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java) ，支持key异常时的告警处理（钉钉、飞书、email、企业微信等等需要自定义开发）
 - [x] 1.0.12  tokens计算优化、删除模型接口修改、语音接口更新支持官方最新参数
 - [x] 1.0.11  增加新的余额查询接口参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) ,修复tokens计算慢的问题，
 - [x] 1.0.10  支持tokens计算：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java) ，更多详细的资料参考文档：[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)
@@ -87,7 +96,7 @@ SDK测试案例 | Tokens测试案例 |
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.12</version>
+    <version>1.0.13</version>
 </dependency>
 ```
 ### 2、流式客户端使用示例：

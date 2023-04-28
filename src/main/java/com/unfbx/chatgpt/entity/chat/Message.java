@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Message implements Serializable {
-    @NotNull
+
     /**
      * 目前支持三中角色参考官网，进行情景输入：https://platform.openai.com/docs/guides/chat/introduction
      */
@@ -34,8 +34,9 @@ public class Message implements Serializable {
     /**
      * 构造函数
      *
-     * @param role
+     * @param role    角色
      * @param content 描述主题信息
+     * @param name    name
      */
     public Message(String role, String content, String name) {
         this.role = role;
@@ -65,14 +66,14 @@ public class Message implements Serializable {
     }
 
     public static final class Builder {
-        private @NotNull String role;
+        private String role;
         private String content;
         private String name;
 
         public Builder() {
         }
 
-        public Builder role(@NotNull Role role) {
+        public Builder role(Role role) {
             this.role = role.getName();
             return this;
         }

@@ -15,7 +15,7 @@ import java.util.Objects;
 /**
  * 描述：openai 返回值处理Interceptor
  *
- * @author grt
+ * @author https:www.unfbx.com
  * @since  2023-03-23
  */
 @Slf4j
@@ -34,7 +34,7 @@ public class OpenAiResponseInterceptor implements Interceptor {
                 throw new BaseException(openAiResponse.getError().getMessage());
             }
             String errorMsg = response.body().string();
-            log.error("请求异常：{}", errorMsg);
+            log.error("--------> 请求异常：{}", errorMsg);
             OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
             if (Objects.nonNull(openAiResponse.getError())) {
                 log.error(openAiResponse.getError().getMessage());
