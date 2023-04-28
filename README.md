@@ -1,37 +1,65 @@
+
 it’s an “unofficial" or "community-maintained” library.
-这是一个非官方的社区维护的库。
-> **原创发布转载注明出处！** 开源协议：[LICENSE](https://github.com/Grt1228/chatgpt-java/blob/main/LICENSE) 
+这是一个非官方的社区维护的库。有bug欢迎朋友们指出，互相学习。
+> **原创发布转载注明出处！**
 
-**基于本SDK开发案例收集**：[chatgpt-java SDK案例征集](https://github.com/Grt1228/chatgpt-java/issues/87) 
-## 此项目不仅仅支持chat对话模型，支持openai官方所有api，包括
-- [x] tokens            计算——[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)
-- [x] Billing           余额查询——[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 、[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java)
-- [x] Models            模型检索
-- [x] Completions       chatgpt对话
-- [x] Images            图片模型
-- [x] Embeddings        模型自定义训练
-- [x] Files             文件上传自定义模型
-- [x] Fine-tune         微调
-- [x] Moderations       文本审核，敏感词鉴别
-- [x] Engines           官方已移除
-- [x] Chat              gpt-3.5对话模型
-- [x] Speech To Text    语音转文字，语音翻译
 
-**国内访问可以看下这个解决方案**：https://github.com/noobnooc/noobnooc/discussions/9
+开源协议：[LICENSE](https://github.com/Grt1228/chatgpt-java/blob/main/LICENSE) 
+### 💬 联系我，ChatGPT相关学习交流咨询全部免费。
 
-### 整合Spring Boot 实现CahtGPT对话模式，思路可以参考：https://github.com/Grt1228/chatgpt-steam-output
-此项目支持两种流式输出有完整示例代码可参考 。
+一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群失效关注公众号恢复：chatgpt-java |
+---|---
+<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" />  | <img src="https://g-photo.oss-cn-shanghai.aliyuncs.com/hd15.jpg" width="210" height="210" alt="二维码" /> | 
+<!--<img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />-->
 
+- [📖 项目简介](#-项目简介)
+- [🚩 特性](#-特性)
+- [📑 更新日志](#-更新日志)
+- [🚀 快速开始](#-快速开始)
+  - [方式一](#方式一)
+    - [1、导入pom依赖](#1导入pom依赖)
+    - [2、流式客户端使用示例：](#2流式客户端使用示例)
+      - [默认OkHttpClient](#默认okhttpclient)
+      - [自定义OkHttpClient客户端使用示例：](#自定义okhttpclient客户端使用示例)
+    - [3、默认客户端使用示例（支持全部API）：](#3默认客户端使用示例支持全部api)
+      - [默认OkHttpClient](#默认okhttpclient-1)
+      - [自定义OkHttpClient客户端使用示例：](#自定义okhttpclient客户端使用示例-1)
+  - [方式二（下载源码直接运行）](#方式二下载源码直接运行)
+- [❔ QA](#-qa)
+- [📌 国内访问解决方案](#-国内访问解决方案)
+- [📋 开发案例收集](#-开发案例收集)
+- [🌟 Star History](#-star-history)
+- [🙏 鸣谢](#-鸣谢)
+- [☕ 打赏](#-打赏)
+
+# 📖 项目简介
+
+**ChatGPT的Java客户端**
+OpenAI官方Api的Java SDK，可以快速接入项目使用。支持OpenAI官方全部接口，**同时支持Tokens计算。参考文档：[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)**。
+
+| TikToken | Chat | Completions | Images | Speech To Text | 余额查询 |
+| --- | --- | --- | --- | --- | --- |
+| Token计算 | GPT-3.5、4.0对话模型 | GPT-3.0对话 | 图片模型 | 语音转文字，语音翻译 | 余额查询
+
+
+| Embeddings | Files | Moderations | Fine-tune | Models |
+| --- | --- | --- | --- | --- |
+| 嵌入 | 自定义训练模型 | 文本审核，敏感词鉴别 | 微调 | 模型检索相关 |
+
+支持流式输出：
 流式输出实现方式 | 小程序 | 安卓 | ios | H5 
 ---|---|---|---|---
 SSE参考：[OpenAISSEEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAISSEEventSourceListener.java) | 不支持| 支持| 支持 | 支持
 WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAIWebSocketEventSourceListener.java) | 支持| 支持| 支持| 支持
-### 有bug欢迎朋友们指出，互相学习，所有咨询全部免费。
-一起探讨chatgpt-java，SDK问题咨询<br/>项目产品开发交流 | 群失效关注公众号恢复：chatgpt-java | 个人微信
----|---|---
-<img src="https://user-images.githubusercontent.com/27008803/225246389-7b452214-f3fe-4a70-bd3e-832a0ed34288.jpg" width="210" height="300" alt="二维码" />  | <img src="https://g-photo.oss-cn-shanghai.aliyuncs.com/hd15.jpg" width="210" height="210" alt="二维码" /> | <img src="https://user-images.githubusercontent.com/27008803/225246581-15e90f78-5438-4637-8e7d-14c68ca13b59.jpg" width="210" height="300" alt="二维码" />
----
-## 更新日志
+
+基于本SDK开发的Demo项目，整合Spring Boot 实现CahtGPT对话模式，思路可以参考：
+**https://github.com/Grt1228/chatgpt-steam-output**
+
+# 🚩 特性
+
+支持多种Tokens计算方式、支持自定义OkhttpClient、支持自定义多Apikey、支持自定义ApiKey的获取策略、支持余额查询，支持个人账户信息查询、支持GPT3、GPT3.5、GPT4.0、支持全部OpenAI的Api。
+
+# 📑 更新日志
 - [x] 1.0.12  tokens计算优化、删除模型接口修改、语音接口更新支持官方最新参数
 - [x] 1.0.11  增加新的余额查询接口参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) ,修复tokens计算慢的问题，
 - [x] 1.0.10  支持tokens计算：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java) ，更多详细的资料参考文档：[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)
@@ -45,31 +73,16 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 - [x] 1.0.2   支持Stream流式输出，参考：OpenAiStreamClient
 - [x] 1.0.1   支持自定义超时时间，自定义OkHttpClient拦截器，参考：OpenAiClient构造函数
 - [x] 1.0.0   支持所有的OpenAI官方接口
----
 
-Q | A
----|---
-如何实现连续对话？ | issues：https://github.com/Grt1228/chatgpt-java/issues/8
-如何实现流式输出？ | 升级1.0.2版本，参考源码：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/)
-如何整合SpringBoot实现流式输出的Api接口？ | 参考另外一个项目：[chatgpt-steam-output](https://github.com/Grt1228/chatgpt-steam-output)
-最新版GPT-3.5-TURBO是否支持？ | 升级1.0.3 已经支持ChatCompletion, 参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
-最新版语言转文字和语言翻译是否支持？ | 升级1.0.3 已经支持whisper参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
----
-# 工程简介
+# 🚀 快速开始
+本项目支持**默认输出**和**流式输出**。完整SDK测试案例参考：
+SDK测试案例 | Tokens测试案例 |
+---|---|
+[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) | Tokens计算参考：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java)|
 
-**ChatGPT的Java客户端**
+## 方式一
 
-OpenAI官方Api的Java SDK
-
-目前支持api-keys的方式调用，获取api-keys可以百度或者csdn查一下。
-
-**api-keys的方式调用目前需要用梯子才可访问。**
-
-OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
-
-# 快速开始
-本项目支持**默认输出**和**流式输出**
-## 1、导入pom依赖
+### 1、导入pom依赖
 ```
 <dependency>
     <groupId>com.unfbx</groupId>
@@ -77,9 +90,9 @@ OpenAi官方文档地址：https://platform.openai.com/docs/api-reference
     <version>1.0.12</version>
 </dependency>
 ```
-## 2、流式客户端使用示例：
+### 2、流式客户端使用示例：
 更多SDK示例参考：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) 
-### 默认OkHttpClient
+#### 默认OkHttpClient
 ```
 public class Test {
     public static void main(String[] args) {
@@ -105,7 +118,7 @@ public class Test {
     }
 }
 ```
-### 自定义OkHttpClient客户端使用示例：
+#### 自定义OkHttpClient客户端使用示例：
 ```
 public class Test {
     public static void main(String[] args) {
@@ -154,9 +167,9 @@ public class Test {
 23:03:59.815 [省略无效信息] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI返回数据结束了
 23:03:59.815 [省略无效信息] INFO com.unfbx.chatgpt.sse.ConsoleEventSourceListener - OpenAI关闭sse连接...
 ```
-## 3、默认客户端使用示例（支持全部API）：
+### 3、默认客户端使用示例（支持全部API）：
 更多SDK示例参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 
-### 默认OkHttpClient
+#### 默认OkHttpClient
 ```
 public class Test {
     public static void main(String[] args) {
@@ -178,7 +191,7 @@ public class Test {
     }
 }
 ```
-### 自定义OkHttpClient客户端使用示例：
+#### 自定义OkHttpClient客户端使用示例：
 ```
 public class Test {
     public static void main(String[] args) {
@@ -218,32 +231,33 @@ public class Test {
 }
 ```
 ## 方式二（下载源码直接运行）
+下载源码打包
+# ❔ QA
+Q | A
+---|---
+如何实现连续对话？ | issues：https://github.com/Grt1228/chatgpt-java/issues/8
+如何实现流式输出？ | 升级1.0.2版本，参考源码：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/)
+如何整合SpringBoot实现流式输出的Api接口？ | 参考另外一个项目：[chatgpt-steam-output](https://github.com/Grt1228/chatgpt-steam-output)
+最新版GPT-3.5-TURBO是否支持？ | 升级1.0.3 已经支持ChatCompletion, 参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
+最新版语言转文字和语言翻译是否支持？ | 升级1.0.3 已经支持whisper参考测试案例：[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java/) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java/)
 
-### **OpenAI全部接口支持调用**
-完整测试案例参考：com.unfbx.chatgpt.OpenAiClientTest 和 com.unfbx.chatgpt.OpenAiStreamClientTest
+# 📌 国内访问解决方案
+国内访问可以看下这个解决方案：**https://github.com/noobnooc/noobnooc/discussions/9**
 
---- 
-注意：由于这个接口：
-
-https://platform.openai.com/docs/api-reference/files/retrieve-content
-
-**免费用户无法使用，所以并未经过测试！！！**（哪位朋友有收费版keys也可以提供下）
-
-**完整测试案例参考源码中的：com.unfbx.chatgpt.OpenAiClientTest**和
-**com.unfbx.chatgpt.OpenAiStreamClientTest**
-
-# Star History
+# 📋 开发案例收集
+**基于本SDK开发案例收集**：[chatgpt-java SDK案例征集](https://github.com/Grt1228/chatgpt-java/issues/87) 
+# 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=Grt1228/chatgpt-java&type=Date)](https://star-history.com/#Grt1228/chatgpt-java&Date)
 
 
-# 站在巨人的肩膀
-鸣谢：
-OpenAi：https://openai.com/
+# 🙏 鸣谢
+站在巨人的肩膀：
+- OpenAi：https://openai.com/
+- [knuddelsgmbh](https://github.com/knuddelsgmbh) 的[jtokkit](https://github.com/knuddelsgmbh/jtokkit) 的开源计算算法。
 
-[knuddelsgmbh](https://github.com/knuddelsgmbh) 的[jtokkit](https://github.com/knuddelsgmbh/jtokkit) 的开源计算算法。
 
+# ☕ 打赏
+如果项目对你有帮助，可以选择请我喝杯奶茶
 
-# 如果项目对你有帮助，可以选择请我喝杯奶茶
-
-<img width="156" alt="微信截图_20230405222411" src="https://user-images.githubusercontent.com/27008803/230111508-3179cf30-e128-4b2e-9645-157266c491ce.png"><img width="164" alt="微信截图_20230405222357" src="https://user-images.githubusercontent.com/27008803/230111525-322f5036-d06d-46bb-94d1-db8ce9ed2adf.png">
+<img width="180" alt="微信截图_20230405222411" src="https://user-images.githubusercontent.com/27008803/230111508-3179cf30-e128-4b2e-9645-157266c491ce.png">  <img width="164" alt="微信截图_20230405222357" src="https://user-images.githubusercontent.com/27008803/230111525-322f5036-d06d-46bb-94d1-db8ce9ed2adf.png">
