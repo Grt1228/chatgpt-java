@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Slf4j
-public class DealKeyWithOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
+public class DynamicKeyOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
     /**
      * 账号被封了
      */
@@ -37,7 +37,7 @@ public class DealKeyWithOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
      * 请求头处理
      *
      */
-    public DealKeyWithOpenAiAuthInterceptor() {
+    public DynamicKeyOpenAiAuthInterceptor() {
         this.setWarringConfig(null);
     }
 
@@ -46,7 +46,7 @@ public class DealKeyWithOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
      *
      * @param warringConfig 所有的key都失效后的告警参数配置
      */
-    public DealKeyWithOpenAiAuthInterceptor(Map warringConfig) {
+    public DynamicKeyOpenAiAuthInterceptor(Map warringConfig) {
         this.setWarringConfig(warringConfig);
     }
 

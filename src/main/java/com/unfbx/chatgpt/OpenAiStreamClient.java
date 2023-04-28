@@ -19,6 +19,7 @@ import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import com.unfbx.chatgpt.interceptor.DefaultOpenAiAuthInterceptor;
+import com.unfbx.chatgpt.interceptor.DynamicKeyOpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAiAuthInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import io.reactivex.Single;
@@ -78,7 +79,7 @@ public class OpenAiStreamClient {
      * 可以不设置，默认实现：DefaultOpenAiAuthInterceptor <br/>
      * 如需自定义实现参考：DealKeyWithOpenAiAuthInterceptor
      *
-     * @see com.unfbx.chatgpt.interceptor.DealKeyWithOpenAiAuthInterceptor
+     * @see DynamicKeyOpenAiAuthInterceptor
      * @see DefaultOpenAiAuthInterceptor
      */
     @Getter
