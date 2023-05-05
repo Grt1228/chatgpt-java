@@ -45,11 +45,6 @@ The Java SDK for OpenAI's official API allows for quick integration into project
 | Embeddings | Custom Training Models | Text Review, Sensitive Word Identification | Fine-tune | Model Retrieval |
 
 
-
-
----|---|---|---|---
-SSE Reference: [OpenAISSEEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput
-
 Supports streaming output:
 Streaming output implementation | Mini Program | Android | iOS | H5 
 ---|---|---|---|---
