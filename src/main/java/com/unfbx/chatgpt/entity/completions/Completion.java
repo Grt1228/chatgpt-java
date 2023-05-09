@@ -76,7 +76,7 @@ public class Completion implements Serializable {
     private Integer logprobs;
 
     @Builder.Default
-    private boolean echo = false;
+    private Boolean echo = false;
 
     private List<String> stop;
 
