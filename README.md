@@ -2,6 +2,7 @@
 it’s an “unofficial" or "community-maintained” library.
 这是一个非官方的社区维护的库。有bug欢迎朋友们指出，互相学习。
 > **原创发布转载注明出处！**
+
 To English Doc -> [English Doc](README_EN.md)
 
 开源协议：[LICENSE](https://github.com/Grt1228/chatgpt-java/blob/main/LICENSE) 
