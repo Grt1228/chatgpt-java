@@ -34,6 +34,11 @@ public class DynamicKeyOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
     private static final String INVALID_API_KEY = "invalid_api_key";
 
     /**
+     * 配额不足
+     * */
+    private static final String INSUFFICIENT_QUOTA  = "insufficient_quota";
+
+    /**
      * 请求头处理
      *
      */
@@ -56,8 +61,11 @@ public class DynamicKeyOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
         Request original = chain.request();
         Request request = this.auth(key, original);
         Response response = chain.proceed(request);
+        String errorMsg = "";
         if (!response.isSuccessful()) {
-            String errorMsg = response.body().string();
+            // refactored the code so the possibility of null pointer exception is removed
+                errorMsg = response.body() != null ? response.body().string(): "Response body is empty!";
+
             if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
                     || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()
                     || response.code() == CommonError.OPENAI_SERVER_ERROR.code()) {
@@ -66,7 +74,7 @@ public class DynamicKeyOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
                 log.error("--------> 请求openai异常，错误code：{}", errorCode);
                 log.error("--------> 请求异常：{}", errorMsg);
                 //账号被封或者key不正确就移除掉
-                if (ACCOUNT_DEACTIVATED.equals(errorCode) || INVALID_API_KEY.equals(errorCode)) {
+                if (ACCOUNT_DEACTIVATED.equals(errorCode) || INVALID_API_KEY.equals(errorCode) || INSUFFICIENT_QUOTA.equals(errorCode)) {
                     super.setApiKey(this.onErrorDealApiKeys(key));
                 }
                 throw new BaseException(openAiResponse.getError().getMessage());
