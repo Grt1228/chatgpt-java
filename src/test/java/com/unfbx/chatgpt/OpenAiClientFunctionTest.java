@@ -50,7 +50,7 @@ public class OpenAiClientFunctionTest {
                 .build();
         v2 = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("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"))
+                .apiKey(Arrays.asList("********************"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy())
 //                .keyStrategy(new FirstKeyStrategy())
