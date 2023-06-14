@@ -65,6 +65,7 @@ WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Gr
 - Supports all OpenAI APIs.
 
 # 📑 Update Log
+- [ ] 1.0.14 Upgrade to support the latest version 0614 model, support function-calling
 - [x] 1.0.13  Added support for custom handling of key exceptions (invalid, expired, blocked) with the implementation reference [DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java). Also added support for alerting on key exceptions (DingTalk, Feishu, email, WeChat Enterprise, etc.), which requires custom development.
 - [x] 1.0.12  Optimized token calculation, modified delete model interface, and updated speech interface to support the latest official parameters.
 - [x] 1.0.11  Added new balance query interface with reference to [OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) and [OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java). Fixed slow token calculation issue.
