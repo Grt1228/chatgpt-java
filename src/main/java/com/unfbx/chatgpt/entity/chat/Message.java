@@ -1,6 +1,7 @@
 package com.unfbx.chatgpt.entity.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -27,6 +28,9 @@ public class Message implements Serializable {
 
     private String name;
 
+    @JsonProperty("function_call")
+    private Object functionCall;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -34,14 +38,16 @@ public class Message implements Serializable {
     /**
      * 构造函数
      *
-     * @param role    角色
-     * @param content 描述主题信息
-     * @param name    name
+     * @param role         角色
+     * @param content      描述主题信息
+     * @param name         name
+     * @param functionCall functionCall
      */
-    public Message(String role, String content, String name) {
+    public Message(String role, String content, String name, Object functionCall) {
         this.role = role;
         this.content = content;
         this.name = name;
+        this.functionCall = functionCall;
     }
 
     public Message() {
@@ -51,6 +57,7 @@ public class Message implements Serializable {
         setRole(builder.role);
         setContent(builder.content);
         setName(builder.name);
+        setFunctionCall(builder.functionCall);
     }
 
 
@@ -61,6 +68,7 @@ public class Message implements Serializable {
         SYSTEM("system"),
         USER("user"),
         ASSISTANT("assistant"),
+        FUNCTION("function"),
         ;
         private String name;
     }
@@ -69,6 +77,7 @@ public class Message implements Serializable {
         private String role;
         private String content;
         private String name;
+        private Object functionCall;
 
         public Builder() {
         }
@@ -85,6 +94,11 @@ public class Message implements Serializable {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder functionCall(Object functionCall) {
+            this.functionCall = functionCall;
             return this;
         }
 

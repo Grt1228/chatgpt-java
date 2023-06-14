@@ -34,6 +34,9 @@ public class ChatCompletion implements Serializable {
      */
     @NonNull
     private List<Message> messages;
+
+    private List<Functions> functions;
+
     /**
      * 使用什么取样温度，0到2之间。较高的值(如0.8)将使输出更加随机，而较低的值(如0.2)将使输出更加集中和确定。
      * <p>
