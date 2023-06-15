@@ -55,7 +55,7 @@ public interface OpenAiApi {
     /**
      * models 返回的数据id
      *
-     * @param id
+     * @param id    模型主键
      * @return Single Model
      */
     @GET("v1/models/{id}")
@@ -314,7 +314,7 @@ public interface OpenAiApi {
     /**
      * 账户信息查询：里面包含总金额（美元）等信息
      *
-     * @return
+     * @return  账户信息
      */
     @GET("v1/dashboard/billing/subscription")
     Single<Subscription> subscription();

@@ -104,7 +104,7 @@ public class Completion implements Serializable {
 
     /**
      * 获取当前参数的tokens数
-     * @return
+     * @return  token数量
      */
     public long tokens() {
         if (StrUtil.isBlank(this.prompt) || StrUtil.isBlank(this.model)) {

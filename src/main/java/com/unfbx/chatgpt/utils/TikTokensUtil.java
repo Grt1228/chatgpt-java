@@ -223,9 +223,9 @@ public class TikTokensUtil {
     /**
      * 通过模型名称和encoded编码数组，反推字符串文本
      *
-     * @param modelName
-     * @param encoded
-     * @return
+     * @param modelName 模型名
+     * @param encoded   编码数组
+     * @return 返回源文本
      */
     public static String decode(@NotNull String modelName, @NotNull List<Integer> encoded) {
         Encoding enc = getEncoding(modelName);
@@ -236,16 +236,15 @@ public class TikTokensUtil {
     /**
      * 获取modelType
      *
-     * @param name
-     * @return
+     * @param name 模型名称
+     * @return ModelType
      */
     public static ModelType getModelTypeByName(String name) {
         if (
                 ChatCompletion.Model.GPT_3_5_TURBO_0301.getName().equals(name) ||
-                ChatCompletion.Model.GPT_3_5_TURBO_0613.getName().equals(name) ||
-                ChatCompletion.Model.GPT_3_5_TURBO_16K.getName().equals(name) ||
-                ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName().equals(name) ||
-                ChatCompletion.Model.GPT_3_5_TURBO_0301.getName().equals(name)
+                        ChatCompletion.Model.GPT_3_5_TURBO_0613.getName().equals(name) ||
+                        ChatCompletion.Model.GPT_3_5_TURBO_16K.getName().equals(name) ||
+                        ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName().equals(name)
         ) {
             return ModelType.GPT_3_5_TURBO;
         }

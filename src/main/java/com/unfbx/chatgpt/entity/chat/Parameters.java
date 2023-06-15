@@ -8,6 +8,7 @@ import java.util.List;
 /**
  * 描述：方法参数类，扩展参数可以继承Parameters自己实现
  * 参考：
+ * <pre>
  * {
  *     "type": "object",
  *     "properties": {
@@ -19,9 +20,9 @@ import java.util.List;
  *     },
  *     "required": ["location"]
  * }
- *
+ * </pre>
  * @author https:www.unfbx.com
- * @time 2023-06-14
+ * @since  2023-06-14
  */
 @Data
 @Builder

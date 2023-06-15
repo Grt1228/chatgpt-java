@@ -310,7 +310,7 @@ public class OpenAiStreamClient {
      *
      * @param starDate 开始时间
      * @param endDate  结束时间
-     * @return
+     * @return  消耗金额信息
      */
     public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
         Single<BillingUsage> billingUsage = this.openAiApi.billingUsage(starDate, endDate);
@@ -320,7 +320,7 @@ public class OpenAiStreamClient {
     /**
      * 构造
      *
-     * @return
+     * @return Builder
      */
     public static OpenAiStreamClient.Builder builder() {
         return new OpenAiStreamClient.Builder();
@@ -361,7 +361,7 @@ public class OpenAiStreamClient {
 
         /**
          * @param val api请求地址，结尾处有斜杠
-         * @return
+         * @return Builder
          * @see com.unfbx.chatgpt.constant.OpenAIConst
          */
         public Builder apiHost(String val) {

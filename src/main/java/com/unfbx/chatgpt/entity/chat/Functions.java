@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.chat;
 
+import cn.hutool.core.date.StopWatch;
 import lombok.Builder;
 import lombok.Data;
 
@@ -7,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * 描述：方法参数实体类，实例数据如下
- * <p>
+ * <pre>
  *     {
  *          "name": "get_current_weather",
  *          "description": "Get the current weather in a given location",
@@ -23,9 +24,9 @@ import java.io.Serializable;
  *              "required": ["location"]
  *          },
  *     }
- * <p/>
+ * </pre>
  * @author https:www.unfbx.com
- * @time 2023-06-14
+ * @since  2023-06-14
  */
 @Data
 @Builder
