@@ -35,9 +35,14 @@ public class TikTokensUtil {
             modelMap.put(modelType.getName(), registry.getEncodingForModel(modelType));
         }
         modelMap.put(ChatCompletion.Model.GPT_3_5_TURBO_0301.getName(), registry.getEncodingForModel(ModelType.GPT_3_5_TURBO));
+        modelMap.put(ChatCompletion.Model.GPT_3_5_TURBO_0613.getName(), registry.getEncodingForModel(ModelType.GPT_3_5_TURBO));
+        modelMap.put(ChatCompletion.Model.GPT_3_5_TURBO_16K.getName(), registry.getEncodingForModel(ModelType.GPT_3_5_TURBO));
+        modelMap.put(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName(), registry.getEncodingForModel(ModelType.GPT_3_5_TURBO));
         modelMap.put(ChatCompletion.Model.GPT_4_32K.getName(), registry.getEncodingForModel(ModelType.GPT_4));
         modelMap.put(ChatCompletion.Model.GPT_4_32K_0314.getName(), registry.getEncodingForModel(ModelType.GPT_4));
         modelMap.put(ChatCompletion.Model.GPT_4_0314.getName(), registry.getEncodingForModel(ModelType.GPT_4));
+        modelMap.put(ChatCompletion.Model.GPT_4_0613.getName(), registry.getEncodingForModel(ModelType.GPT_4));
+        modelMap.put(ChatCompletion.Model.GPT_4_32K_0613.getName(), registry.getEncodingForModel(ModelType.GPT_4));
     }
 
     /**
@@ -180,12 +185,24 @@ public class TikTokensUtil {
         int tokensPerMessage = 0;
         int tokensPerName = 0;
         //3.5统一处理
-        if (modelName.equals("gpt-3.5-turbo-0301") || modelName.equals("gpt-3.5-turbo")) {
+        if (modelName.equals("gpt-3.5-turbo-0301")
+                || modelName.equals("gpt-3.5-turbo")
+                || modelName.equals("gpt-3.5-turbo-0613")
+                || modelName.equals("gpt-3.5-turbo-16k")
+                || modelName.equals("gpt-3.5-turbo-16k-0613")
+
+        ) {
             tokensPerMessage = 4;
             tokensPerName = -1;
         }
         //4.0统一处理
-        if (modelName.equals("gpt-4") || modelName.equals("gpt-4-0314")) {
+        if (modelName.equals("gpt-4")
+                || modelName.equals("gpt-4-0314")
+                || modelName.equals("gpt-4-32k")
+                || modelName.equals("gpt-4-32k-0314")
+                || modelName.equals("gpt-4-0613")
+                || modelName.equals("gpt-4-32k-0613")
+        ) {
             tokensPerMessage = 3;
             tokensPerName = 1;
         }
@@ -223,13 +240,22 @@ public class TikTokensUtil {
      * @return
      */
     public static ModelType getModelTypeByName(String name) {
-        if (ChatCompletion.Model.GPT_3_5_TURBO_0301.getName().equals(name)) {
+        if (
+                ChatCompletion.Model.GPT_3_5_TURBO_0301.getName().equals(name) ||
+                ChatCompletion.Model.GPT_3_5_TURBO_0613.getName().equals(name) ||
+                ChatCompletion.Model.GPT_3_5_TURBO_16K.getName().equals(name) ||
+                ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName().equals(name) ||
+                ChatCompletion.Model.GPT_3_5_TURBO_0301.getName().equals(name)
+        ) {
             return ModelType.GPT_3_5_TURBO;
         }
         if (ChatCompletion.Model.GPT_4.getName().equals(name)
                 || ChatCompletion.Model.GPT_4_32K.getName().equals(name)
                 || ChatCompletion.Model.GPT_4_32K_0314.getName().equals(name)
-                || ChatCompletion.Model.GPT_4_0314.getName().equals(name)) {
+                || ChatCompletion.Model.GPT_4_0314.getName().equals(name)
+                || ChatCompletion.Model.GPT_4_0613.getName().equals(name)
+                || ChatCompletion.Model.GPT_4_32K_0613.getName().equals(name)
+        ) {
             return ModelType.GPT_4;
         }
 

@@ -20,7 +20,8 @@ import java.io.Serializable;
 public class Message implements Serializable {
 
     /**
-     * 目前支持三中角色参考官网，进行情景输入：https://platform.openai.com/docs/guides/chat/introduction
+     * 目前支持四个中角色参考官网，进行情景输入：
+     * https://platform.openai.com/docs/guides/chat/introduction
      */
     private String role;
 
@@ -29,7 +30,7 @@ public class Message implements Serializable {
     private String name;
 
     @JsonProperty("function_call")
-    private Object functionCall;
+    private FunctionCall functionCall;
 
     public static Builder builder() {
         return new Builder();
@@ -43,7 +44,7 @@ public class Message implements Serializable {
      * @param name         name
      * @param functionCall functionCall
      */
-    public Message(String role, String content, String name, Object functionCall) {
+    public Message(String role, String content, String name, FunctionCall functionCall) {
         this.role = role;
         this.content = content;
         this.name = name;
@@ -77,13 +78,18 @@ public class Message implements Serializable {
         private String role;
         private String content;
         private String name;
-        private Object functionCall;
+        private FunctionCall functionCall;
 
         public Builder() {
         }
 
         public Builder role(Role role) {
             this.role = role.getName();
+            return this;
+        }
+
+        public Builder role(String role) {
+            this.role = role;
             return this;
         }
 
@@ -97,7 +103,7 @@ public class Message implements Serializable {
             return this;
         }
 
-        public Builder functionCall(Object functionCall) {
+        public Builder functionCall(FunctionCall functionCall) {
             this.functionCall = functionCall;
             return this;
         }
