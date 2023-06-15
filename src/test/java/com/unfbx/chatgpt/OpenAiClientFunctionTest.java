@@ -53,7 +53,7 @@ public class OpenAiClientFunctionTest {
                 .build();
         openAiClient = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("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"))
+                .apiKey(Arrays.asList("sk-******************"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy())
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
@@ -64,7 +64,7 @@ public class OpenAiClientFunctionTest {
 
         openAiStreamClient = OpenAiStreamClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("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"))
+                .apiKey(Arrays.asList("sk-*********************"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy())
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
@@ -74,6 +74,21 @@ public class OpenAiClientFunctionTest {
                 .build();
     }
 
+    /**
+     * 阻塞输出日志如下：
+     *
+     * [main] INFO com.unfbx.chatgpt.OpenAiClientFunctionTest - 自定义的方法返回值：词语：苹果
+     *
+     * 用途：苹果是一种水果，具有多种用途。以下是苹果的几种常见用途：
+     *
+     * 1. 直接吃：苹果可以直接食用，具有清爽的口感和丰富的营养成分，是一种健康的零食选择。
+     *
+     * 2. 做沙拉：苹果可以切成块状或丝状，加入其他蔬菜和调味料，制作成沙拉。苹果的甜脆口感可以为沙拉增添口感和风味。
+     *
+     * 3. 售卖：苹果是一种常见的水果，可以被商家售卖。人们可以购买苹果作为食物或礼物，满足自己或他人的需求。
+     *
+     * 总之，苹果是一种多功能的水果，可以直接食用，也可以用于制作沙拉，同时也是一种常见的商业商品。
+     */
     @Test
     public void chatFunction() {
 
@@ -139,23 +154,28 @@ public class OpenAiClientFunctionTest {
                 .build();
         ChatCompletionResponse chatCompletionResponseV2 = openAiClient.chatCompletion(chatCompletionV2);
         log.info("自定义的方法返回值：{}",chatCompletionResponseV2.getChoices().get(0).getMessage().getContent());
-
-        /**
-         * [main] INFO com.unfbx.chatgpt.OpenAiClientFunctionTest - 自定义的方法返回值：词语：苹果
-         *
-         * 用途：苹果是一种水果，具有多种用途。以下是苹果的几种常见用途：
-         *
-         * 1. 直接吃：苹果可以直接食用，具有清爽的口感和丰富的营养成分，是一种健康的零食选择。
-         *
-         * 2. 做沙拉：苹果可以切成块状或丝状，加入其他蔬菜和调味料，制作成沙拉。苹果的甜脆口感可以为沙拉增添口感和风味。
-         *
-         * 3. 售卖：苹果是一种常见的水果，可以被商家售卖。人们可以购买苹果作为食物或礼物，满足自己或他人的需求。
-         *
-         * 总之，苹果是一种多功能的水果，可以直接食用，也可以用于制作沙拉，同时也是一种常见的商业商品。
-         */
     }
 
 
+    /**
+     * 流式输出最后输出日志如下
+     * .........省略省略省略省略省略............
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"、"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"水"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"果"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"摊"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"等"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"渠"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"道"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"进行"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"销"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"售"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{"content":"。"},"finish_reason":null}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：{"id":"chatcmpl-7RXBSbHZPGCbiV9uO9iPlgoZ56t9y","object":"chat.completion.chunk","created":1686796770,"model":"gpt-3.5-turbo-16k-0613","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据：[DONE]
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI返回数据结束了
+     * [OkHttp https://dgr.life/...] INFO com.unfbx.chatgpt.ConsoleEventSourceListenerV2 - OpenAI关闭sse连接...
+     */
     @Test
     public void streamChatFunction() {
         CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -231,22 +251,13 @@ public class OpenAiClientFunctionTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        /**
-         * [main] INFO com.unfbx.chatgpt.OpenAiClientFunctionTest - 自定义的方法返回值：词语：苹果
-         *
-         * 用途：苹果是一种水果，具有多种用途。以下是苹果的几种常见用途：
-         *
-         * 1. 直接吃：苹果可以直接食用，具有清爽的口感和丰富的营养成分，是一种健康的零食选择。
-         *
-         * 2. 做沙拉：苹果可以切成块状或丝状，加入其他蔬菜和调味料，制作成沙拉。苹果的甜脆口感可以为沙拉增添口感和风味。
-         *
-         * 3. 售卖：苹果是一种常见的水果，可以被商家售卖。人们可以购买苹果作为食物或礼物，满足自己或他人的需求。
-         *
-         * 总之，苹果是一种多功能的水果，可以直接食用，也可以用于制作沙拉，同时也是一种常见的商业商品。
-         */
     }
 
+    /**
+     * 获取一个词语
+     * @param wordParam
+     * @return
+     */
     public String getOneWord(WordParam wordParam) {
 
         List<String> zh = Arrays.asList("大香蕉", "哈密瓜", "苹果");

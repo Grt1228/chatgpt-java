@@ -43,7 +43,9 @@ public class ConsoleEventSourceListenerV2 extends EventSourceListener {
             return;
         }
         ChatCompletionResponse chatCompletionResponse = JSONUtil.toBean(data, ChatCompletionResponse.class);
-        args += chatCompletionResponse.getChoices().get(0).getDelta().getFunctionCall().getArguments();
+        if(Objects.nonNull(chatCompletionResponse.getChoices().get(0).getDelta().getFunctionCall())){
+            args += chatCompletionResponse.getChoices().get(0).getDelta().getFunctionCall().getArguments();
+        }
     }
 
     @Override
