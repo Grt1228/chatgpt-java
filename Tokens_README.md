@@ -2,7 +2,7 @@
 chatgpt-java 更新到1.0.10支持Tokens计算，增加[TikTokensUtil](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/utils/TikTokensUtil.java) 工具类.
 
 ## tokens计算说明
-openai 的tokens计算规则适合模型先关的，不同的模型计算方法是不一样的。大致的表格如下：
+openai 的tokens计算规则和模型相关的，不同的模型计算方法是不一样的。大致的表格如下：
 
 ## 关于流式返回
 流式返回的数据，返回行数-2=返回tokens
@@ -28,7 +28,7 @@ openai 的tokens计算规则适合模型先关的，不同的模型计算方法�
 ## 使用示例
 完整使用示例请参考：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java)
 
-结合chat模型使用示例：
+### 结合chat模型使用示例：
 完整示例参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java)
 ```
     public void chatTokensTest() {
@@ -51,7 +51,7 @@ openai 的tokens计算规则适合模型先关的，不同的模型计算方法�
         log.info("Open AI 官方计算的返回的tokens数{}", chatCompletionResponse.getUsage().getCompletionTokens());
     }
 ```
-单独使用示例：
+### 单独使用示例：
 ```java
 public class TikTokensTest {
     String text;
