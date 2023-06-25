@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.moderations;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
  *  2023-02-15
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryScores implements Serializable {
     private BigDecimal hate;
     @JsonProperty("hate/threatening")

@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.moderations;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  *  2023-02-15
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Categories implements Serializable {
     /**
      * 表达、煽动或宣扬基于种族、性别、民族、宗教、国籍、性取向、残疾状况或种姓的仇恨的内容。

@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.completions;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.common.Choice;
 import com.unfbx.chatgpt.entity.common.Usage;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  *  2023-02-11
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CompletionResponse extends OpenAiResponse implements Serializable {
     private String id;
     private String object;

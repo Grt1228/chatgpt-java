@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.chat;
 
+import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

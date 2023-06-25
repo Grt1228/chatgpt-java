@@ -1,12 +1,14 @@
 package com.unfbx.chatgpt.utils;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.EncodingType;
 import com.knuddels.jtokkit.api.ModelType;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.FunctionCall;
 import com.unfbx.chatgpt.entity.chat.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -184,27 +186,29 @@ public class TikTokensUtil {
         Encoding encoding = getEncoding(modelName);
         int tokensPerMessage = 0;
         int tokensPerName = 0;
-        //3.5统一处理
-        if (modelName.equals("gpt-3.5-turbo-0301")
-                || modelName.equals("gpt-3.5-turbo")
-                || modelName.equals("gpt-3.5-turbo-0613")
-                || modelName.equals("gpt-3.5-turbo-16k")
-                || modelName.equals("gpt-3.5-turbo-16k-0613")
-
-        ) {
-            tokensPerMessage = 4;
-            tokensPerName = -1;
-        }
-        //4.0统一处理
-        if (modelName.equals("gpt-4")
-                || modelName.equals("gpt-4-0314")
-                || modelName.equals("gpt-4-32k")
-                || modelName.equals("gpt-4-32k-0314")
-                || modelName.equals("gpt-4-0613")
-                || modelName.equals("gpt-4-32k-0613")
+        if (modelName.equals(ChatCompletion.Model.GPT_3_5_TURBO_0613.getName())
+                || modelName.equals(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
+                || modelName.equals(ChatCompletion.Model.GPT_4_0314.getName())
+                || modelName.equals(ChatCompletion.Model.GPT_4_32K_0314.getName())
+                || modelName.equals(ChatCompletion.Model.GPT_4_0613.getName())
+                || modelName.equals(ChatCompletion.Model.GPT_4_32K_0613.getName())
         ) {
             tokensPerMessage = 3;
             tokensPerName = 1;
+        }else if(modelName.equals(ChatCompletion.Model.GPT_3_5_TURBO_0301.getName())){
+            tokensPerMessage = 4;
+            tokensPerName = -1;
+        }else if(modelName.contains(ChatCompletion.Model.GPT_3_5_TURBO.getName())){
+            //"gpt-3.5-turbo" in model:
+            log.warn("Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.");
+            tokensPerMessage = 3;
+            tokensPerName = 1;
+        }else if(modelName.contains(ChatCompletion.Model.GPT_4.getName())){
+            log.warn("Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.");
+            tokensPerMessage = 3;
+            tokensPerName = 1;
+        }else {
+            log.warn("不支持的model {}. See https://github.com/openai/openai-python/blob/main/chatml.md 更多信息.",modelName);
         }
         int sum = 0;
         for (Message msg : messages) {
@@ -212,6 +216,8 @@ public class TikTokensUtil {
             sum += tokens(encoding, msg.getContent());
             sum += tokens(encoding, msg.getRole());
             sum += tokens(encoding, msg.getName());
+            FunctionCall functionCall = msg.getFunctionCall();
+            sum += Objects.isNull(functionCall) ? 0 : tokens(encoding, functionCall.toString());
             if (StrUtil.isNotBlank(msg.getName())) {
                 sum += tokensPerName;
             }
