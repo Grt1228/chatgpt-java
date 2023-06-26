@@ -3,7 +3,10 @@ it’s an “unofficial" or "community-maintained” library.
 这是一个非官方的社区维护的库。有bug欢迎朋友们指出，互相学习。
 > **原创发布转载注明出处！**
 
+> 文档地址：https://chatgpt-java.unfbx.com/
+
 To English Doc -> [English Doc](README_EN.md)
+
 
 ### 💬 联系我，ChatGPT相关学习交流咨询全部免费。
 
