@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.engines;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  *  2023-02-15
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Engine implements Serializable {
 
     private String id;

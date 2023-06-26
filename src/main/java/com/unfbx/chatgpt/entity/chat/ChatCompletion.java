@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 描述： chat
+ * 描述： chat模型参数
  *
  * @author https:www.unfbx.com
  * @since 2023-03-02
@@ -34,6 +34,18 @@ public class ChatCompletion implements Serializable {
      */
     @NonNull
     private List<Message> messages;
+
+    private List<Functions> functions;
+
+    /**
+     * 取值：null,auto或者自定义
+     * functions没有值的时候默认为：null
+     * functions存在值得时候默认为：auto
+     * 也可以自定义
+     */
+    @JsonProperty("function_call")
+    private Object functionCall;
+
     /**
      * 使用什么取样温度，0到2之间。较高的值(如0.8)将使输出更加随机，而较低的值(如0.2)将使输出更加集中和确定。
      * <p>
@@ -108,7 +120,10 @@ public class ChatCompletion implements Serializable {
         return TikTokensUtil.tokens(this.model, this.messages);
     }
 
-
+    /**
+     * 最新模型参考官方文档：
+     * <a href="https://platform.openai.com/docs/models/model-endpoint-compatibility">官方稳定模型列表</a>
+     */
     @Getter
     @AllArgsConstructor
     public enum Model {
@@ -117,25 +132,48 @@ public class ChatCompletion implements Serializable {
          */
         GPT_3_5_TURBO("gpt-3.5-turbo"),
         /**
-         * 临时模型，不建议使用
+         * 临时模型，不建议使用，2023年9 月 13 日将被弃用
          */
+        @Deprecated
         GPT_3_5_TURBO_0301("gpt-3.5-turbo-0301"),
+        /**
+         * gpt-3.5-turbo-0613 支持函数
+         */
+        GPT_3_5_TURBO_0613("gpt-3.5-turbo-0613"),
+        /**
+         * gpt-3.5-turbo-16k 超长上下文
+         */
+        GPT_3_5_TURBO_16K("gpt-3.5-turbo-16k"),
+        /**
+         * gpt-3.5-turbo-16k-0613 超长上下文 支持函数
+         */
+        GPT_3_5_TURBO_16K_0613("gpt-3.5-turbo-16k-0613"),
         /**
          * GPT4.0
          */
         GPT_4("gpt-4"),
         /**
-         * 临时模型，不建议使用
+         * 临时模型，不建议使用，2023年9 月 13 日将被弃用
          */
+        @Deprecated
         GPT_4_0314("gpt-4-0314"),
         /**
          * GPT4.0 超长上下文
          */
         GPT_4_32K("gpt-4-32k"),
         /**
-         * 临时模型，不建议使用
+         * 临时模型，不建议使用，2023年9 月 13 日将被弃用
          */
         GPT_4_32K_0314("gpt-4-32k-0314"),
+
+        /**
+         * gpt-4-0613，支持函数
+         */
+        GPT_4_0613("gpt-4-0613"),
+        /**
+         * gpt-4-0613，支持函数
+         */
+        GPT_4_32K_0613("gpt-4-32k-0613"),
         ;
         private String name;
     }

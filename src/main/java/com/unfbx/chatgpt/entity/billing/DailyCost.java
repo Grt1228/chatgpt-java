@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.billing;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @since 2023-04-08
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DailyCost {
     /**
      * 时间戳

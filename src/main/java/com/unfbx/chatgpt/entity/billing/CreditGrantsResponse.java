@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.billing;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
  * @since 2023-03-18
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CreditGrantsResponse implements Serializable {
     private String object;
     /**

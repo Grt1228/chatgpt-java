@@ -37,7 +37,7 @@ public class DefaultOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
      *
      * @param chain Chain
      * @return Response对象
-     * @throws IOException
+     * @throws IOException io异常
      */
     @Override
     public Response intercept(Chain chain) throws IOException {

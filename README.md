@@ -64,11 +64,11 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 - 支持自定义ApiKey的获取策略
 - 支持余额查询
 - 支持个人账户信息查询
-- 支持GPT3、GPT3.5、GPT4.0
+- 支持GPT3、GPT3.5、GPT4.0、GPT3.5—0614、GPT4.0—0614...
 - 支持全部OpenAI的Api
 
 # 📑 更新日志
-- [ ] 1.0.14  升级支持最新版0614模型，支持function-calling
+- [x] 1.0.14  升级支持最新版Gpt-3.5—0614、Gpt-4.0—0614等模型, 支持function-calling完整使用案例参考：[OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java) 
 - [x] 1.0.13  支持当key异常（失效、过期、封禁）时，自定义动态处理key，参考实现[DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java) ，支持key异常时的告警处理（钉钉、飞书、email、企业微信等等需要自定义开发）
 - [x] 1.0.12  tokens计算优化、删除模型接口修改、语音接口更新支持官方最新参数
 - [x] 1.0.11  增加新的余额查询接口参考：[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) ,修复tokens计算慢的问题，
@@ -86,9 +86,10 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 
 # 🚀 快速开始
 本项目支持**默认输出**和**流式输出**。完整SDK测试案例参考：
-SDK测试案例 | Tokens测试案例 |
----|---|
-[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) | Tokens计算参考：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java)|
+
+SDK测试案例 | Tokens计算测试案例 | 完整Function-Call调用案例
+---| --- | ---
+[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) 和[OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) | Tokens计算参考：[TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java) | [OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java)
 
 ## 方式一
 
@@ -97,7 +98,7 @@ SDK测试案例 | Tokens测试案例 |
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.14-beta1</version>
 </dependency>
 ```
 ### 2、流式客户端使用示例：
