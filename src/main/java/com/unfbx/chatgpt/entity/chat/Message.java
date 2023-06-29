@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
@@ -73,7 +72,7 @@ public class Message implements Serializable {
         ASSISTANT("assistant"),
         FUNCTION("function"),
         ;
-        private String name;
+        private final String name;
     }
 
     public static final class Builder {

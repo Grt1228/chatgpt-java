@@ -56,7 +56,7 @@ public class DynamicKeyOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
         Request original = chain.request();
         Request request = this.auth(key, original);
         Response response = chain.proceed(request);
-        if (!response.isSuccessful()) {
+        if (!response.isSuccessful() && response.body() != null) {
             String errorMsg = response.body().string();
             if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
                     || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()

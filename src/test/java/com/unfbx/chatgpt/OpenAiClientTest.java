@@ -39,8 +39,7 @@ import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -158,7 +157,7 @@ public class OpenAiClientTest {
         Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴！").build();
         ChatCompletion chatCompletion = ChatCompletion
                 .builder()
-                .messages(Arrays.asList(message))
+                .messages(Collections.singletonList(message))
                 .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponse = v2.chatCompletion(chatCompletion);
@@ -374,6 +373,7 @@ public class OpenAiClientTest {
      * 暂时没有测试
      */
     @Test
+    @Ignore
     public void retrieveFileContent() {
 //        ResponseBody responseBody = v2.retrieveFileContent("file-EHB0Wp3wcZu6tpbwkB6xeiEd");
 //        System.out.println(responseBody);
@@ -405,14 +405,14 @@ public class OpenAiClientTest {
 
     @Test
     public void moderationsv3() {
-        List<String> list = Arrays.asList("I want to kill them.");
+        List<String> list = Collections.singletonList("I want to kill them.");
         ModerationResponse moderations = v2.moderations(list);
         System.out.println(moderations);
     }
 
     @Test
     public void moderationsV2() {
-        Moderation moderation = Moderation.builder().input(Arrays.asList("I want to kill them.")).build();
+        Moderation moderation = Moderation.builder().input(Collections.singletonList("I want to kill them.")).build();
         ModerationResponse moderations = v2.moderations(moderation);
         System.out.println(moderations);
     }

@@ -1,6 +1,5 @@
 package com.unfbx.chatgpt.entity.chat;
 
-import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 /**
  * 描述：函数调用返回值
  *
- * @author https://www.unfbx.com
+ * @author <a href="https://www.unfbx.com">unfbx</a>
  * @since 2023-06-14
  */
 @Data

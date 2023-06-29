@@ -142,14 +142,13 @@ public class OpenAiStreamClient {
         }
         this.authInterceptor.setApiKey(this.apiKey);
         this.authInterceptor.setKeyStrategy(this.keyStrategy);
-        OkHttpClient okHttpClient = new OkHttpClient
+        return new OkHttpClient
                 .Builder()
                 .addInterceptor(this.authInterceptor)
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(50, TimeUnit.SECONDS)
                 .readTimeout(50, TimeUnit.SECONDS)
                 .build();
-        return okHttpClient;
     }
 
     /**
@@ -279,9 +278,8 @@ public class OpenAiStreamClient {
                 log.error(openAiResponse.getError().getMessage());
                 throw new BaseException(openAiResponse.getError().getMessage());
             }
-            String errorMsg = bodyStr;
-            log.error("询余额请求异常：{}", errorMsg);
-            OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
+            log.error("询余额请求异常：{}", bodyStr);
+            OpenAiResponse openAiResponse = JSONUtil.toBean(bodyStr, OpenAiResponse.class);
             if (Objects.nonNull(openAiResponse.getError())) {
                 log.error(openAiResponse.getError().getMessage());
                 throw new BaseException(openAiResponse.getError().getMessage());
@@ -290,8 +288,7 @@ public class OpenAiStreamClient {
         }
         ObjectMapper mapper = new ObjectMapper();
         // 读取Json 返回值
-        CreditGrantsResponse completionResponse = mapper.readValue(bodyStr, CreditGrantsResponse.class);
-        return completionResponse;
+        return mapper.readValue(bodyStr, CreditGrantsResponse.class);
     }
 
     /**

@@ -66,11 +66,6 @@ public class Edit implements Serializable {
             this.temperature = 2;
             return;
         }
-        if (temperature < 0) {
-            log.error("temperature参数异常，temperature属于[0,2]");
-            this.temperature = 0;
-            return;
-        }
         this.temperature = temperature;
     }
 
@@ -96,9 +91,6 @@ public class Edit implements Serializable {
         TEXT_DAVINCI_EDIT_001("text-davinci-edit-001"),
         CODE_DAVINCI_EDIT_001("code-davinci-edit-001"),
         ;
-        private String name;
+        private final String name;
     }
 }
-
-
-

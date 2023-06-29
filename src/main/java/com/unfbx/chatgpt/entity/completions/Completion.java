@@ -3,8 +3,6 @@ package com.unfbx.chatgpt.entity.completions;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.unfbx.chatgpt.exception.BaseException;
-import com.unfbx.chatgpt.exception.CommonError;
 import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -121,8 +119,6 @@ public class Completion implements Serializable {
         DAVINCI_002("text-davinci-002"),
         DAVINCI("davinci"),
         ;
-        private String name;
+        private final String name;
     }
 }
-
-
