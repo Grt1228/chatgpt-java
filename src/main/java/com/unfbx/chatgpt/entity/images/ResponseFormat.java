@@ -18,5 +18,5 @@ public enum ResponseFormat implements Serializable {
     B64_JSON("b64_json"),
     ;
 
-    private String name;
+    private final String name;
 }

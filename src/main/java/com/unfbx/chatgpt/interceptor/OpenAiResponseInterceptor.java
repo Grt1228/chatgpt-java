@@ -25,7 +25,7 @@ public class OpenAiResponseInterceptor implements Interceptor {
 
         Request original = chain.request();
         Response response = chain.proceed(original);
-        if (!response.isSuccessful()) {
+        if (!response.isSuccessful() && response.body() != null) {
             if (response.code() == CommonError.OPENAI_AUTHENTICATION_ERROR.code()
                     || response.code() == CommonError.OPENAI_LIMIT_ERROR.code()
                     || response.code() == CommonError.OPENAI_SERVER_ERROR.code()) {

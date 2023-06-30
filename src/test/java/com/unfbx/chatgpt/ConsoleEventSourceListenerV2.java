@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
 public class ConsoleEventSourceListenerV2 extends EventSourceListener {
     @Getter
     String args = "";
-    CountDownLatch countDownLatch;
+    final CountDownLatch countDownLatch;
 
     public ConsoleEventSourceListenerV2(CountDownLatch countDownLatch) {
         this.countDownLatch = countDownLatch;

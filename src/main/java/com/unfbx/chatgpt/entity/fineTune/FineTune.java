@@ -117,6 +117,6 @@ public class FineTune implements Serializable {
         CURIE("curie"),
         DAVINCI("davinci"),
         ;
-        private String name;
+        private final String name;
     }
 }

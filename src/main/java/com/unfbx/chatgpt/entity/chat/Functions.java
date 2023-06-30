@@ -1,6 +1,5 @@
 package com.unfbx.chatgpt.entity.chat;
 
-import cn.hutool.core.date.StopWatch;
 import lombok.Builder;
 import lombok.Data;
 

@@ -7,7 +7,6 @@ import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.interceptor.DynamicKeyOpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
-import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -110,7 +109,7 @@ public class OpenAiClientFunctionTest {
         Parameters parameters = Parameters.builder()
                 .type("object")
                 .properties(properties)
-                .required(Arrays.asList("wordLength")).build();
+                .required(Collections.singletonList("wordLength")).build();
         Functions functions = Functions.builder()
                 .name("getOneWord")
                 .description("获取一个指定长度和语言类型的词语")
@@ -119,8 +118,8 @@ public class OpenAiClientFunctionTest {
 
         ChatCompletion chatCompletion = ChatCompletion
                 .builder()
-                .messages(Arrays.asList(message))
-                .functions(Arrays.asList(functions))
+                .messages(Collections.singletonList(message))
+                .functions(Collections.singletonList(functions))
                 .functionCall("auto")
                 .model(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
                 .build();
@@ -200,7 +199,7 @@ public class OpenAiClientFunctionTest {
         Parameters parameters = Parameters.builder()
                 .type("object")
                 .properties(properties)
-                .required(Arrays.asList("wordLength")).build();
+                .required(Collections.singletonList("wordLength")).build();
         Functions functions = Functions.builder()
                 .name("getOneWord")
                 .description("获取一个指定长度和语言类型的词语")
@@ -209,8 +208,8 @@ public class OpenAiClientFunctionTest {
 
         ChatCompletion chatCompletion = ChatCompletion
                 .builder()
-                .messages(Arrays.asList(message))
-                .functions(Arrays.asList(functions))
+                .messages(Collections.singletonList(message))
+                .functions(Collections.singletonList(functions))
                 .functionCall("auto")
                 .model(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
                 .build();
