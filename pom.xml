@@ -8,7 +8,7 @@
     <version>1.0.15</version>
     <name>chatgpt-java</name>
     <description>OpenAI Java SDK, OpenAI Api for Java. ChatGPT Java SDK .</description>
-    <url>https://www.unfbx.com</url>
+    <url>https://chatgpt-java.unfbx.com</url>
     <scm>
         <connection>scm:git:git://github.com/Grt1228/chatgpt-java.git</connection>
         <url>https://github.com/Grt1228/chatgpt-java</url>
