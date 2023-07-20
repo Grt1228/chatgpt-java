@@ -49,6 +49,6 @@ public class Moderation implements Serializable {
         TEXT_MODERATION_LATEST("text-moderation-latest"),
         ;
 
-        private String name;
+        private final String name;
     }
 }

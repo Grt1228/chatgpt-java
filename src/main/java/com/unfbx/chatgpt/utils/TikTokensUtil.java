@@ -1,7 +1,6 @@
 package com.unfbx.chatgpt.utils;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
@@ -88,8 +87,7 @@ public class TikTokensUtil {
      * @return Encoding
      */
     public static Encoding getEncoding(@NotNull EncodingType encodingType) {
-        Encoding enc = registry.getEncoding(encodingType);
-        return enc;
+        return registry.getEncoding(encodingType);
     }
 
     /**
@@ -103,8 +101,7 @@ public class TikTokensUtil {
             return new ArrayList<>();
         }
         Encoding enc = getEncoding(encodingType);
-        List<Integer> encoded = enc.encode(text);
-        return encoded;
+        return enc.encode(text);
     }
 
     /**
@@ -157,8 +154,7 @@ public class TikTokensUtil {
             log.warn("[{}]模型不存在或者暂不支持计算tokens，直接返回tokens==0");
             return new ArrayList<>();
         }
-        List<Integer> encoded = enc.encode(text);
-        return encoded;
+        return enc.encode(text);
     }
 
     /**

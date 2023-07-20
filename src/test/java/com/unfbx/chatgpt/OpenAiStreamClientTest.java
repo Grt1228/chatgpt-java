@@ -7,7 +7,6 @@ import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
-import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -15,10 +14,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -92,7 +90,7 @@ public class OpenAiStreamClientTest {
                 .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
                 .temperature(0.2)
                 .maxTokens(2048)
-                .messages(Arrays.asList(message))
+                .messages(Collections.singletonList(message))
                 .stream(true)
                 .build();
         client.streamChatCompletion(chatCompletion, eventSourceListener);

@@ -175,9 +175,7 @@ public class ChatCompletion implements Serializable {
          */
         GPT_4_32K_0613("gpt-4-32k-0613"),
         ;
-        private String name;
+        private final String name;
     }
 
 }
-
-

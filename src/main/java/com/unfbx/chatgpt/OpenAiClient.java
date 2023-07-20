@@ -166,13 +166,12 @@ public class OpenAiClient {
         }
         this.authInterceptor.setApiKey(this.apiKey);
         this.authInterceptor.setKeyStrategy(this.keyStrategy);
-        OkHttpClient okHttpClient = new OkHttpClient
+        return new OkHttpClient
                 .Builder()
                 .addInterceptor(this.authInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS).build();
-        return okHttpClient;
     }
 
     /**
@@ -182,8 +181,7 @@ public class OpenAiClient {
      */
     public List<Model> models() {
         Single<ModelResponse> models = this.openAiApi.models();
-        List<Model> modelList = models.blockingGet().getData();
-        return modelList;
+        return models.blockingGet().getData();
     }
 
     /**
@@ -727,7 +725,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String, RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>(5,1L);
 
         if (StrUtil.isNotBlank(translations.getModel())) {
             requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
@@ -738,9 +736,7 @@ public class OpenAiClient {
         if (StrUtil.isNotBlank(translations.getResponseFormat())) {
             requestBodyMap.put(Translations.Fields.responseFormat, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getResponseFormat()));
         }
-        if (Objects.nonNull(translations.getTemperature())) {
-            requestBodyMap.put(Translations.Fields.temperature, RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(translations.getTemperature())));
-        }
+        requestBodyMap.put(Translations.Fields.temperature, RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(translations.getTemperature())));
         Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranslations(multipartBody, requestBodyMap);
         return whisperResponse.blockingGet();
     }

@@ -72,7 +72,7 @@ public class Message implements Serializable {
         ASSISTANT("assistant"),
         FUNCTION("function"),
         ;
-        private String name;
+        private final String name;
     }
 
     public static final class Builder {

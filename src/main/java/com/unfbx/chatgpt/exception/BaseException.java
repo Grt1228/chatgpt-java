@@ -11,8 +11,8 @@ import lombok.Getter;
 @Getter
 public class BaseException extends RuntimeException {
 
-    private String msg;
-    private int code;
+    private final String msg;
+    private final int code;
 
     public BaseException(IError error) {
         super(error.msg());

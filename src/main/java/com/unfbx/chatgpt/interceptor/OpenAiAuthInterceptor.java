@@ -74,11 +74,10 @@ public abstract class OpenAiAuthInterceptor implements Interceptor {
      * @return 请求体
      */
     public Request auth(String key, Request original) {
-        Request request = original.newBuilder()
+        return original.newBuilder()
                 .header(Header.AUTHORIZATION.getValue(), "Bearer " + key)
                 .header(Header.CONTENT_TYPE.getValue(), ContentType.JSON.getValue())
                 .method(original.method(), original.body())
                 .build();
-        return request;
     }
 }

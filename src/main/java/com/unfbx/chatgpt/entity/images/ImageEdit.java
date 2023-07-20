@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.images;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unfbx.chatgpt.exception.BaseException;
@@ -61,7 +62,7 @@ public class ImageEdit implements Serializable {
     }
 
     public ImageEdit setPrompt(String prompt) {
-        if(Objects.isNull(prompt) || "".equals(prompt)){
+        if(StrUtil.isEmpty(prompt)){
             log.error("参数异常");
             throw new BaseException(CommonError.PARAM_ERROR);
         }

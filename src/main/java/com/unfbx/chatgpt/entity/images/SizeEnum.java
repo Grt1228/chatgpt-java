@@ -19,6 +19,6 @@ public enum SizeEnum implements Serializable {
     size_256("256x256"),
 
     ;
-    private String name;
+    private final String name;
 
 }
