@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
