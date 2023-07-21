@@ -23,4 +23,5 @@ public class CompletionResponse extends OpenAiResponse implements Serializable {
     private String model;
     private Choice[] choices;
     private Usage usage;
+    private String warning;
 }
