@@ -102,7 +102,7 @@ public class OpenAiClient {
     /**
      * 构造器
      *
-     * @return
+     * @return OpenAiClient.Builder
      */
     public static OpenAiClient.Builder builder() {
         return new OpenAiClient.Builder();
@@ -166,13 +166,12 @@ public class OpenAiClient {
         }
         this.authInterceptor.setApiKey(this.apiKey);
         this.authInterceptor.setKeyStrategy(this.keyStrategy);
-        OkHttpClient okHttpClient = new OkHttpClient
+        return new OkHttpClient
                 .Builder()
                 .addInterceptor(this.authInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS).build();
-        return okHttpClient;
     }
 
     /**
@@ -182,15 +181,14 @@ public class OpenAiClient {
      */
     public List<Model> models() {
         Single<ModelResponse> models = this.openAiApi.models();
-        List<Model> modelList = models.blockingGet().getData();
-        return modelList;
+        return models.blockingGet().getData();
     }
 
     /**
      * openAi模型详细信息
      *
-     * @param id
-     * @return Model
+     * @param id 模型主键
+     * @return Model    模型类
      */
     public Model model(String id) {
         if (Objects.isNull(id) || "".equals(id)) {
@@ -240,7 +238,7 @@ public class OpenAiClient {
     /**
      * 根据描述生成图片
      *
-     * @param prompt
+     * @param prompt 描述信息
      * @return ImageResponse
      */
     public ImageResponse genImages(String prompt) {
@@ -407,7 +405,7 @@ public class OpenAiClient {
     /**
      * 向量计算：单文本
      *
-     * @param input
+     * @param input 单文本
      * @return EmbeddingResponse
      */
     public EmbeddingResponse embeddings(String input) {
@@ -480,7 +478,7 @@ public class OpenAiClient {
     /**
      * 上传文件
      *
-     * @param file
+     * @param file 文件
      * @return UploadFileResponse
      */
     public UploadFileResponse uploadFile(java.io.File file) {
@@ -538,7 +536,7 @@ public class OpenAiClient {
     /**
      * 文本审核
      *
-     * @param moderation
+     * @param moderation 审核参数
      * @return ModerationResponse
      */
     public ModerationResponse moderations(Moderation moderation) {
@@ -592,7 +590,7 @@ public class OpenAiClient {
     /**
      * 取消微调作业
      *
-     * @param fineTuneId
+     * @param fineTuneId 主键
      * @return FineTuneResponse
      */
     public FineTuneResponse cancelFineTune(String fineTuneId) {
@@ -615,7 +613,7 @@ public class OpenAiClient {
      * 删除微调作业模型
      * Delete a fine-tuned model. You must have the Owner role in your organization.
      *
-     * @param model
+     * @param model 模型名称
      * @return FineTuneDeleteResponse
      */
     public FineTuneDeleteResponse deleteFineTuneModel(String model) {
@@ -727,7 +725,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String, RequestBody> requestBodyMap = new HashMap<>();
+        Map<String, RequestBody> requestBodyMap = new HashMap<>(5,1L);
 
         if (StrUtil.isNotBlank(translations.getModel())) {
             requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
@@ -738,9 +736,7 @@ public class OpenAiClient {
         if (StrUtil.isNotBlank(translations.getResponseFormat())) {
             requestBodyMap.put(Translations.Fields.responseFormat, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getResponseFormat()));
         }
-        if (Objects.nonNull(translations.getTemperature())) {
-            requestBodyMap.put(Translations.Fields.temperature, RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(translations.getTemperature())));
-        }
+        requestBodyMap.put(Translations.Fields.temperature, RequestBody.create(MediaType.parse("multipart/form-data"), String.valueOf(translations.getTemperature())));
         Single<WhisperResponse> whisperResponse = this.openAiApi.speechToTextTranslations(multipartBody, requestBodyMap);
         return whisperResponse.blockingGet();
     }
@@ -771,7 +767,7 @@ public class OpenAiClient {
      * ## 官方已经禁止使用此api
      * OpenAi账户余额查询
      *
-     * @return
+     * @return 余额
      * @see #subscription()
      * @see #billingUsage(LocalDate, LocalDate)
      */

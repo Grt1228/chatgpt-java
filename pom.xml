@@ -5,10 +5,10 @@
 
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.15</version>
     <name>chatgpt-java</name>
     <description>OpenAI Java SDK, OpenAI Api for Java. ChatGPT Java SDK .</description>
-    <url>https://www.unfbx.com</url>
+    <url>https://chatgpt-java.unfbx.com</url>
     <scm>
         <connection>scm:git:git://github.com/Grt1228/chatgpt-java.git</connection>
         <url>https://github.com/Grt1228/chatgpt-java</url>
@@ -60,11 +60,6 @@
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.13.3</version>
@@ -107,6 +102,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
@@ -115,7 +116,7 @@
         <dependency>
             <groupId>com.knuddels</groupId>
             <artifactId>jtokkit</artifactId>
-            <version>0.2.0</version>
+            <version>0.5.0</version>
         </dependency>
     </dependencies>
 

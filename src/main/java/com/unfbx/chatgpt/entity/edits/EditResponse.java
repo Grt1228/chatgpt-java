@@ -1,6 +1,7 @@
 package com.unfbx.chatgpt.entity.edits;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.unfbx.chatgpt.entity.common.Choice;
 import com.unfbx.chatgpt.entity.common.Usage;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  *  2023-02-15
  */
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EditResponse implements Serializable {
     private String id;
     private String object;

@@ -21,7 +21,7 @@ public class Whisper implements Serializable {
     public enum Model {
         WHISPER_1("whisper-1"),
         ;
-        private String name;
+        private final String name;
     }
 
     @Getter
@@ -33,6 +33,6 @@ public class Whisper implements Serializable {
         VERBOSE_JSON("verbose_json"),
         VTT("vtt"),
         ;
-        private String name;
+        private final String name;
     }
 }

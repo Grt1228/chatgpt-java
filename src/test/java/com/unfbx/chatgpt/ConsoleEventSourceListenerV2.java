@@ -1,5 +1,8 @@
-package com.unfbx.chatgpt.sse;
+package com.unfbx.chatgpt;
 
+import cn.hutool.json.JSONUtil;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
@@ -8,15 +11,23 @@ import okhttp3.sse.EventSource;
 import okhttp3.sse.EventSourceListener;
 
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 描述： sse
  *
  * @author https:www.unfbx.com
- * 2023-02-28
+ * 2023-06-15
  */
 @Slf4j
-public class ConsoleEventSourceListener extends EventSourceListener {
+public class ConsoleEventSourceListenerV2 extends EventSourceListener {
+    @Getter
+    String args = "";
+    final CountDownLatch countDownLatch;
+
+    public ConsoleEventSourceListenerV2(CountDownLatch countDownLatch) {
+        this.countDownLatch = countDownLatch;
+    }
 
     @Override
     public void onOpen(EventSource eventSource, Response response) {
@@ -26,9 +37,14 @@ public class ConsoleEventSourceListener extends EventSourceListener {
     @Override
     public void onEvent(EventSource eventSource, String id, String type, String data) {
         log.info("OpenAI返回数据：{}", data);
-        if ("[DONE]".equals(data)) {
+        if (data.equals("[DONE]")) {
             log.info("OpenAI返回数据结束了");
+            countDownLatch.countDown();
             return;
+        }
+        ChatCompletionResponse chatCompletionResponse = JSONUtil.toBean(data, ChatCompletionResponse.class);
+        if(Objects.nonNull(chatCompletionResponse.getChoices().get(0).getDelta().getFunctionCall())){
+            args += chatCompletionResponse.getChoices().get(0).getDelta().getFunctionCall().getArguments();
         }
     }
 

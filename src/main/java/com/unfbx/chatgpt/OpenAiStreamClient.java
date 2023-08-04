@@ -142,14 +142,13 @@ public class OpenAiStreamClient {
         }
         this.authInterceptor.setApiKey(this.apiKey);
         this.authInterceptor.setKeyStrategy(this.keyStrategy);
-        OkHttpClient okHttpClient = new OkHttpClient
+        return new OkHttpClient
                 .Builder()
                 .addInterceptor(this.authInterceptor)
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(50, TimeUnit.SECONDS)
                 .readTimeout(50, TimeUnit.SECONDS)
                 .build();
-        return okHttpClient;
     }
 
     /**
@@ -279,9 +278,8 @@ public class OpenAiStreamClient {
                 log.error(openAiResponse.getError().getMessage());
                 throw new BaseException(openAiResponse.getError().getMessage());
             }
-            String errorMsg = bodyStr;
-            log.error("询余额请求异常：{}", errorMsg);
-            OpenAiResponse openAiResponse = JSONUtil.toBean(errorMsg, OpenAiResponse.class);
+            log.error("询余额请求异常：{}", bodyStr);
+            OpenAiResponse openAiResponse = JSONUtil.toBean(bodyStr, OpenAiResponse.class);
             if (Objects.nonNull(openAiResponse.getError())) {
                 log.error(openAiResponse.getError().getMessage());
                 throw new BaseException(openAiResponse.getError().getMessage());
@@ -290,8 +288,7 @@ public class OpenAiStreamClient {
         }
         ObjectMapper mapper = new ObjectMapper();
         // 读取Json 返回值
-        CreditGrantsResponse completionResponse = mapper.readValue(bodyStr, CreditGrantsResponse.class);
-        return completionResponse;
+        return mapper.readValue(bodyStr, CreditGrantsResponse.class);
     }
 
     /**
@@ -310,7 +307,7 @@ public class OpenAiStreamClient {
      *
      * @param starDate 开始时间
      * @param endDate  结束时间
-     * @return
+     * @return  消耗金额信息
      */
     public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
         Single<BillingUsage> billingUsage = this.openAiApi.billingUsage(starDate, endDate);
@@ -320,7 +317,7 @@ public class OpenAiStreamClient {
     /**
      * 构造
      *
-     * @return
+     * @return Builder
      */
     public static OpenAiStreamClient.Builder builder() {
         return new OpenAiStreamClient.Builder();
@@ -361,7 +358,7 @@ public class OpenAiStreamClient {
 
         /**
          * @param val api请求地址，结尾处有斜杠
-         * @return
+         * @return Builder
          * @see com.unfbx.chatgpt.constant.OpenAIConst
          */
         public Builder apiHost(String val) {

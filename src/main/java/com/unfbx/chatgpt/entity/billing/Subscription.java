@@ -10,6 +10,7 @@ import lombok.Data;
  * @since  2023-04-08
  */
 @Data
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Subscription {
     @JsonProperty("object")
     private String object;
@@ -49,4 +50,6 @@ public class Subscription {
     private Object billingAddress;
     @JsonProperty("business_address")
     private Object businessAddress;
+    @JsonProperty("primary")
+    private Boolean primary;
 }

@@ -1,8 +1,6 @@
 package com.unfbx.chatgpt.entity.embeddings;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.unfbx.chatgpt.exception.BaseException;
-import com.unfbx.chatgpt.exception.CommonError;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,6 +49,6 @@ public class Embedding implements Serializable {
     public enum Model {
         TEXT_EMBEDDING_ADA_002("text-embedding-ada-002"),
         ;
-        private String name;
+        private final String name;
     }
 }

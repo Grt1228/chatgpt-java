@@ -61,10 +61,12 @@ WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Gr
 - Supports customizing the key acquisition strategy.
 - Supports balance inquiry.
 - Supports personal account information inquiry.
-- Supports GPT3, GPT3.5, GPT4.0.
+- Supports GPT3, GPT3.5, GPT4.0, GPT3.5—0614, GPT4.0—0614...
 - Supports all OpenAI APIs.
 
 # 📑 Update Log
+- [x] 1.0.15  moderations api update,code fix,bug fix
+- [x] 1.0.14  Upgrade to support the latest version gpt-3.5—0614、gpt-4.0—0614 models, support function-calling full test e.g.：[OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java)
 - [x] 1.0.13  Added support for custom handling of key exceptions (invalid, expired, blocked) with the implementation reference [DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java). Also added support for alerting on key exceptions (DingTalk, Feishu, email, WeChat Enterprise, etc.), which requires custom development.
 - [x] 1.0.12  Optimized token calculation, modified delete model interface, and updated speech interface to support the latest official parameters.
 - [x] 1.0.11  Added new balance query interface with reference to [OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) and [OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java). Fixed slow token calculation issue.
@@ -84,9 +86,9 @@ WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Gr
 
 This project supports both **default output** and **streaming output**. For a complete SDK test case, see:
 
-SDK Test Cases | Token Test Cases |
----|---|
-[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) and [OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) | Token calculation reference: [TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java)|
+SDK Test Cases | TikToken Test Cases | Full Function Call Test Cases
+---|---|---|
+[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientTest.java) and [OpenAiStreamClientTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiStreamClientTest.java) | Token calculation reference: [TikTokensTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/TikTokensTest.java) | [OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java)
 
 ## Method 1
 
@@ -95,7 +97,7 @@ SDK Test Cases | Token Test Cases |
 <dependency>
     <groupId>com.unfbx</groupId>
     <artifactId>chatgpt-java</artifactId>
-    <version>1.0.13</version>
+    <version>1.0.14</version>
 </dependency>
 ```
 ### 2. Streaming client usage example:
@@ -274,7 +276,7 @@ Standing on the shoulders of giants:
 # ☕ Buy me a coffee
 If this project is helpful to you, you can buy me a cup of milk tea.
 
-<img width="180" alt="微信截图_20230405222411" src="https://user-images.githubusercontent.com/27008803/230111508-3179cf30-e128-4
+<img width="180" alt="微信截图_20230405222411" src="https://user-images.githubusercontent.com/27008803/230111508-3179cf30-e128-4b2e-9645-157266c491ce.png">  <img width="164" alt="微信截图_20230405222357" src="https://user-images.githubusercontent.com/27008803/230111525-322f5036-d06d-46bb-94d1-db8ce9ed2adf.png">
 
 
 

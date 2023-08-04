@@ -16,6 +16,6 @@ public enum ChatGPTUrl {
     COMPLETIONS("https://api.openai.com/v1/completions"),
     ;
 
-    private String url;
+    private final String url;
 
 }
