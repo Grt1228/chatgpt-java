@@ -52,7 +52,7 @@ SSE Reference：[OpenAISSEEventSourceListener](https://github.com/Grt1228/chatgp
 WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Grt1228/chatgpt-steam-output/blob/main/src/main/java/com/unfbx/chatgptsteamoutput/listener/OpenAIWebSocketEventSourceListener.java) | Supported| Supported | Supported | Supported
 
 # 🚩 Features
-- support gpt plugin ,eg: [PluginTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/PluginTest.java)
+- support gpt plugin ,eg: [PluginTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/PluginTest.java)
 - Supports dynamic handling of keys in case of exceptions (invalid, expired, blocked). See the reference implementation [DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java).
 - Supports alerting in case of key exceptions (custom development needed for platforms like DingTalk, Feishu, email, WeChat Work). See the reference implementation [DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java).
 - Supports multiple ways of token calculation.
@@ -65,7 +65,7 @@ WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Gr
 - Supports all OpenAI APIs.
 
 # 📑 Update Log
-- [x] 1.1.1-beta0   function call update to GPT plugin model, so easy use the plugin api. eg: [PluginTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/PluginTest.java)
+- [x] 1.1.1-beta0   function call update to GPT plugin model, so easy use the plugin api. eg: [PluginTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/PluginTest.java)
 - [x] 1.0.15  moderations api update,code fix,bug fix
 - [x] 1.0.14  Upgrade to support the latest version gpt-3.5—0614、gpt-4.0—0614 models, support function-calling full test e.g.：[OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java)
 - [x] 1.0.13  Added support for custom handling of key exceptions (invalid, expired, blocked) with the implementation reference [DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java). Also added support for alerting on key exceptions (DingTalk, Feishu, email, WeChat Enterprise, etc.), which requires custom development.
