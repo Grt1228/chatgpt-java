@@ -47,12 +47,12 @@ public class PluginTest {
                 .build();
         openAiClient = OpenAiClient.builder()
                 .okHttpClient(okHttpClient)
-                .apiKey(Arrays.asList("sk-***********************************"))
+                .apiKey(Arrays.asList("sk-********************************"))
                 .apiHost("https://dgr.life/")
                 .build();
         openAiStreamClient = OpenAiStreamClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("sk-***********************************"))
+                .apiKey(Arrays.asList("sk-********************************"))
                 .apiHost("https://dgr.life/")
                 .build();
     }
@@ -71,12 +71,13 @@ public class PluginTest {
         arg.setRequired(true);
         plugin.setArgs(Collections.singletonList(arg));
 
-        Message message1 = Message.builder().role(Message.Role.USER).content("秦始皇统一了哪六国。").build();
+//        Message message1 = Message.builder().role(Message.Role.USER).content("秦始皇统一了哪六国。").build();
         Message message2 = Message.builder().role(Message.Role.USER).content("获取上海市的天气现在多少度，然后再给出3个推荐的户外运动。").build();
         List<Message> messages = new ArrayList<>();
-        messages.add(message1);
+//        messages.add(message1);
         messages.add(message2);
         //默认模型：GPT_3_5_TURBO_16K_0613
+        //有四个重载方法，都可以使用
         ChatCompletionResponse response = openAiClient.chatCompletionWithPlugin(messages, plugin);
         log.info("自定义的方法返回值：{}", response.getChoices().get(0).getMessage().getContent());
     }
@@ -95,12 +96,13 @@ public class PluginTest {
         arg.setRequired(true);
         plugin.setArgs(Collections.singletonList(arg));
 
-        Message message1 = Message.builder().role(Message.Role.USER).content("秦始皇统一了哪六国。").build();
+//        Message message1 = Message.builder().role(Message.Role.USER).content("秦始皇统一了哪六国。").build();
         Message message2 = Message.builder().role(Message.Role.USER).content("获取上海市的天气现在多少度，然后再给出3个推荐的户外运动。").build();
         List<Message> messages = new ArrayList<>();
-        messages.add(message1);
+//        messages.add(message1);
         messages.add(message2);
         //默认模型：GPT_3_5_TURBO_16K_0613
+        //有四个重载方法，都可以使用
         openAiStreamClient.streamChatCompletionWithPlugin(messages, new ConsoleEventSourceListener(), plugin);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         try {

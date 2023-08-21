@@ -23,8 +23,8 @@ import com.unfbx.chatgpt.interceptor.OpenAiAuthInterceptor;
 import com.unfbx.chatgpt.plugin.PluginAbstract;
 import com.unfbx.chatgpt.plugin.PluginParam;
 import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
-import com.unfbx.chatgpt.sse.DefaultPluginEventSourceListener;
-import com.unfbx.chatgpt.sse.PluginEventSourceListener;
+import com.unfbx.chatgpt.sse.DefaultPluginListener;
+import com.unfbx.chatgpt.sse.PluginListener;
 import io.reactivex.Single;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -42,7 +42,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 
@@ -271,7 +270,7 @@ public class OpenAiStreamClient {
      * @param <R>                       插件自定义函数的请求值
      * @param <T>                       插件自定义函数的返回值
      */
-    public <R extends PluginParam, T> void streamChatCompletionWithPlugin(ChatCompletion chatCompletion, EventSourceListener eventSourceListener, PluginEventSourceListener pluginEventSourceListener, PluginAbstract<R, T> plugin) {
+    public <R extends PluginParam, T> void streamChatCompletionWithPlugin(ChatCompletion chatCompletion, EventSourceListener eventSourceListener, PluginListener pluginEventSourceListener, PluginAbstract<R, T> plugin) {
         if (Objects.isNull(plugin)) {
             this.streamChatCompletion(chatCompletion, eventSourceListener);
             return;
@@ -279,7 +278,6 @@ public class OpenAiStreamClient {
         if (CollectionUtil.isEmpty(chatCompletion.getMessages())) {
             throw new BaseException(CommonError.MESSAGE_NOT_NUL);
         }
-        List<Message> messages = chatCompletion.getMessages();
         Functions functions = Functions.builder()
                 .name(plugin.getFunction())
                 .description(plugin.getDescription())
@@ -292,33 +290,10 @@ public class OpenAiStreamClient {
         //tip: 覆盖自己设置的functions参数，使用plugin构造的functions
         chatCompletion.setFunctions(Collections.singletonList(functions));
         //调用OpenAi
-        CountDownLatch countDownLatch = new CountDownLatch(1);
         if (Objects.isNull(pluginEventSourceListener)) {
-            pluginEventSourceListener = new DefaultPluginEventSourceListener(countDownLatch);
+            pluginEventSourceListener = new DefaultPluginListener(this, eventSourceListener, plugin, chatCompletion);
         }
         this.streamChatCompletion(chatCompletion, pluginEventSourceListener);
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        log.debug("构造的方法值：{}", pluginEventSourceListener.getArguments());
-
-        R realFunctionParam = (R) JSONUtil.toBean(pluginEventSourceListener.getArguments(), plugin.getR());
-        T tq = plugin.func(realFunctionParam);
-
-        FunctionCall functionCall = FunctionCall.builder()
-                .arguments(pluginEventSourceListener.getArguments())
-                .name(plugin.getFunction())
-                .build();
-        messages.add(Message.builder().role(Message.Role.ASSISTANT).content("function_call").functionCall(functionCall).build());
-        messages.add(Message.builder().role(Message.Role.FUNCTION).name(plugin.getFunction()).content(plugin.content(tq)).build());
-        //设置第二次，请求的参数
-        chatCompletion.setFunctionCall(null);
-        chatCompletion.setFunctions(null);
-        this.streamChatCompletion(chatCompletion, eventSourceListener);
-        messages.remove(messages.size() - 1);
-        messages.remove(messages.size() - 2);
     }
 
 
@@ -334,8 +309,7 @@ public class OpenAiStreamClient {
      * @param <T>                 插件自定义函数的返回值
      */
     public <R extends PluginParam, T> void streamChatCompletionWithPlugin(ChatCompletion chatCompletion, EventSourceListener eventSourceListener, PluginAbstract<R, T> plugin) {
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        PluginEventSourceListener pluginEventSourceListener = new DefaultPluginEventSourceListener(countDownLatch);
+        PluginListener pluginEventSourceListener = new DefaultPluginListener(this, eventSourceListener, plugin, chatCompletion);
         this.streamChatCompletionWithPlugin(chatCompletion, eventSourceListener, pluginEventSourceListener, plugin);
     }
 
@@ -425,7 +399,7 @@ public class OpenAiStreamClient {
      *
      * @param starDate 开始时间
      * @param endDate  结束时间
-     * @return  消耗金额信息
+     * @return 消耗金额信息
      */
     public BillingUsage billingUsage(@NotNull LocalDate starDate, @NotNull LocalDate endDate) {
         Single<BillingUsage> billingUsage = this.openAiApi.billingUsage(starDate, endDate);

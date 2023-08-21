@@ -72,7 +72,7 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 - 支持全部OpenAI的Api
 
 # 📑 更新日志
-- [x] 1.1.0   function call改成GPT插件模式调用更加简单的调用方式.参考实现[PluginTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/PluginTest.java)
+- [x] 1.1.1   function call改成GPT插件模式调用更加简单的调用方式.参考实现[PluginTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/PluginTest.java)
 - [x] 1.0.15  moderations接口更新，代码优化，序列化修复。
 - [x] 1.0.14  升级支持最新版Gpt-3.5—0614、Gpt-4.0—0614等模型, 支持function-calling完整使用案例参考：[OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java) 
 - [x] 1.0.13  支持当key异常（失效、过期、封禁）时，自定义动态处理key，参考实现[DynamicKeyOpenAiAuthInterceptor](https://github.com/Grt1228/chatgpt-java/blob/main/src/main/java/com/unfbx/chatgpt/interceptor/DynamicKeyOpenAiAuthInterceptor.java) ，支持key异常时的告警处理（钉钉、飞书、email、企业微信等等需要自定义开发）

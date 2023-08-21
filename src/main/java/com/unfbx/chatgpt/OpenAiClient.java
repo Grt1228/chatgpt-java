@@ -718,8 +718,6 @@ public class OpenAiClient {
 
         ChatCompletionResponse chatCompletionResponse = this.chatCompletion(chatCompletion);
         log.debug("自定义的方法返回值：{}", chatCompletionResponse.getChoices());
-        messages.remove(messages.size() - 1);
-        messages.remove(messages.size() - 2);
         return chatCompletionResponse;
     }
 
