@@ -5,6 +5,8 @@ it’s an “unofficial" or "community-maintained” library.
 
 > 文档地址：https://chatgpt-java.unfbx.com/
 
+> 星火大模型Java SDK: https://github.com/Grt1228/SparkDesk-Java 
+
 To English Doc -> [English Doc](README_EN.md)
 
 
