@@ -74,6 +74,7 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 - 支持全部OpenAI的Api
 
 # 📑 更新日志
+- [ ] 1.1.2   支持1106最新版api。
 - [x] 1.1.1-beta0   function call改成GPT插件模式调用更加简单的调用方式.参考实现[PluginTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/PluginTest.java)
 - [x] 1.0.15  moderations接口更新，代码优化，序列化修复。
 - [x] 1.0.14  升级支持最新版Gpt-3.5—0614、Gpt-4.0—0614等模型, 支持function-calling完整使用案例参考：[OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/1.0.14/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java) 
