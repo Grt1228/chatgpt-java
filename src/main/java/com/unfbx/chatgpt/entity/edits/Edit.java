@@ -17,6 +17,7 @@ import java.io.Serializable;
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class Edit implements Serializable {
     /**
      * 编辑模型，目前支持两种
