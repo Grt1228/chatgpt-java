@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 2023-11-10
  */
 @Data
-@Builder
+@SuperBuilder
 @Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor

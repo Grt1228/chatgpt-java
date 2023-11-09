@@ -3,18 +3,14 @@ package com.unfbx.chatgpt.entity.chat;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.unfbx.chatgpt.entity.chat.tool.Tools;
-import com.unfbx.chatgpt.entity.chat.tool.ToolChoice;
-import com.unfbx.chatgpt.entity.chat.tool.ToolChoiceObj;
 import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 描述： chat模型参数
@@ -45,6 +41,17 @@ public class ChatCompletion extends ChatCompletionCommon implements Serializable
             return 0;
         }
         return TikTokensUtil.tokens(this.getModel(), this.messages);
+    }
+
+    public static void main(String[] args) {
+        List<Message> messages = new ArrayList<>(2);
+        messages.add(Message.builder().role(Message.Role.USER).content("关注微信公众号：程序员的黑洞。").build());
+        messages.add(Message.builder().role(Message.Role.USER).content("进入chatgpt-java交流群获取最新版本更新通知。").build());
+        ChatCompletion chatCompletion = ChatCompletion
+                .builder()
+                .messages(messages)
+                .maxTokens((4096 - TikTokensUtil.tokens(ChatCompletion.Model.GPT_3_5_TURBO.getName(),messages)))
+                .build();
     }
 
 }

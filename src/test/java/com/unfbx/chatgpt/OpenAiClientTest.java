@@ -262,7 +262,7 @@ public class OpenAiClientTest {
 //        Arrays.stream(completions.getChoices()).forEach(System.out::println);
 
         CompletionResponse completions = v2.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
-        Arrays.stream(completions.getChoices()).forEach(System.out::println);
+        (completions.getChoices()).forEach(System.out::println);
     }
 
     //对话测试
@@ -276,15 +276,15 @@ public class OpenAiClientTest {
                 .echo(true)
                 .build();
         CompletionResponse completions = v2.completions(q);
-        String text = completions.getChoices()[0].getText();
+        String text = completions.getChoices().get(0).getText();
 
         q.setPrompt(text + "\n" + "再翻译成韩文\n");
         completions = v2.completions(q);
-        text = completions.getChoices()[0].getText();
+        text = completions.getChoices().get(0).getText();
 
         q.setPrompt(text + "\n" + "再翻译成日文\n");
         completions = v2.completions(q);
-        text = completions.getChoices()[0].getText();
+        text = completions.getChoices().get(0).getText();
         System.out.println(text);
     }
 
