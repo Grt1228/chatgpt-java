@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt;
 
+import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -31,6 +32,7 @@ import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.time.LocalDate;
@@ -55,7 +57,7 @@ public interface OpenAiApi {
     /**
      * models 返回的数据id
      *
-     * @param id    模型主键
+     * @param id 模型主键
      * @return Single Model
      */
     @GET("v1/models/{id}")
@@ -314,7 +316,7 @@ public interface OpenAiApi {
     /**
      * 账户信息查询：里面包含总金额（美元）等信息
      *
-     * @return  账户信息
+     * @return 账户信息
      */
     @GET("v1/dashboard/billing/subscription")
     Single<Subscription> subscription();
@@ -329,4 +331,13 @@ public interface OpenAiApi {
      */
     @GET("v1/dashboard/billing/usage")
     Single<BillingUsage> billingUsage(@Query("start_date") LocalDate starDate, @Query("end_date") LocalDate endDate);
+
+    /**
+     * 文本转语音
+     *
+     * @param textToSpeech
+     * @return
+     */
+    @POST("v1/audio/speech")
+    Call<ResponseBody> textToSpeech(@Body TextToSpeech textToSpeech);
 }

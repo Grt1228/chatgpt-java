@@ -96,13 +96,19 @@ public class Completion implements Serializable {
     @JsonProperty("logit_bias")
     private Map logitBias;
     /**
+     * @since 1.1.2
+     */
+    private Integer seed;
+
+    /**
      * 用户唯一值，确保接口不被重复调用
      */
     private String user;
 
     /**
      * 获取当前参数的tokens数
-     * @return  token数量
+     *
+     * @return token数量
      */
     public long tokens() {
         if (StrUtil.isBlank(this.prompt) || StrUtil.isBlank(this.model)) {

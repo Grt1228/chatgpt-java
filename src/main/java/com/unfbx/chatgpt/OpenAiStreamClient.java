@@ -7,6 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -153,6 +154,27 @@ public class OpenAiStreamClient {
                 .writeTimeout(50, TimeUnit.SECONDS)
                 .readTimeout(50, TimeUnit.SECONDS)
                 .build();
+    }
+
+
+    public void textToSpeed(TextToSpeech textToSpeech, EventSourceListener eventSourceListener) {
+        try {
+            EventSource.Factory factory = EventSources.createFactory(this.okHttpClient);
+            ObjectMapper mapper = new ObjectMapper();
+            String requestBody = mapper.writeValueAsString(textToSpeech);
+            Request request = new Request.Builder()
+                    .url(this.apiHost + "v1/audio/speech")
+                    .post(RequestBody.create(MediaType.parse(ContentType.JSON.getValue()), requestBody))
+                    .build();
+            //创建事件
+            EventSource eventSource = factory.newEventSource(request, eventSourceListener);
+        } catch (JsonProcessingException e) {
+            log.error("请求参数解析异常：{}", e);
+            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("请求参数解析异常：{}", e);
+            e.printStackTrace();
+        }
     }
 
     /**

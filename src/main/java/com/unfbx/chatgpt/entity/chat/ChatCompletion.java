@@ -4,6 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.unfbx.chatgpt.entity.chat.tool.Tools;
+import com.unfbx.chatgpt.entity.chat.tool.ToolChoice;
+import com.unfbx.chatgpt.entity.chat.tool.ToolChoiceObj;
 import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,19 @@ public class ChatCompletion implements Serializable {
     @NonNull
     private List<Message> messages;
 
+    /**
+     * 指定模型必须输出的格式的对象。
+     * @since 1.1.2
+     */
+    @JsonProperty("response_format")
+    private ResponseFormat responseFormat;
+
+    /**
+     * 已过时
+     *
+     * @see #tools
+     */
+    @Deprecated
     private List<Functions> functions;
 
     /**
@@ -42,9 +58,30 @@ public class ChatCompletion implements Serializable {
      * functions没有值的时候默认为：null
      * functions存在值得时候默认为：auto
      * 也可以自定义
+     * <p>已过时</p>
+     *
+     * @see #toolChoice
      */
+    @Deprecated
     @JsonProperty("function_call")
     private Object functionCall;
+
+    /**
+     * 模型可能调用的工具列表。
+     * 当前版本仅支持：functions
+     * @since 1.1.2
+     */
+    private List<Tools> tools;
+
+    /**
+     * 取值：String或者ToolChoiceObj
+     *
+     * @see ToolChoice.Choice 当取值为String时：ToolChoice.Choice</p>
+     * @see ToolChoiceObj 当取值为ToolChoiceObj时：ToolChoiceObj
+     * @since 1.1.2
+     */
+    @JsonProperty("tool_choice")
+    private Object toolChoice;
 
     /**
      * 使用什么取样温度，0到2之间。较高的值(如0.8)将使输出更加随机，而较低的值(如0.2)将使输出更加集中和确定。
@@ -110,6 +147,11 @@ public class ChatCompletion implements Serializable {
     private String user;
 
     /**
+     * @since 1.1.2
+     */
+    private Integer seed;
+
+    /**
      * 获取当前参数的tokens数
      */
     public long tokens() {
@@ -164,6 +206,7 @@ public class ChatCompletion implements Serializable {
         /**
          * 临时模型，不建议使用，2023年9 月 13 日将被弃用
          */
+        @Deprecated
         GPT_4_32K_0314("gpt-4-32k-0314"),
 
         /**
@@ -174,6 +217,14 @@ public class ChatCompletion implements Serializable {
          * gpt-4-0613，支持函数
          */
         GPT_4_32K_0613("gpt-4-32k-0613"),
+        /**
+         * 支持数组模式，支持function call，支持可重复输出
+         */
+        GPT_4_1106_PREVIEW("gpt-4-1106-preview"),
+        /**
+         * 支持图片
+         */
+        GPT_4_VISION_PREVIEW("gpt-4-vision-preview"),
         ;
         private final String name;
     }
