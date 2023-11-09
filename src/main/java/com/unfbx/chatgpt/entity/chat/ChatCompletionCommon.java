@@ -1,16 +1,12 @@
 package com.unfbx.chatgpt.entity.chat;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.unfbx.chatgpt.entity.chat.tool.Tools;
 import com.unfbx.chatgpt.entity.chat.tool.ToolChoice;
 import com.unfbx.chatgpt.entity.chat.tool.ToolChoiceObj;
-import com.unfbx.chatgpt.utils.TikTokensUtil;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +20,6 @@ import java.util.Map;
  */
 @Data
 @SuperBuilder
-@Slf4j
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor

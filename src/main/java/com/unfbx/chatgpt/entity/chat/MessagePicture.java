@@ -25,5 +25,5 @@ public class MessagePicture extends Message implements Serializable {
      * Content数组支持多图片输入 <p/>
      * https://platform.openai.com/docs/guides/vision
      */
-    private List<Content> Content;
+    private List<Content> content;
 }
