@@ -16,14 +16,15 @@ import java.util.Map;
  * 描述： chat模型基础类
  *
  * @author https:www.unfbx.com
- * @since 2023-11-10
+ * @since 1.1.2
+ * 2023-11-10
  */
 @Data
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatCompletionCommon implements Serializable {
+public class BaseChatCompletion implements Serializable {
 
     @NonNull
     @Builder.Default

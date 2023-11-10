@@ -675,8 +675,12 @@ public class OpenAiClient {
      * @param chatCompletion 问答参数
      * @return 答案
      */
-    public ChatCompletionResponse chatCompletion(ChatCompletion chatCompletion) {
-        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion(chatCompletion);
+    public <T extends BaseChatCompletion> ChatCompletionResponse chatCompletion(T chatCompletion) {
+        if (chatCompletion instanceof ChatCompletion) {
+            Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion((ChatCompletion) chatCompletion);
+            return chatCompletionResponse.blockingGet();
+        }
+        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletionWithPicture((ChatCompletionWithPicture) chatCompletion);
         return chatCompletionResponse.blockingGet();
     }
 

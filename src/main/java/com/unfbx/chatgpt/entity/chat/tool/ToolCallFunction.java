@@ -12,7 +12,8 @@ import java.io.Serializable;
  * The function that the model called.
  *
  * @author https:www.unfbx.com
- * @since 2023-11-09
+ * @since 1.1.2
+ * 2023-11-09
  */
 @Data
 @Builder

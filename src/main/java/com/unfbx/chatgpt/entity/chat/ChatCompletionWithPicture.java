@@ -12,7 +12,8 @@ import java.util.List;
  * 描述： chat模型附带图片的参数
  *
  * @author https:www.unfbx.com
- * @since 2023-11-10
+ * @since 1.1.2
+ * 2023-11-10
  */
 @Data
 @SuperBuilder
@@ -20,16 +21,10 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatCompletionWithPicture extends ChatCompletionCommon implements Serializable {
+public class ChatCompletionWithPicture extends BaseChatCompletion implements Serializable {
     /**
      * 问题描述
      */
-    @NonNull
     private List<MessagePicture> messages;
-
-    public static void main(String[] args) {
-        ChatCompletionCommon aaaa = ChatCompletionWithPicture.builder().model("aaaa").build();
-        System.out.println(aaaa);
-    }
 
 }

@@ -4,8 +4,10 @@ import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
+import com.unfbx.chatgpt.entity.chat.BaseChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
+import com.unfbx.chatgpt.entity.chat.ChatCompletionWithPicture;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
@@ -293,6 +295,14 @@ public interface OpenAiApi {
     @POST("v1/chat/completions")
     Single<ChatCompletionResponse> chatCompletion(@Body ChatCompletion chatCompletion);
 
+    /**
+     * 最新版的GPT-4 chat completion 支持图片输入
+     *
+     * @param chatCompletion chat completion
+     * @return 返回答案
+     */
+    @POST("v1/chat/completions")
+    Single<ChatCompletionResponse> chatCompletionWithPicture(@Body ChatCompletionWithPicture chatCompletion);
 
     /**
      * 语音转文字
