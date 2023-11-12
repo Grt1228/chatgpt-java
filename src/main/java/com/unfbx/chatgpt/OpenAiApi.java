@@ -359,8 +359,8 @@ public interface OpenAiApi {
     /**
      * 文本转语音
      *
-     * @param textToSpeech
-     * @return
+     * @param textToSpeech 参数
+     * @return ResponseBody body
      * @since 1.1.2
      */
     @POST("v1/audio/speech")
@@ -393,7 +393,7 @@ public interface OpenAiApi {
     /**
      * 检索微调job
      *
-     * @param fineTuneJobId
+     * @param fineTuneJobId JobId
      * @return FineTuneJobResponse
      * @since 1.1.2
      */

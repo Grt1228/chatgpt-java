@@ -70,7 +70,8 @@ public class BaseChatCompletion implements Serializable {
     /**
      * 取值：String或者ToolChoiceObj
      *
-     * @see ToolChoice.Choice 当取值为String时：ToolChoice.Choice</p>
+     * @see ToolChoice.Choice 当取值为String时：ToolChoice.Choice
+     *
      * @see ToolChoiceObj 当取值为ToolChoiceObj时：ToolChoiceObj
      * @since 1.1.2
      */

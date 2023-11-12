@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
  * 描述：
  *
  * @author https://www.unfbx.com
- * @date 2023-11-10
  * @since 1.1.2
+ * 2023-11-10
  */
 @Data
 @Builder

@@ -337,7 +337,7 @@ public class OpenAiStreamClient {
      *
      * @param messages            问答参数
      * @param model               模型
-     * @param eventSourceListener
+     * @param eventSourceListener eventSourceListener
      * @param plugin              插件
      * @param <R>                 插件自定义函数的请求值
      * @param <T>                 插件自定义函数的返回值

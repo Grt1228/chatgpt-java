@@ -21,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MessagePicture extends BaseMessage implements Serializable {
     /**
-     * Content数组支持多图片输入 <p/>
+     * Content数组支持多图片输入
      * https://platform.openai.com/docs/guides/vision
      */
     private List<Content> content;

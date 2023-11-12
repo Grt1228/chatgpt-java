@@ -705,7 +705,7 @@ public class OpenAiClient {
      * @param plugin         插件
      * @param <R>            插件自定义函数的请求值
      * @param <T>            插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(ChatCompletion chatCompletion, PluginAbstract<R, T> plugin) {
         if (Objects.isNull(plugin)) {
@@ -758,7 +758,7 @@ public class OpenAiClient {
      * @param plugin   插件
      * @param <R>      插件自定义函数的请求值
      * @param <T>      插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, PluginAbstract<R, T> plugin) {
         return chatCompletionWithPlugin(messages, ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName(), plugin);
@@ -774,7 +774,7 @@ public class OpenAiClient {
      * @param plugin   插件
      * @param <R>      插件自定义函数的请求值
      * @param <T>      插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, String model, PluginAbstract<R, T> plugin) {
         ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).model(model).build();
