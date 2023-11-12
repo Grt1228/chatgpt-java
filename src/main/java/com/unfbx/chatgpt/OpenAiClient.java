@@ -686,7 +686,7 @@ public class OpenAiClient {
     }
 
     /**
-     * 简易版
+     * 简易版（不支持图片输入）
      *
      * @param messages 问答参数
      * @return 答案

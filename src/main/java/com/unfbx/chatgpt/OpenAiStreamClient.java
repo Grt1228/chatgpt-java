@@ -216,7 +216,7 @@ public class OpenAiStreamClient {
      * @param eventSourceListener sse监听器
      * @see ConsoleEventSourceListener
      */
-    public void streamChatCompletion(ChatCompletion chatCompletion, EventSourceListener eventSourceListener) {
+    public <T extends BaseChatCompletion> void streamChatCompletion(T chatCompletion, EventSourceListener eventSourceListener) {
         if (Objects.isNull(eventSourceListener)) {
             log.error("参数异常：EventSourceListener不能为空，可以参考：com.unfbx.chatgpt.sse.ConsoleEventSourceListener");
             throw new BaseException(CommonError.PARAM_ERROR);
@@ -245,6 +245,7 @@ public class OpenAiStreamClient {
 
     /**
      * 流式输出，最新版的GPT-3.5 chat completion 更加贴近官方网站的问答模型
+     * 警告：（不支持图片输入）
      *
      * @param messages            问答列表
      * @param eventSourceListener sse监听器

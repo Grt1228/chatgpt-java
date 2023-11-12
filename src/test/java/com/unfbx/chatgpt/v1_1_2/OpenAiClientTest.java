@@ -25,6 +25,7 @@ import com.unfbx.chatgpt.function.KeyRandomStrategy;
 import com.unfbx.chatgpt.interceptor.DynamicKeyOpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
+import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.Builder;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -96,7 +97,9 @@ public class OpenAiClientTest {
                 .build();
     }
 
-
+    /**
+     * 聊天模型支持图片流式示例
+     */
     @Test
     public void pictureChat() {
         Content textContent = Content.builder().text("What’s in this image?").type(Content.Type.TEXT.getName()).build();
@@ -109,15 +112,66 @@ public class OpenAiClientTest {
         ChatCompletionWithPicture chatCompletion = ChatCompletionWithPicture
                 .builder()
                 .messages(Collections.singletonList(message))
-                .responseFormat(ResponseFormat.builder().type(ResponseFormat.Type.JSON_OBJECT.getName()).build())
                 .model(ChatCompletion.Model.GPT_4_VISION_PREVIEW.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponse = client.chatCompletion(chatCompletion);
         chatCompletionResponse.getChoices().forEach(e -> System.out.println(e.getMessage()));
     }
 
+
+    /**
+     * 聊天模型支持图片流式示例
+     */
     @Test
-    public void diyReturnModelChat() {
+    public void pictureChatV2() {
+        Content textContent = Content.builder().text("What’s in this image?").type(Content.Type.TEXT.getName()).build();
+        ImageUrl imageUrl = ImageUrl.builder().url("https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg").build();
+        Content imageContent = Content.builder().imageUrl(imageUrl).type(Content.Type.IMAGE_URL.getName()).build();
+        List<Content> contentList = new ArrayList<>();
+        contentList.add(textContent);
+        contentList.add(imageContent);
+        MessagePicture message = MessagePicture.builder().role(Message.Role.USER).content(contentList).build();
+        ChatCompletionWithPicture chatCompletion = ChatCompletionWithPicture
+                .builder()
+                .messages(Collections.singletonList(message))
+                .model(ChatCompletion.Model.GPT_4_VISION_PREVIEW.getName())
+                .build();
+        ChatCompletionResponse chatCompletionResponse = client.chatCompletion(chatCompletion);
+        chatCompletionResponse.getChoices().forEach(e -> System.out.println(e.getMessage()));
+    }
+
+
+    /**
+     * 聊天模型支持图片流式示例
+     */
+    @Test
+    public void pictureChatStream() {
+        Content textContent = Content.builder().text("What’s in this image?").type(Content.Type.TEXT.getName()).build();
+        ImageUrl imageUrl = ImageUrl.builder().url("https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg").build();
+        Content imageContent = Content.builder().imageUrl(imageUrl).type(Content.Type.IMAGE_URL.getName()).build();
+        List<Content> contentList = new ArrayList<>();
+        contentList.add(textContent);
+        contentList.add(imageContent);
+        MessagePicture message = MessagePicture.builder().role(Message.Role.USER).content(contentList).build();
+        ChatCompletionWithPicture chatCompletion = ChatCompletionWithPicture
+                .builder()
+                .messages(Collections.singletonList(message))
+                .model(ChatCompletion.Model.GPT_4_VISION_PREVIEW.getName())
+                .build();
+        streamClient.streamChatCompletion(chatCompletion, new ConsoleEventSourceListener());
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 自定义返回数据格式
+     */
+    @Test
+    public void diyReturnDataModelChat() {
         Message message = Message.builder().role(Message.Role.USER).content("随机输出10个单词，使用json输出").build();
         ChatCompletion chatCompletion = ChatCompletion
                 .builder()
@@ -129,7 +183,9 @@ public class OpenAiClientTest {
         chatCompletionResponse.getChoices().forEach(e -> System.out.println(e.getMessage()));
     }
 
-
+    /**
+     * tools使用示例
+     */
     @Test
     public void toolsChat() {
         Message message = Message.builder().role(Message.Role.USER).content("给我输出一个长度为2的中文词语，并解释下词语对应物品的用途").build();
@@ -194,7 +250,9 @@ public class OpenAiClientTest {
 
     }
 
-
+    /**
+     * tools流式输出使用示例
+     */
     @Test
     public void streamToolsChat() {
 
@@ -278,7 +336,9 @@ public class OpenAiClientTest {
 
     }
 
-
+    /**
+     * 新版图片生成模型使用示例
+     */
     @Test
     public void generateImageByDall_e_3() {
         Image image = Image.builder()
@@ -295,6 +355,9 @@ public class OpenAiClientTest {
         System.out.println(imageResponse.getData().get(0).getUrl());
     }
 
+    /**
+     * fineTuneJob使用示例
+     */
     @Test
     public void uploadFile() {
         UploadFileResponse uploadFileResponse = client.uploadFile(new java.io.File("fine_tune_test_file.json1"));
@@ -384,7 +447,9 @@ public class OpenAiClientTest {
         System.out.println(models);
     }
 
-
+    /**
+     * tts使用示例
+     */
     @Test
     public void textToSpeed() {
         TextToSpeech textToSpeech = TextToSpeech.builder()
