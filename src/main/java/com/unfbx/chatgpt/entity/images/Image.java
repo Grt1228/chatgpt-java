@@ -30,7 +30,8 @@ public class Image implements Serializable {
      *
      * @see Model
      */
-    private String model;
+    @Builder.Default
+    private String model = Model.DALL_E_3.getName();
 
     /**
      * 此参数仅仅dall-e-3,默认值：standard

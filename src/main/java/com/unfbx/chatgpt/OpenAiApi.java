@@ -4,7 +4,6 @@ import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
-import com.unfbx.chatgpt.entity.chat.BaseChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionWithPicture;
@@ -217,7 +216,7 @@ public interface OpenAiApi {
      * 微调作业集合
      *
      * @return Single OpenAiResponse FineTuneResponse
-     * @see #fineTuneJobs()
+     * @see #fineTuneJobs(String, Integer)
      */
     @Deprecated
     @GET("v1/fine-tunes")
@@ -248,7 +247,7 @@ public interface OpenAiApi {
      * 微调作业事件列表
      *
      * @return Single OpenAiResponse Event
-     * @see #fineTuneJobEvents(String fineTuneJobId)
+     * @see #fineTuneJobEvents(String, String, Integer)
      */
     @Deprecated
     @GET("v1/fine-tunes/{fine_tune_id}/events")
@@ -362,8 +361,10 @@ public interface OpenAiApi {
      *
      * @param textToSpeech
      * @return
+     * @since 1.1.2
      */
     @POST("v1/audio/speech")
+    @Streaming
     Call<ResponseBody> textToSpeech(@Body TextToSpeech textToSpeech);
 
 
@@ -380,11 +381,13 @@ public interface OpenAiApi {
     /**
      * 微调job集合
      *
+     * @param after 上一个分页请求中最后一个job id
+     * @param limit 每次查询数量
      * @return FineTuneJobListResponse #FineTuneResponse
      * @since 1.1.2
      */
     @GET("v1/fine_tuning/jobs")
-    Single<FineTuneJobListResponse<FineTuneJobResponse>> fineTuneJobs();
+    Single<FineTuneJobListResponse<FineTuneJobResponse>> fineTuneJobs(@Query("after") String after, @Query("limit") Integer limit);
 
 
     /**
@@ -400,7 +403,7 @@ public interface OpenAiApi {
     /**
      * 取消微调job
      *
-     * @param fineTuneJobId
+     * @param fineTuneJobId JobId
      * @return FineTuneJobResponse
      * @since 1.1.2
      */
@@ -410,11 +413,13 @@ public interface OpenAiApi {
     /**
      * 微调job事件列表
      *
-     * @param fineTuneJobId
+     * @param fineTuneJobId JobId
+     * @param after         上一个分页请求中最后一个id，默认值：null
+     * @param limit         每次查询数量 默认值：20
      * @return FineTuneJobListResponse #FineTuneResponse
      * @since 1.1.2
      */
     @GET("v1/fine_tuning/jobs/{fine_tuning_job_id}/events")
-    Single<FineTuneJobListResponse<FineTuneJobEvent>> fineTuneJobEvents(@Path("fine_tuning_job_id") String fineTuneJobId);
+    Single<FineTuneJobListResponse<FineTuneJobEvent>> fineTuneJobEvents(@Path("fine_tuning_job_id") String fineTuneJobId, @Query("after") String after, @Query("limit") Integer limit);
 
 }

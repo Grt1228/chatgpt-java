@@ -60,6 +60,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -586,7 +587,7 @@ public class OpenAiClient {
      * 微调模型列表
      *
      * @return FineTuneResponse list
-     * @see #fineTuneJobs()
+     * @see #fineTuneJobs(String, Integer)
      */
     @Deprecated
     public List<FineTuneResponse> fineTunes() {
@@ -625,7 +626,7 @@ public class OpenAiClient {
      *
      * @param fineTuneId 微调作业id
      * @return Event List
-     * @see #fineTuneJobEvents(String fineTuneJobId)
+     * @see #fineTuneJobEvents(String, String, Integer)
      */
     @Deprecated
     public List<Event> fineTuneEvents(String fineTuneId) {
@@ -933,18 +934,23 @@ public class OpenAiClient {
      * @since 1.1.2
      */
     public FineTuneJobResponse fineTuneJob(String trainingFileId) {
-        FineTuneJob fineTuneJob = FineTuneJob.builder().trainingFile(trainingFileId).build();
+        FineTuneJob fineTuneJob = FineTuneJob.builder()
+                .model(FineTuneJob.Model.GPT_3_5_TURBO_1106.getName())
+                .trainingFile(trainingFileId)
+                .build();
         return this.fineTuneJob(fineTuneJob);
     }
 
     /**
-     * 微调job列表
+     * 微调job集合
      *
-     * @return FineTuneJobListResponse #FineTuneJobResponse
+     * @param after 上一个分页请求中最后一个job id，默认值：null
+     * @param limit 每次查询数量 默认值：20
+     * @return FineTuneJobListResponse #FineTuneResponse
      * @since 1.1.2
      */
-    public FineTuneJobListResponse<FineTuneJobResponse> fineTuneJobs() {
-        Single<FineTuneJobListResponse<FineTuneJobResponse>> fineTuneJobs = this.openAiApi.fineTuneJobs();
+    public FineTuneJobListResponse<FineTuneJobResponse> fineTuneJobs(String after, Integer limit) {
+        Single<FineTuneJobListResponse<FineTuneJobResponse>> fineTuneJobs = this.openAiApi.fineTuneJobs(after, limit);
         return fineTuneJobs.blockingGet();
     }
 
@@ -976,29 +982,20 @@ public class OpenAiClient {
      * 微调作业事件列表
      *
      * @param fineTuneJobId 微调job id
+     * @param after         上一个分页请求中最后一个id，默认值：null
+     * @param limit         每次查询数量 默认值：20
      * @return Event List
      * @since 1.1.2
      */
-    public FineTuneJobListResponse<FineTuneJobEvent> fineTuneJobEvents(String fineTuneJobId) {
-        Single<FineTuneJobListResponse<FineTuneJobEvent>> events = this.openAiApi.fineTuneJobEvents(fineTuneJobId);
+    public FineTuneJobListResponse<FineTuneJobEvent> fineTuneJobEvents(String fineTuneJobId, String after, Integer limit) {
+        Single<FineTuneJobListResponse<FineTuneJobEvent>> events = this.openAiApi.fineTuneJobEvents(fineTuneJobId, after, limit);
         return events.blockingGet();
     }
 
 
-    public void textToSpeech(TextToSpeech textToSpeech) {
+    public void textToSpeech(TextToSpeech textToSpeech, Callback callback) {
         Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
-        responseBody.enqueue(new Callback<ResponseBody>() {
-            @SneakyThrows
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                System.out.println("--------------------->" + response.body());
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-            }
-        });
+        responseBody.enqueue(callback);
     }
 
     public static final class Builder {

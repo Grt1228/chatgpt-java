@@ -11,12 +11,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum TtsVoice {
 
-    ALLOY("mp3"),
-    ECHO("opus"),
-    FABLE("aac"),
-    ONYX("flac"),
-    NOVA("flac"),
-    SHIMMER("flac"),
+    ALLOY("alloy"),
+    ECHO("echo"),
+    FABLE("fable"),
+    ONYX("onyx"),
+    NOVA("nova"),
+    SHIMMER("shimmer"),
     ;
 
     private final String name;

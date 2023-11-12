@@ -2,12 +2,18 @@ package com.unfbx.chatgpt.entity.fineTune.job;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 描述：
+ *
+ * @author https://www.unfbx.com
+ * @since 1.1.2
+ * 2023-11-12
+ */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FineTuneJobResponse implements Serializable {
@@ -18,7 +24,7 @@ public class FineTuneJobResponse implements Serializable {
     private Long createdAt;
 
     @JsonProperty("error")
-    private OpenAiResponse.Error error;
+    private FineTuneError error;
 
     @JsonProperty("fine_tuned_model")
     private String fineTunedModel;
@@ -42,7 +48,7 @@ public class FineTuneJobResponse implements Serializable {
     private List<String> resultFiles;
 
     @JsonProperty("status")
-    private Long status;
+    private String status;
 
     @JsonProperty("trained_tokens")
     private Integer trainedTokens;
@@ -52,4 +58,7 @@ public class FineTuneJobResponse implements Serializable {
 
     @JsonProperty("validation_file")
     private String validationFile;
+
+    @JsonProperty("data")
+    private String data;
 }

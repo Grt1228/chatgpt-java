@@ -80,40 +80,16 @@ public class OpenAiClientTest {
                 .build();
         v2 = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("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"))
+                .apiKey(Arrays.asList("************************"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 //.keyStrategy(new KeyRandomStrategy())
                 .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*********/")
                 .build();
     }
 
-    @Test
-    public void textToSpeed() throws IOException {
-        TextToSpeech textToSpeech = TextToSpeech.builder()
-                .model("tts-1")
-                .input("In the vast, white expanse of the winter landscape, a drama unfolds that is as timeless as it is raw. Here, in the cradle of nature's harshest trials, a pack of grey wolves has singled out a bison from the herd—a desperate struggle for life and sustenance is about to begin.\n" +
-                        "\n" +
-                        "In a carefully orchestrated assault, the pack encircles their quarry, each wolf keenly aware of its role. Muscles tense and breaths visible in the frigid air, they inch closer, probing for a weakness. The bison, a formidable giant, stands its ground, backed by the survival instincts honed over millennia. Its hulking form casts a solitary shadow against the snow's blinding canvas.\n" +
-                        "\n" +
-                        "The dance of predator and prey plays out as a symphony of survival—each movement, each feint, holds the weight of life itself. The wolves take turns attacking, conserving strength while wearing down their target. The herd, once the bison's allies, scatter into the distance, a stark reminder that in these wild territories, the law of survival supersedes the bonds of kinship.\n" +
-                        "\n" +
-                        "A burst of activity—the wolves close in. The bison, though mighty, is tiring, its breaths labored, its movements sluggish. The wolves sense the turning tide. With relentless determination, they press their advantage, a testament to the brutal beauty of the natural order.\n" +
-                        "\n" +
-                        "As the struggle reaches its inevitable conclusion, we are reminded of the delicate balance that governs these wild spaces. Life, death, struggle, and survival—the cycle continues, each chapter written in the snow, for as long as the wolf roams and the bison roves these frozen plains.")
-                .voice("alloy")
-                .responseFormat("mp3")
-                .build();
-        v2.textToSpeech(textToSpeech);
-        CountDownLatch countDownLatch = new CountDownLatch(1);
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
     @Test
     public void subscription() {
         Subscription subscription = v2.subscription();
