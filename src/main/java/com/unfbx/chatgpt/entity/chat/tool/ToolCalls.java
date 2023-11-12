@@ -1,9 +1,6 @@
 package com.unfbx.chatgpt.entity.chat.tool;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -29,4 +26,12 @@ public class ToolCalls implements Serializable {
     private String type;
 
     private ToolCallFunction function;
+
+    @Getter
+    @AllArgsConstructor
+    public enum Type {
+        FUNCTION("function"),
+        ;
+        private final String name;
+    }
 }

@@ -2,14 +2,20 @@ package com.unfbx.chatgpt.v1_1_2;
 
 
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.FirstKeyStrategy;
 import com.unfbx.chatgpt.OpenAiClient;
 
+import com.unfbx.chatgpt.OpenAiClientFunctionTest;
 import com.unfbx.chatgpt.entity.chat.*;
+import com.unfbx.chatgpt.entity.chat.tool.ToolCallFunction;
+import com.unfbx.chatgpt.entity.chat.tool.ToolCalls;
 import com.unfbx.chatgpt.entity.chat.tool.Tools;
 import com.unfbx.chatgpt.entity.chat.tool.ToolsFunction;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -50,7 +56,6 @@ public class OpenAiClientTest {
         client = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
 //                .apiKey(Arrays.asList("*********************"))
-                .apiKey(Arrays.asList("***************"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 //.keyStrategy(new KeyRandomStrategy())
                 .keyStrategy(new FirstKeyStrategy())
@@ -131,6 +136,76 @@ public class OpenAiClientTest {
 
         ChatChoice chatChoice = chatCompletionResponse.getChoices().get(0);
         log.info("构造的方法值：{}", chatChoice.getMessage().getToolCalls());
+
+        ToolCalls openAiReturnToolCalls = chatChoice.getMessage().getToolCalls().get(0);
+        WordParam wordParam = JSONUtil.toBean(openAiReturnToolCalls.getFunction().getArguments(), WordParam.class);
+        String oneWord = getOneWord(wordParam);
+
+
+        ToolCallFunction tcf = ToolCallFunction.builder().name("getOneWord").arguments(openAiReturnToolCalls.getFunction().getArguments()).build();
+        ToolCalls tc = ToolCalls.builder().id(openAiReturnToolCalls.getId()).type(ToolCalls.Type.FUNCTION.getName()).function(tcf).build();
+        //构造tool call
+        Message message2 = Message.builder().role(Message.Role.ASSISTANT).content("方法参数").toolCalls(Collections.singletonList(tc)).build();
+        String content
+                = "{ " +
+                "\"wordLength\": \"3\", " +
+                "\"language\": \"zh\", " +
+                "\"word\": \"" + oneWord + "\"," +
+                "\"用途\": [\"直接吃\", \"做沙拉\", \"售卖\"]" +
+                "}";
+        Message message3 = Message.builder().toolCallId(openAiReturnToolCalls.getId()).role(Message.Role.TOOL).name("getOneWord").content(content).build();
+        List<Message> messageList = Arrays.asList(message, message2, message3);
+        ChatCompletion chatCompletionV2 = ChatCompletion
+                .builder()
+                .messages(messageList)
+                .model(ChatCompletion.Model.GPT_4_1106_PREVIEW.getName())
+                .build();
+        ChatCompletionResponse chatCompletionResponseV2 = client.chatCompletion(chatCompletionV2);
+        log.info("自定义的方法返回值：{}",chatCompletionResponseV2.getChoices().get(0).getMessage().getContent());
+
     }
 
+
+
+
+
+
+    /**
+     * 获取一个词语
+     * @param wordParam
+     * @return
+     */
+    public String getOneWord(WordParam wordParam) {
+
+        List<String> zh = Arrays.asList("大香蕉", "哈密瓜", "苹果");
+        List<String> en = Arrays.asList("apple", "banana", "cantaloupe");
+        if (wordParam.getLanguage().equals("zh")) {
+            for (String e : zh) {
+                if (e.length() == wordParam.getWordLength()) {
+                    return e;
+                }
+            }
+        }
+        if (wordParam.getLanguage().equals("en")) {
+            for (String e : en) {
+                if (e.length() == wordParam.getWordLength()) {
+                    return e;
+                }
+            }
+        }
+        return "西瓜";
+    }
+
+    @Test
+    public void testInput() {
+        System.out.println(getOneWord(WordParam.builder().wordLength(2).language("zh").build()));
+    }
+
+    @Data
+    @Builder
+    static class WordParam {
+        private int wordLength;
+        @Builder.Default
+        private String language = "zh";
+    }
 }

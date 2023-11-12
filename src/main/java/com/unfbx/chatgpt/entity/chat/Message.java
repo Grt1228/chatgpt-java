@@ -37,11 +37,12 @@ public class Message extends BaseMessage implements Serializable {
      * @param content      content
      * @param functionCall functionCall
      */
-    public Message(String role, String name, String content, List<ToolCalls> toolCalls, FunctionCall functionCall) {
+    public Message(String role, String name, String content, List<ToolCalls> toolCalls, String toolCallId, FunctionCall functionCall) {
         this.content = content;
         super.setRole(role);
         super.setName(name);
         super.setToolCalls(toolCalls);
+        super.setToolCallId(toolCallId);
         super.setFunctionCall(functionCall);
     }
 
@@ -54,12 +55,14 @@ public class Message extends BaseMessage implements Serializable {
         super.setName(builder.name);
         super.setFunctionCall(builder.functionCall);
         super.setToolCalls(builder.toolCalls);
+        super.setToolCallId(builder.toolCallId);
     }
 
     public static final class Builder {
         private String role;
         private String content;
         private String name;
+        private String toolCallId;
         private List<ToolCalls> toolCalls;
         private FunctionCall functionCall;
 
@@ -93,6 +96,11 @@ public class Message extends BaseMessage implements Serializable {
 
         public Builder toolCalls(List<ToolCalls> toolCalls) {
             this.toolCalls = toolCalls;
+            return this;
+        }
+
+        public Builder toolCallId(String toolCallId) {
+            this.toolCallId = toolCallId;
             return this;
         }
 
