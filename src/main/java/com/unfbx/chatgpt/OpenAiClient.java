@@ -3,13 +3,12 @@ package com.unfbx.chatgpt;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 
+import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
-import com.unfbx.chatgpt.entity.chat.ChatCompletion;
-import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
-import com.unfbx.chatgpt.entity.chat.Message;
+import com.unfbx.chatgpt.entity.chat.*;
 import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
 import com.unfbx.chatgpt.entity.completions.Completion;
@@ -40,6 +39,8 @@ import com.unfbx.chatgpt.function.KeyStrategyFunction;
 import com.unfbx.chatgpt.interceptor.DynamicKeyOpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.DefaultOpenAiAuthInterceptor;
+import com.unfbx.chatgpt.plugin.PluginAbstract;
+import com.unfbx.chatgpt.plugin.PluginParam;
 import io.reactivex.Single;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -665,6 +666,91 @@ public class OpenAiClient {
     public ChatCompletionResponse chatCompletion(List<Message> messages) {
         ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).build();
         return this.chatCompletion(chatCompletion);
+    }
+
+    /**
+     * 插件问答简易版
+     * 默认取messages最后一个元素构建插件对话
+     * 默认模型：ChatCompletion.Model.GPT_3_5_TURBO_16K_0613
+     *
+     * @param chatCompletion 参数
+     * @param plugin         插件
+     * @param <R>            插件自定义函数的请求值
+     * @param <T>            插件自定义函数的返回值
+     * @return
+     */
+    public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(ChatCompletion chatCompletion, PluginAbstract<R, T> plugin) {
+        if (Objects.isNull(plugin)) {
+            return this.chatCompletion(chatCompletion);
+        }
+        if (CollectionUtil.isEmpty(chatCompletion.getMessages())) {
+            throw new BaseException(CommonError.MESSAGE_NOT_NUL);
+        }
+        List<Message> messages = chatCompletion.getMessages();
+        Functions functions = Functions.builder()
+                .name(plugin.getFunction())
+                .description(plugin.getDescription())
+                .parameters(plugin.getParameters())
+                .build();
+        //没有值，设置默认值
+        if (Objects.isNull(chatCompletion.getFunctionCall())) {
+            chatCompletion.setFunctionCall("auto");
+        }
+        //tip: 覆盖自己设置的functions参数，使用plugin构造的functions
+        chatCompletion.setFunctions(Collections.singletonList(functions));
+        //调用OpenAi
+        ChatCompletionResponse functionCallChatCompletionResponse = this.chatCompletion(chatCompletion);
+        ChatChoice chatChoice = functionCallChatCompletionResponse.getChoices().get(0);
+        log.debug("构造的方法值：{}", chatChoice.getMessage().getFunctionCall());
+
+        R realFunctionParam = (R) JSONUtil.toBean(chatChoice.getMessage().getFunctionCall().getArguments(), plugin.getR());
+        T tq = plugin.func(realFunctionParam);
+
+        FunctionCall functionCall = FunctionCall.builder()
+                .arguments(chatChoice.getMessage().getFunctionCall().getArguments())
+                .name(plugin.getFunction())
+                .build();
+        messages.add(Message.builder().role(Message.Role.ASSISTANT).content("function_call").functionCall(functionCall).build());
+        messages.add(Message.builder().role(Message.Role.FUNCTION).name(plugin.getFunction()).content(plugin.content(tq)).build());
+        //设置第二次，请求的参数
+        chatCompletion.setFunctionCall(null);
+        chatCompletion.setFunctions(null);
+
+        ChatCompletionResponse chatCompletionResponse = this.chatCompletion(chatCompletion);
+        log.debug("自定义的方法返回值：{}", chatCompletionResponse.getChoices());
+        return chatCompletionResponse;
+    }
+
+    /**
+     * 插件问答简易版
+     * 默认取messages最后一个元素构建插件对话
+     * 默认模型：ChatCompletion.Model.GPT_3_5_TURBO_16K_0613
+     *
+     * @param messages 问答参数
+     * @param plugin   插件
+     * @param <R>      插件自定义函数的请求值
+     * @param <T>      插件自定义函数的返回值
+     * @return
+     */
+    public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, PluginAbstract<R, T> plugin) {
+        return chatCompletionWithPlugin(messages, ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName(), plugin);
+    }
+
+
+    /**
+     * 插件问答简易版
+     * 默认取messages最后一个元素构建插件对话
+     *
+     * @param messages 问答参数
+     * @param model    模型
+     * @param plugin   插件
+     * @param <R>      插件自定义函数的请求值
+     * @param <T>      插件自定义函数的返回值
+     * @return
+     */
+    public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, String model, PluginAbstract<R, T> plugin) {
+        ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).model(model).build();
+        return this.chatCompletionWithPlugin(chatCompletion, plugin);
     }
 
 
