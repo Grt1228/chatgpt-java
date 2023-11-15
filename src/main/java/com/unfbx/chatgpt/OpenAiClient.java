@@ -6,6 +6,8 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
+import com.unfbx.chatgpt.entity.assistant.Assistant;
+import com.unfbx.chatgpt.entity.assistant.AssistantResponse;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -992,11 +994,31 @@ public class OpenAiClient {
         return events.blockingGet();
     }
 
-
+    /**
+     * 文本转语音
+     *
+     * @param textToSpeech 参数
+     * @param callback     返回值接收
+     * @since 1.1.2
+     */
     public void textToSpeech(TextToSpeech textToSpeech, Callback callback) {
         Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
         responseBody.enqueue(callback);
     }
+
+    /**
+     * 创建助手
+     *
+     * @param assistant 参数
+     * @return 返回助手信息
+     * @since 1.1.2
+     */
+    public AssistantResponse assistants(Assistant assistant) {
+        Single<AssistantResponse> assistants = this.openAiApi.assistant(assistant);
+        return assistants.blockingGet();
+    }
+
+
 
     public static final class Builder {
         /**
