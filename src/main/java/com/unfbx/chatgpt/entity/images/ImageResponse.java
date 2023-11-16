@@ -15,6 +15,6 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ImageResponse implements Serializable {
-    private long created;
+    private Long created;
     private List<Item> data;
 }

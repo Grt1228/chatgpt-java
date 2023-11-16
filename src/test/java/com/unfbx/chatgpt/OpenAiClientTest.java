@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -41,10 +42,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.*;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,14 +64,14 @@ public class OpenAiClientTest {
     @Before
     public void before() {
         //可以为null
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         //！！！！千万别再生产或者测试环境打开BODY级别日志！！！！
         //！！！生产或者测试环境建议设置为这三种级别：NONE,BASIC,HEADERS,！！！
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-                .proxy(proxy)
+//                .proxy(proxy)
                 .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new OpenAiResponseInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -77,15 +80,16 @@ public class OpenAiClientTest {
                 .build();
         v2 = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("sk-***********","sk-*********"))
+                .apiKey(Arrays.asList("************************"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 //.keyStrategy(new KeyRandomStrategy())
                 .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-//                .apiHost("https://自己代理的服务器地址/")
+                .apiHost("https://*********/")
                 .build();
     }
+
     @Test
     public void subscription() {
         Subscription subscription = v2.subscription();
@@ -234,7 +238,7 @@ public class OpenAiClientTest {
 //        Arrays.stream(completions.getChoices()).forEach(System.out::println);
 
         CompletionResponse completions = v2.completions("我想申请转专业，从计算机专业转到会计学专业，帮我完成一份两百字左右的申请书");
-        Arrays.stream(completions.getChoices()).forEach(System.out::println);
+        (completions.getChoices()).forEach(System.out::println);
     }
 
     //对话测试
@@ -248,15 +252,15 @@ public class OpenAiClientTest {
                 .echo(true)
                 .build();
         CompletionResponse completions = v2.completions(q);
-        String text = completions.getChoices()[0].getText();
+        String text = completions.getChoices().get(0).getText();
 
         q.setPrompt(text + "\n" + "再翻译成韩文\n");
         completions = v2.completions(q);
-        text = completions.getChoices()[0].getText();
+        text = completions.getChoices().get(0).getText();
 
         q.setPrompt(text + "\n" + "再翻译成日文\n");
         completions = v2.completions(q);
-        text = completions.getChoices()[0].getText();
+        text = completions.getChoices().get(0).getText();
         System.out.println(text);
     }
 

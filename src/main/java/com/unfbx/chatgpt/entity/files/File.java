@@ -17,12 +17,15 @@ import java.io.Serializable;
 public class File implements Serializable {
 
     private String id;
-    private String object;
-    private long bytes;
-    private long created_at;
+    private Long bytes;
+    @JsonProperty("created_at")
+    private Long createdAt;
     private String filename;
+    private String object;
     private String purpose;
+    @Deprecated
     private String status;
+    @Deprecated
     @JsonProperty("status_details")
     private String statusDetails;
 }

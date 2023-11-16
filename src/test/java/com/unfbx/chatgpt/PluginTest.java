@@ -48,12 +48,12 @@ public class PluginTest {
         openAiClient = OpenAiClient.builder()
                 .okHttpClient(okHttpClient)
                 .apiKey(Arrays.asList("sk-********************************"))
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
         openAiStreamClient = OpenAiStreamClient.builder()
                 //支持多key传入，请求时候随机选择
                 .apiKey(Arrays.asList("sk-********************************"))
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
     }
 

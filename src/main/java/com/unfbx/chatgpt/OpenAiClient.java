@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -24,6 +25,10 @@ import com.unfbx.chatgpt.entity.fineTune.Event;
 import com.unfbx.chatgpt.entity.fineTune.FineTune;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneDeleteResponse;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJob;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobEvent;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobListResponse;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobResponse;
 import com.unfbx.chatgpt.entity.images.*;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
@@ -43,13 +48,19 @@ import com.unfbx.chatgpt.plugin.PluginAbstract;
 import com.unfbx.chatgpt.plugin.PluginParam;
 import io.reactivex.Single;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -231,6 +242,7 @@ public class OpenAiClient {
      * @param edit 图片对象
      * @return EditResponse
      */
+    @Deprecated
     public EditResponse edit(Edit edit) {
         Single<EditResponse> edits = this.openAiApi.edits(edit);
         return edits.blockingGet();
@@ -550,7 +562,9 @@ public class OpenAiClient {
      *
      * @param fineTune 微调作业id
      * @return FineTuneResponse
+     * @see #fineTuneJob(FineTuneJob fineTuneJob)
      */
+    @Deprecated
     public FineTuneResponse fineTune(FineTune fineTune) {
         Single<FineTuneResponse> fineTuneResponse = this.openAiApi.fineTune(fineTune);
         return fineTuneResponse.blockingGet();
@@ -561,7 +575,9 @@ public class OpenAiClient {
      *
      * @param trainingFileId 文件id，文件上传返回的id
      * @return FineTuneResponse
+     * @see #fineTuneJob(String trainingFileId)
      */
+    @Deprecated
     public FineTuneResponse fineTune(String trainingFileId) {
         FineTune fineTune = FineTune.builder().trainingFile(trainingFileId).build();
         return this.fineTune(fineTune);
@@ -571,7 +587,9 @@ public class OpenAiClient {
      * 微调模型列表
      *
      * @return FineTuneResponse list
+     * @see #fineTuneJobs(String, Integer)
      */
+    @Deprecated
     public List<FineTuneResponse> fineTunes() {
         Single<OpenAiResponse<FineTuneResponse>> fineTunes = this.openAiApi.fineTunes();
         return fineTunes.blockingGet().getData();
@@ -582,7 +600,9 @@ public class OpenAiClient {
      *
      * @param fineTuneId 微调作业id
      * @return FineTuneResponse
+     * @see #retrieveFineTuneJob(String fineTuneJobId)
      */
+    @Deprecated
     public FineTuneResponse retrieveFineTune(String fineTuneId) {
         Single<FineTuneResponse> fineTune = this.openAiApi.retrieveFineTune(fineTuneId);
         return fineTune.blockingGet();
@@ -593,7 +613,9 @@ public class OpenAiClient {
      *
      * @param fineTuneId 主键
      * @return FineTuneResponse
+     * @see #cancelFineTuneJob(String fineTuneJobId)
      */
+    @Deprecated
     public FineTuneResponse cancelFineTune(String fineTuneId) {
         Single<FineTuneResponse> fineTune = this.openAiApi.cancelFineTune(fineTuneId);
         return fineTune.blockingGet();
@@ -604,7 +626,9 @@ public class OpenAiClient {
      *
      * @param fineTuneId 微调作业id
      * @return Event List
+     * @see #fineTuneJobEvents(String, String, Integer)
      */
+    @Deprecated
     public List<Event> fineTuneEvents(String fineTuneId) {
         Single<OpenAiResponse<Event>> events = this.openAiApi.fineTuneEvents(fineTuneId);
         return events.blockingGet().getData();
@@ -652,13 +676,17 @@ public class OpenAiClient {
      * @param chatCompletion 问答参数
      * @return 答案
      */
-    public ChatCompletionResponse chatCompletion(ChatCompletion chatCompletion) {
-        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion(chatCompletion);
+    public <T extends BaseChatCompletion> ChatCompletionResponse chatCompletion(T chatCompletion) {
+        if (chatCompletion instanceof ChatCompletion) {
+            Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion((ChatCompletion) chatCompletion);
+            return chatCompletionResponse.blockingGet();
+        }
+        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletionWithPicture((ChatCompletionWithPicture) chatCompletion);
         return chatCompletionResponse.blockingGet();
     }
 
     /**
-     * 简易版
+     * 简易版（不支持图片输入）
      *
      * @param messages 问答参数
      * @return 答案
@@ -677,7 +705,7 @@ public class OpenAiClient {
      * @param plugin         插件
      * @param <R>            插件自定义函数的请求值
      * @param <T>            插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(ChatCompletion chatCompletion, PluginAbstract<R, T> plugin) {
         if (Objects.isNull(plugin)) {
@@ -730,7 +758,7 @@ public class OpenAiClient {
      * @param plugin   插件
      * @param <R>      插件自定义函数的请求值
      * @param <T>      插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, PluginAbstract<R, T> plugin) {
         return chatCompletionWithPlugin(messages, ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName(), plugin);
@@ -746,7 +774,7 @@ public class OpenAiClient {
      * @param plugin   插件
      * @param <R>      插件自定义函数的请求值
      * @param <T>      插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, String model, PluginAbstract<R, T> plugin) {
         ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).model(model).build();
@@ -811,7 +839,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String, RequestBody> requestBodyMap = new HashMap<>(5,1L);
+        Map<String, RequestBody> requestBodyMap = new HashMap<>(5, 1L);
 
         if (StrUtil.isNotBlank(translations.getModel())) {
             requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
@@ -886,6 +914,89 @@ public class OpenAiClient {
         return billingUsage.blockingGet();
     }
 
+    /**
+     * 创建微调job
+     *
+     * @param fineTuneJob 微调job
+     * @return FineTuneJobResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse fineTuneJob(FineTuneJob fineTuneJob) {
+        Single<FineTuneJobResponse> fineTuneJobResponse = this.openAiApi.fineTuneJob(fineTuneJob);
+        return fineTuneJobResponse.blockingGet();
+    }
+
+    /**
+     * 创建微调job
+     *
+     * @param trainingFileId 文件id，文件上传返回的id
+     * @return FineTuneJobResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse fineTuneJob(String trainingFileId) {
+        FineTuneJob fineTuneJob = FineTuneJob.builder()
+                .model(FineTuneJob.Model.GPT_3_5_TURBO_1106.getName())
+                .trainingFile(trainingFileId)
+                .build();
+        return this.fineTuneJob(fineTuneJob);
+    }
+
+    /**
+     * 微调job集合
+     *
+     * @param after 上一个分页请求中最后一个job id，默认值：null
+     * @param limit 每次查询数量 默认值：20
+     * @return FineTuneJobListResponse #FineTuneResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobListResponse<FineTuneJobResponse> fineTuneJobs(String after, Integer limit) {
+        Single<FineTuneJobListResponse<FineTuneJobResponse>> fineTuneJobs = this.openAiApi.fineTuneJobs(after, limit);
+        return fineTuneJobs.blockingGet();
+    }
+
+    /**
+     * 检索微调job
+     *
+     * @param fineTuneJobId 微调job id
+     * @return FineTuneResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse retrieveFineTuneJob(String fineTuneJobId) {
+        Single<FineTuneJobResponse> fineTuneJob = this.openAiApi.retrieveFineTuneJob(fineTuneJobId);
+        return fineTuneJob.blockingGet();
+    }
+
+    /**
+     * 取消微调job
+     *
+     * @param fineTuneJobId 微调job id
+     * @return FineTuneJobResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse cancelFineTuneJob(String fineTuneJobId) {
+        Single<FineTuneJobResponse> fineTuneJob = this.openAiApi.cancelFineTuneJob(fineTuneJobId);
+        return fineTuneJob.blockingGet();
+    }
+
+    /**
+     * 微调作业事件列表
+     *
+     * @param fineTuneJobId 微调job id
+     * @param after         上一个分页请求中最后一个id，默认值：null
+     * @param limit         每次查询数量 默认值：20
+     * @return Event List
+     * @since 1.1.2
+     */
+    public FineTuneJobListResponse<FineTuneJobEvent> fineTuneJobEvents(String fineTuneJobId, String after, Integer limit) {
+        Single<FineTuneJobListResponse<FineTuneJobEvent>> events = this.openAiApi.fineTuneJobEvents(fineTuneJobId, after, limit);
+        return events.blockingGet();
+    }
+
+
+    public void textToSpeech(TextToSpeech textToSpeech, Callback callback) {
+        Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
+        responseBody.enqueue(callback);
+    }
 
     public static final class Builder {
         /**

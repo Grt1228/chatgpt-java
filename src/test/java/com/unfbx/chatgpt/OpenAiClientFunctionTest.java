@@ -58,7 +58,7 @@ public class OpenAiClientFunctionTest {
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
 
         openAiStreamClient = OpenAiStreamClient.builder()
@@ -69,7 +69,7 @@ public class OpenAiClientFunctionTest {
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
     }
 

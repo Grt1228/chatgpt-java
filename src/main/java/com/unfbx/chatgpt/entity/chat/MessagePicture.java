@@ -13,17 +13,19 @@ import java.util.List;
  * 描述：
  *
  * @author https:www.unfbx.com
- * @since 2023-11-10
+ * @since 2023-03-02
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
-public class Message extends BaseMessage implements Serializable {
+public class MessagePicture extends BaseMessage implements Serializable {
     /**
-     * 旧的content属性仅仅支持字符类型
+     * Content数组支持多图片输入
+     * https://platform.openai.com/docs/guides/vision
      */
-    private String content;
+    private List<Content> content;
+
 
     public static Builder builder() {
         return new Builder();
@@ -37,7 +39,7 @@ public class Message extends BaseMessage implements Serializable {
      * @param content      content
      * @param functionCall functionCall
      */
-    public Message(String role, String name, String content, List<ToolCalls> toolCalls, String toolCallId, FunctionCall functionCall) {
+    public MessagePicture(String role, String name, List<Content> content, List<ToolCalls> toolCalls, String toolCallId, FunctionCall functionCall) {
         this.content = content;
         super.setRole(role);
         super.setName(name);
@@ -46,10 +48,10 @@ public class Message extends BaseMessage implements Serializable {
         super.setFunctionCall(functionCall);
     }
 
-    public Message() {
+    public MessagePicture() {
     }
 
-    private Message(Builder builder) {
+    private MessagePicture(Builder builder) {
         setContent(builder.content);
         super.setRole(builder.role);
         super.setName(builder.name);
@@ -60,7 +62,7 @@ public class Message extends BaseMessage implements Serializable {
 
     public static final class Builder {
         private String role;
-        private String content;
+        private List<Content> content;
         private String name;
         private String toolCallId;
         private List<ToolCalls> toolCalls;
@@ -79,7 +81,7 @@ public class Message extends BaseMessage implements Serializable {
             return this;
         }
 
-        public Builder content(String content) {
+        public Builder content(List<Content> content) {
             this.content = content;
             return this;
         }
@@ -104,8 +106,9 @@ public class Message extends BaseMessage implements Serializable {
             return this;
         }
 
-        public Message build() {
-            return new Message(this);
+        public MessagePicture build() {
+            return new MessagePicture(this);
         }
     }
+
 }

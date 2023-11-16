@@ -2,19 +2,16 @@ package com.unfbx.chatgpt.entity.images;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.unfbx.chatgpt.exception.BaseException;
-import com.unfbx.chatgpt.exception.CommonError;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * 描述：
  *
  * @author https:www.unfbx.com
- *  2023-02-15
+ * 2023-02-15
  */
 @Getter
 @Slf4j
@@ -24,69 +21,88 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Image implements Serializable {
 
-    @NonNull
+    /**
+     * 提示词：dall-e-2支持1000字符、dall-e-3支持4000字符
+     */
     private String prompt;
     /**
-     * 为每个提示生成的完成次数。
+     * 支持dall-e-2、dall-e-3
+     *
+     * @see Model
      */
     @Builder.Default
-    private Integer n = 1;
-    /**
-     * 256x256
-     * 512x512
-     * 1024x1024
-     */
-    @Builder.Default
-    private String size = SizeEnum.size_512.getName();
+    private String model = Model.DALL_E_3.getName();
 
+    /**
+     * 此参数仅仅dall-e-3,默认值：standard
+     *
+     * @see Quality
+     */
+    private String quality;
+
+    /**
+     * 为每个提示生成的个数，dall-e-3只能为1。
+     */
+    private Integer n;
+    /**
+     * 图片尺寸，默认值：1024x1024
+     * dall-e-2支持：256x256, 512x512, or 1024x1024
+     * dall-e-3支持：1024x1024, 1792x1024, or 1024x1792
+     *
+     * @see SizeEnum
+     */
+    private String size;
+    /**
+     * 此参数仅仅dall-e-3,取值范围：vivid、natural
+     * 默认值：vivid
+     *
+     * @see Style
+     */
+    private String style;
+
+    /**
+     * 生成图片格式：url、b64_json
+     *
+     * @see ResponseFormat
+     */
     @JsonProperty("response_format")
-    @Builder.Default
-    private String responseFormat = ResponseFormat.URL.getName();
+    private String responseFormat;
 
     private String user;
 
-    public void setN(Integer n) {
-        if(n < 1){
-            log.warn("n最小值1");
-            this.n = 1;
-            return;
-        }
-        if(n > 10){
-            log.warn("n最大值10");
-            this.n = 10;
-            return;
-        }
-        this.n = n;
+    /**
+     * 图片生成模型
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum Model {
+        DALL_E_2("dall-e-2"),
+        DALL_E_3("dall-e-3"),
+        ;
+        private final String name;
     }
 
-    public void setPrompt(String prompt) {
-        if(Objects.isNull(prompt) || "".equals(prompt)){
-            log.error("参数异常");
-            throw new BaseException(CommonError.PARAM_ERROR);
-        }
-        if(prompt.length() > 1000){
-            log.error("长度超过1000");
-            throw new BaseException(CommonError.PARAM_ERROR);
-        }
-        this.prompt = prompt;
+    /**
+     * 生成图片质量
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum Quality {
+        STANDARD("standard"),
+        HD("hd"),
+        ;
+        private final String name;
     }
 
-    public void setSize(SizeEnum size) {
-        if(Objects.isNull(size)){
-            size = SizeEnum.size_512;
-        }
-        this.size = size.getName();
+    /**
+     * 生成图片风格
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum Style {
+        VIVID("vivid"),
+        NATURAL("natural"),
+        ;
+        private final String name;
     }
-
-    public void setResponseFormat(ResponseFormat responseFormat) {
-        if(Objects.isNull(responseFormat)){
-            responseFormat = ResponseFormat.URL;
-        }
-        this.responseFormat = responseFormat.getName();
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
 }
