@@ -9,8 +9,10 @@ import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.common.PageRequest;
 import com.unfbx.chatgpt.entity.files.File;
 import com.unfbx.chatgpt.entity.files.UploadFileResponse;
-import com.unfbx.chatgpt.entity.thread.Thread;
-import com.unfbx.chatgpt.entity.thread.ThreadResponse;
+import com.unfbx.chatgpt.entity.assistant.thread.ModifyThread;
+import com.unfbx.chatgpt.entity.assistant.thread.Thread;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadMessage;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadResponse;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,14 +40,14 @@ public class OpenAiClientTest {
     @Before
     public void before() {
         //可以为null
-//        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 7890));
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
         //！！！！千万别再生产或者测试环境打开BODY级别日志！！！！
         //！！！生产或者测试环境建议设置为这三种级别：NONE,BASIC,HEADERS,！！！
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
-//                .proxy(proxy)
+                .proxy(proxy)
                 .addInterceptor(httpLoggingInterceptor)
                 .addInterceptor(new OpenAiResponseInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -54,13 +56,13 @@ public class OpenAiClientTest {
                 .build();
         client = OpenAiClient.builder()
                 //支持多key传入，请求时候随机选择
-                .apiKey(Arrays.asList("*********************"))
+                .apiKey(Arrays.asList("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"))
                 //自定义key的获取策略：默认KeyRandomStrategy
                 //.keyStrategy(new KeyRandomStrategy())
                 .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://*********************/")
+                .apiHost("https://api.openai.com/")
                 .build();
     }
 
@@ -218,39 +220,47 @@ public class OpenAiClientTest {
      */
     @Test
     public void thread() {
+        ThreadMessage threadMessage = ThreadMessage
+                .builder()
+                .content("hello.")
+                .role(ThreadMessage.Role.USER.getName()).build();
         Thread thread = Thread.builder()
                 .metadata(new HashMap())
-                .messages(new ArrayList<>()).build();
+                .messages(Collections.singletonList(threadMessage))
+                .build();
         ThreadResponse threadResponse = client.thread(thread);
         System.out.println(threadResponse.getId());
+        //thread_lYig5XqdtEn5UDzsZh53qfq1
     }
-//
-//    /**
-//     * 获取助手信息
-//     */
-//    @Test
-//    public void retrieveAssistant() {
-//        AssistantResponse assistants = client.retrieveAssistant("asst_V7ITX0eKgpm1tMU7L0bTlwaR");
-//        System.out.println(assistants.getId());
-//    }
-//
-//    /**
-//     * 修改县城信息
-//     */
-//    @Test
-//    public void modifyAssistant() {
-//
-//        AssistantResponse assistants = client.modify("asst_V7ITX0eKgpm1tMU7L0bTlwaR", assistant);
-//        System.out.println(assistants.getId());
-//    }
-//
-//    /**
-//     * 删除线程信息
-//     */
-//    @Test
-//    public void deleteAssistant() {
-//        DeleteResponse response = client.deleteAssistant("asst_V7ITX0eKgpm1tMU7L0bTlwaR");
-//        System.out.println(response.isDeleted());
-//    }
+
+    /**
+     * 获取助手信息
+     */
+    @Test
+    public void retrieveThread() {
+        ThreadResponse threadResponse = client.retrieveThread("thread_lYig5XqdtEn5UDzsZh53qfq1");
+        System.out.println(threadResponse.getId());
+    }
+
+    /**
+     * 修改县城信息
+     */
+    @Test
+    public void modifyThread() {
+        Map<String,String> map = new HashMap<>();
+        map.put("hello", "unfbx");
+        ModifyThread mod = ModifyThread.builder().metadata(map).build();
+        ThreadResponse threadResponse = client.modifyThread("thread_lYig5XqdtEn5UDzsZh53qfq1", mod);
+        System.out.println(threadResponse.getId());
+    }
+
+    /**
+     * 删除线程信息
+     */
+    @Test
+    public void deleteThread() {
+        DeleteResponse response = client.deleteThread("thread_yrzSAYVLhaDTdKsx1InD6o9R");
+        System.out.println(response.isDeleted());
+    }
 
 }

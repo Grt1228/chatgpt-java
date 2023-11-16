@@ -2,6 +2,10 @@ package com.unfbx.chatgpt;
 
 import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.assistant.*;
+import com.unfbx.chatgpt.entity.assistant.message.MessageFileResponse;
+import com.unfbx.chatgpt.entity.assistant.message.MessageResponse;
+import com.unfbx.chatgpt.entity.assistant.message.ModifyMessage;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadMessage;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -33,9 +37,9 @@ import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
-import com.unfbx.chatgpt.entity.thread.ModifyThread;
-import com.unfbx.chatgpt.entity.thread.Thread;
-import com.unfbx.chatgpt.entity.thread.ThreadResponse;
+import com.unfbx.chatgpt.entity.assistant.thread.ModifyThread;
+import com.unfbx.chatgpt.entity.assistant.thread.Thread;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadResponse;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
@@ -582,4 +586,89 @@ public interface OpenAiApi {
     @DELETE("v1/threads/{thread_id}")
     @Headers("OpenAI-Beta: assistants=v1")
     Single<DeleteResponse> deleteThread(@Path("thread_id") String threadId);
+
+    /**
+     * 为线程创建消息
+     *
+     * @param threadId 线程id
+     * @param message  message参数
+     * @return
+     * @since 1.1.3
+     */
+    @POST("v1/threads/{thread_id}/messages")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<MessageResponse> message(@Path("thread_id") String threadId, @Body ThreadMessage message);
+
+    /**
+     * 检索某一个线程对应的消息详细信息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @return
+     * @since 1.1.3
+     */
+    @GET("v1/threads/{thread_id}/messages/{message_id}")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<MessageResponse> retrieveMessage(@Path("thread_id") String threadId, @Path("message_id") String messageId);
+
+    /**
+     * 修改某一个线程对应的消息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param message   消息体
+     * @return
+     * @since 1.1.3
+     */
+    @POST("v1/threads/{thread_id}/messages/{message_id}")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<MessageResponse> modifyMessage(@Path("thread_id") String threadId, @Path("message_id") String messageId, @Body ModifyMessage message);
+
+    /**
+     * 获取某一个线程的消息集合
+     *
+     * @param threadId 线程id
+     * @param limit    一页数据大小
+     * @param order    排序类型
+     * @param before   分页参数，之前的id，默认值：null
+     * @param after    分页参数，之后的id，默认值：null
+     * @return
+     * @since 1.1.3
+     */
+    @GET("v1/threads/{thread_id}/messages")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<AssistantListResponse<MessageResponse>> messages(@Path("thread_id") String threadId,
+                                                            @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
+
+    /**
+     * 检索某一个线程对应某一个消息的一个文件信息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param fileId    文件id
+     * @return
+     * @since 1.1.3
+     */
+    @GET("v1/threads/{thread_id}/messages/{message_id}/files/{file_id}")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<MessageFileResponse> retrieveMessageFile(@Path("thread_id") String threadId, @Path("message_id") String messageId, @Path("file_id") String fileId);
+
+    /**
+     * messageFiles集合
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param limit     一页数据大小
+     * @param order     排序类型
+     * @param before    分页参数，之前的id，默认值：null
+     * @param after     分页参数，之后的id，默认值：null
+     * @return
+     * @since 1.1.3
+     */
+    @GET("v1/threads/{thread_id}/messages/{message_id}/files")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<AssistantListResponse<MessageResponse>> messageFiles(@Path("thread_id") String threadId, @Path("message_id") String messageId,
+                                                                @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
+
+
 }

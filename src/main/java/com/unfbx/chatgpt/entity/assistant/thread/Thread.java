@@ -1,4 +1,4 @@
-package com.unfbx.chatgpt.entity.thread;
+package com.unfbx.chatgpt.entity.assistant.thread;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -17,8 +17,12 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ModifyThread implements Serializable {
+public class Thread implements Serializable {
 
+    /**
+     * 用于启动线程的消息列表。
+     */
+    private List<ThreadMessage> messages;
     /**
      * Set of 16 key-value pairs that can be attached to an object.
      * This can be useful for storing additional information about the object in a structured format.
