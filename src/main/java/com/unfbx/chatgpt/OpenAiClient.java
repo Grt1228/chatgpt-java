@@ -6,14 +6,14 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
-import com.unfbx.chatgpt.entity.assistant.Assistant;
-import com.unfbx.chatgpt.entity.assistant.AssistantResponse;
+import com.unfbx.chatgpt.entity.assistant.*;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.*;
 import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
+import com.unfbx.chatgpt.entity.common.PageRequest;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
 import com.unfbx.chatgpt.entity.edits.Edit;
@@ -36,6 +36,9 @@ import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import com.unfbx.chatgpt.entity.thread.ModifyThread;
+import com.unfbx.chatgpt.entity.thread.Thread;
+import com.unfbx.chatgpt.entity.thread.ThreadResponse;
 import com.unfbx.chatgpt.entity.whisper.Transcriptions;
 import com.unfbx.chatgpt.entity.whisper.Translations;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
@@ -50,19 +53,15 @@ import com.unfbx.chatgpt.plugin.PluginAbstract;
 import com.unfbx.chatgpt.plugin.PluginParam;
 import io.reactivex.Single;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -118,8 +117,8 @@ public class OpenAiClient {
      *
      * @return OpenAiClient.Builder
      */
-    public static OpenAiClient.Builder builder() {
-        return new OpenAiClient.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -1013,11 +1012,153 @@ public class OpenAiClient {
      * @return 返回助手信息
      * @since 1.1.2
      */
-    public AssistantResponse assistants(Assistant assistant) {
-        Single<AssistantResponse> assistants = this.openAiApi.assistant(assistant);
+    public AssistantResponse assistant(Assistant assistant) {
+        Single<AssistantResponse> assistantResponse = this.openAiApi.assistant(assistant);
+        return assistantResponse.blockingGet();
+    }
+
+    /**
+     * 获取助手详细信息
+     *
+     * @param assistantId 助手id
+     * @return 助手信息
+     * @since 1.1.3
+     */
+    public AssistantResponse retrieveAssistant(String assistantId) {
+        Single<AssistantResponse> assistant = this.openAiApi.retrieveAssistant(assistantId);
+        return assistant.blockingGet();
+    }
+
+
+    /**
+     * 修改助手信息
+     *
+     * @param assistantId 助手id
+     * @param assistant   修改助手参数
+     * @return 助手信息
+     * @since 1.1.3
+     */
+    public AssistantResponse modifyAssistant(String assistantId, Assistant assistant) {
+        Single<AssistantResponse> assistantResponse = this.openAiApi.modifyAssistant(assistantId, assistant);
+        return assistantResponse.blockingGet();
+    }
+
+    /**
+     * 删除助手
+     *
+     * @param assistantId 助手id
+     * @return 删除状态
+     * @since 1.1.3
+     */
+    public DeleteResponse deleteAssistant(String assistantId) {
+        Single<DeleteResponse> deleteAssistant = this.openAiApi.deleteAssistant(assistantId);
+        return deleteAssistant.blockingGet();
+    }
+
+    /**
+     * 助手列表
+     *
+     * @param pageRequest 分页信息
+     * @return AssistantListResponse #AssistantResponse
+     * @since 1.1.3
+     */
+    public AssistantListResponse<AssistantResponse> assistants(PageRequest pageRequest) {
+        Single<AssistantListResponse<AssistantResponse>> assistants = this.openAiApi.assistants(pageRequest.getLimit(), pageRequest.getOrder(), pageRequest.getBefore(), pageRequest.getAfter());
         return assistants.blockingGet();
     }
 
+    /**
+     * 创建助手文件
+     *
+     * @param assistantId 助手id
+     * @param assistantId 文件信息
+     * @return 返回信息AssistantResponse
+     */
+    public AssistantFileResponse assistantFile(String assistantId, AssistantFile assistantFile) {
+        Single<AssistantFileResponse> assistantFileResponse = this.openAiApi.assistantFile(assistantId, assistantFile);
+        return assistantFileResponse.blockingGet();
+    }
+
+    /**
+     * 检索助手文件
+     *
+     * @param assistantId 助手id
+     * @param fileId      文件信息
+     * @return 助手文件信息
+     */
+    public AssistantFileResponse retrieveAssistantFile(String assistantId, String fileId) {
+        Single<AssistantFileResponse> assistantFileResponse = this.openAiApi.retrieveAssistantFile(assistantId, fileId);
+        return assistantFileResponse.blockingGet();
+    }
+
+    /**
+     * 删除助手文件
+     *
+     * @param assistantId 助手id
+     * @param fileId      文件信息
+     * @return 删除状态
+     */
+    public DeleteResponse deleteAssistantFile(String assistantId, String fileId) {
+        Single<DeleteResponse> deleteResponse = this.openAiApi.deleteAssistantFile(assistantId, fileId);
+        return deleteResponse.blockingGet();
+    }
+
+    /**
+     * 助手文件列表
+     *
+     * @param assistantId 助手id
+     * @param pageRequest 分页信息
+     * @return 助手文件列表
+     */
+    public AssistantListResponse<AssistantFileResponse> assistantFiles(String assistantId, PageRequest pageRequest) {
+        Single<AssistantListResponse<AssistantFileResponse>> deleteResponse = this.openAiApi.assistantFiles(assistantId, pageRequest.getLimit(), pageRequest.getOrder(), pageRequest.getBefore(), pageRequest.getAfter());
+        return deleteResponse.blockingGet();
+    }
+
+    /**
+     * 创建线程
+     *
+     * @param thread 创建线程参数
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    public ThreadResponse thread(Thread thread) {
+        return this.openAiApi.thread(thread).blockingGet();
+    }
+
+    /**
+     * 获取线程详细信息
+     *
+     * @param threadId 线程id
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    public ThreadResponse retrieveThread(String threadId) {
+        return this.openAiApi.retrieveThread(threadId).blockingGet();
+    }
+
+    /**
+     * 修改线程信息
+     *
+     * @param threadId 线程id
+     * @param thread   线程信息
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    public ThreadResponse modifyThread(String threadId, ModifyThread thread) {
+        return this.openAiApi.modifyThread(threadId, thread).blockingGet();
+    }
+
+    /**
+     * 删除线程
+     *
+     * @param threadId 线程id
+     * @return 删除状态
+     * @since 1.1.3
+     */
+    public DeleteResponse deleteThread(String threadId) {
+        return this.openAiApi.deleteThread(threadId).blockingGet();
+    }
 
 
     public static final class Builder {
@@ -1028,7 +1169,7 @@ public class OpenAiClient {
         /**
          * api请求地址，结尾处有斜杠
          *
-         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         * @see OpenAIConst
          */
         private String apiHost;
         /**
@@ -1052,7 +1193,7 @@ public class OpenAiClient {
         /**
          * @param val api请求地址，结尾处有斜杠
          * @return Builder对象
-         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         * @see OpenAIConst
          */
         public Builder apiHost(String val) {
             apiHost = val;

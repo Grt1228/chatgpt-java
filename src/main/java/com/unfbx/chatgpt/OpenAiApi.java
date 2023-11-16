@@ -33,6 +33,9 @@ import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import com.unfbx.chatgpt.entity.thread.ModifyThread;
+import com.unfbx.chatgpt.entity.thread.Thread;
+import com.unfbx.chatgpt.entity.thread.ThreadResponse;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
 import io.reactivex.Single;
 import okhttp3.MultipartBody;
@@ -450,7 +453,8 @@ public interface OpenAiApi {
     /**
      * 修改助手信息
      *
-     * @param assistant 修改助手参数
+     * @param assistantId 助手id
+     * @param assistant   修改助手参数
      * @return 助手信息
      * @since 1.1.3
      */
@@ -477,39 +481,105 @@ public interface OpenAiApi {
      * @param order  排序类型
      * @param before 分页参数，之前的id，默认值：null
      * @param after  分页参数，之后的id，默认值：null
-     * @return AssistantListResponse #Assistant
+     * @return AssistantListResponse #AssistantResponse
      * @since 1.1.3
      */
     @GET("v1/assistants")
     @Headers("OpenAI-Beta: assistants=v1")
-    Single<AssistantListResponse<Assistant>> assistants(@Query("limit") Integer limit, @Query("order") Integer order, @Query("before") String before, @Query("after") String after);
+    Single<AssistantListResponse<AssistantResponse>> assistants(@Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
 
     /**
      * 创建助手文件
      *
      * @param assistantId   助手id
-     * @param assistantFile 文件id
+     * @param assistantFile 文件信息
      * @return 返回信息AssistantResponse
      */
     @POST("v1/assistants/{assistant_id}/files")
     @Headers("OpenAI-Beta: assistants=v1")
-    Single<AssistantResponse> assistantFile(@Path("assistant_id") String assistantId, @Body AssistantFile assistantFile);
+    Single<AssistantFileResponse> assistantFile(@Path("assistant_id") String assistantId, @Body AssistantFile assistantFile);
 
-
+    /**
+     * 检索助手文件
+     *
+     * @param assistantId 助手id
+     * @param fileId      文件id
+     * @return 助手文件信息
+     */
     @GET("v1/assistants/{assistant_id}/files/{file_id}")
     @Headers("OpenAI-Beta: assistants=v1")
-    Single<AssistantResponse> retrieveAssistantFile(@Path("assistant_id") String assistantId, @Path("file_id") String fileId);
+    Single<AssistantFileResponse> retrieveAssistantFile(@Path("assistant_id") String assistantId, @Path("file_id") String fileId);
 
-
+    /**
+     * 删除助手文件
+     *
+     * @param assistantId 助手id
+     * @param fileId      文件id
+     * @return 删除状态
+     */
     @DELETE("v1/assistants/{assistant_id}/files/{file_id}")
     @Headers("OpenAI-Beta: assistants=v1")
     Single<DeleteResponse> deleteAssistantFile(@Path("assistant_id") String assistantId, @Path("file_id") String fileId);
 
-
+    /**
+     * 助手文件列表
+     *
+     * @param assistantId 助手id
+     * @param limit       一页数据大小
+     * @param order       排序类型
+     * @param before      分页参数，之前的id，默认值：null
+     * @param after       分页参数，之后的id，默认值：null
+     * @return 助手文件列表
+     */
     @GET("v1/assistants/{assistant_id}/files")
     @Headers("OpenAI-Beta: assistants=v1")
     Single<AssistantListResponse<AssistantFileResponse>> assistantFiles(@Path("assistant_id") String assistantId,
-                                                                        @Query("limit") Integer limit, @Query("order") Integer order, @Query("before") String before, @Query("after") String after);
+                                                                        @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
 
 
+    /**
+     * 创建线程
+     *
+     * @param thread 创建线程参数
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    @POST("v1/threads")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<ThreadResponse> thread(@Body Thread thread);
+
+
+    /**
+     * 获取线程详细信息
+     *
+     * @param threadId 线程id
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    @GET("v1/threads/{thread_id}")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<ThreadResponse> retrieveThread(@Path("thread_id") String threadId);
+
+    /**
+     * 修改线程信息
+     *
+     * @param threadId 线程id
+     * @param thread   线程信息
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    @POST("v1/threads/{thread_id}")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<ThreadResponse> modifyThread(@Path("thread_id") String threadId, @Body ModifyThread thread);
+
+    /**
+     * 删除线程
+     *
+     * @param threadId 线程id
+     * @return 删除状态
+     * @since 1.1.3
+     */
+    @DELETE("v1/threads/{thread_id}")
+    @Headers("OpenAI-Beta: assistants=v1")
+    Single<DeleteResponse> deleteThread(@Path("thread_id") String threadId);
 }

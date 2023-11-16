@@ -1,4 +1,4 @@
-package com.unfbx.chatgpt.entity.assistant;
+package com.unfbx.chatgpt.entity.thread;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Slf4j
@@ -16,10 +17,11 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssistantFile implements Serializable {
-    /**
-     * 文件id
-     */
-    @JsonProperty("file_id")
-    private String fileId;
+public class ThreadMessage {
+
+    private String role;
+    private String content;
+    @JsonProperty("file_ids")
+    private List<String> fileIds;
+    private Map metadata;
 }
