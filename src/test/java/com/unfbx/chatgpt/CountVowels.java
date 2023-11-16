@@ -2,7 +2,7 @@ public class CountVowels {
 	public static void main(String args[]) {
 		String s = "Abir";
 		CountVowels c = new CountVowels();
-		System.out.println(c.countVowels(s));
+		System.out.println(c.countVowels(s) + "*****");
 		
 	}
 	
