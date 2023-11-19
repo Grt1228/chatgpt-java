@@ -2,6 +2,7 @@ package com.unfbx.chatgpt.entity.assistant.run;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,13 +10,14 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 描述：
  *
  * @author https://www.unfbx.com
  * @since 1.1.3
- * 2023-11-17
+ * 2023-11-20
  */
 @Getter
 @Slf4j
@@ -24,20 +26,24 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RunError implements Serializable {
-    /**
-     * One of server_error or rate_limit_exceeded.
-     * @see Code
-     */
-    private String code;
-    private String message;
+public class StepDetail implements Serializable {
 
+    /**
+     * @see Type
+     */
+    private String type;
+
+    @JsonProperty("message_creation")
+    private MessageCreation messageCreation;
+
+    @JsonProperty("tool_calls")
+    private List<ToolCall> toolCalls;
 
     @Getter
     @AllArgsConstructor
-    public enum Code {
-        SERVER_ERROR("server_error"),
-        RATE_LIMIT_EXCEEDED("rate_limit_exceeded"),
+    public enum Type {
+        MESSAGE_CREATION("message_creation"),
+        TOOL_CALLS("tool_calls"),
         ;
         private final String name;
     }

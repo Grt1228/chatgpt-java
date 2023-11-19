@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @author https://www.unfbx.com
  * @since 1.1.3
- * 2023-11-17
+ * 2023-11-20
  */
 @Getter
 @Slf4j
@@ -24,20 +24,22 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RunError implements Serializable {
-    /**
-     * One of server_error or rate_limit_exceeded.
-     * @see Code
-     */
-    private String code;
-    private String message;
+public class Output implements Serializable {
 
+    /**
+     * @see Type
+     */
+    private String type;
+
+    private String logs;
+
+    private Image image;
 
     @Getter
     @AllArgsConstructor
-    public enum Code {
-        SERVER_ERROR("server_error"),
-        RATE_LIMIT_EXCEEDED("rate_limit_exceeded"),
+    public enum Type {
+        LOGS("logs"),
+        IMAGE("image"),
         ;
         private final String name;
     }

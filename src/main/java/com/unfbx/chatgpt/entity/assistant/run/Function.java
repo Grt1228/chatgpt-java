@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @author https://www.unfbx.com
  * @since 1.1.3
- * 2023-11-17
+ * 2023-11-20
  */
 @Getter
 @Slf4j
@@ -24,21 +24,21 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RunError implements Serializable {
+public class Function implements Serializable {
+
     /**
-     * One of server_error or rate_limit_exceeded.
-     * @see Code
+     * The name of the function.
      */
-    private String code;
-    private String message;
+    private String name;
+    /**
+     * The arguments passed to the function.
+     */
+    private String arguments;
+    /**
+     * The output of the function. This will be null if the outputs have not been submitted yet.
+     * 函数的输出。如果尚未提交输出，则该值为空。
+     */
+    private String output;
 
 
-    @Getter
-    @AllArgsConstructor
-    public enum Code {
-        SERVER_ERROR("server_error"),
-        RATE_LIMIT_EXCEEDED("rate_limit_exceeded"),
-        ;
-        private final String name;
-    }
 }

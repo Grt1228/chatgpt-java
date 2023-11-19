@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
+
 
 /**
  * 描述：
  *
  * @author https://www.unfbx.com
  * @since 1.1.3
- * 2023-11-17
+ * 2023-11-20
  */
 @Getter
 @Slf4j
@@ -24,21 +26,17 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RunError implements Serializable {
+public class CodeInterpreter implements Serializable {
+
     /**
-     * One of server_error or rate_limit_exceeded.
-     * @see Code
+     * 代码解释器工具调用的输入。
      */
-    private String code;
-    private String message;
+    private String input;
+    /**
+     * 代码解释器工具调用的输出。
+     * Code Interpreter可以输出一项或多项，包括文本（log）或图像（image）。
+     * 其中每一个都由不同的对象类型表示。
+     */
+    private List<Output> outputs;
 
-
-    @Getter
-    @AllArgsConstructor
-    public enum Code {
-        SERVER_ERROR("server_error"),
-        RATE_LIMIT_EXCEEDED("rate_limit_exceeded"),
-        ;
-        private final String name;
-    }
 }

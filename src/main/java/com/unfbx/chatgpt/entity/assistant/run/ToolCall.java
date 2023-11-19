@@ -1,8 +1,8 @@
-package com.unfbx.chatgpt.entity.assistant;
+package com.unfbx.chatgpt.entity.assistant.run;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.unfbx.chatgpt.entity.chat.Functions;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,17 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
+
+/**
+ * 描述：
+ *
+ * @author https://www.unfbx.com
+ * @since 1.1.3
+ * 2023-11-20
+ */
 @Getter
 @Slf4j
 @Builder
@@ -18,19 +28,33 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Tool implements Serializable {
-
+public class ToolCall implements Serializable {
+    /**
+     * The ID of the tool call.
+     */
+    private String id;
+    /**
+     * The type of tool call.
+     *
+     * @see Type
+     */
     private String type;
 
     /**
-     * type为function时，function参数必输
+     * 代码解释器工具调用定义。
      */
-    private Functions function;
-
+    @JsonProperty("code_interpreter")
+    private CodeInterpreter codeInterpreter;
 
     /**
-     * 支持的三种类型
+     * 当前版本始终为空
      */
+    @JsonProperty("retrieval")
+    private Map retrieval;
+
+    @JsonProperty("function")
+    private Function function;
+
     @Getter
     @AllArgsConstructor
     public enum Type {
