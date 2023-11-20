@@ -668,7 +668,7 @@ public interface OpenAiApi {
      */
     @GET("v1/threads/{thread_id}/messages/{message_id}/files")
     @Headers("OpenAI-Beta: assistants=v1")
-    Single<AssistantListResponse<MessageResponse>> messageFiles(@Path("thread_id") String threadId, @Path("message_id") String messageId,
+    Single<AssistantListResponse<MessageFileResponse>> messageFiles(@Path("thread_id") String threadId, @Path("message_id") String messageId,
                                                                 @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
 
 

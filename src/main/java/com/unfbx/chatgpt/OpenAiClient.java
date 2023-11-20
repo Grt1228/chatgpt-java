@@ -7,6 +7,11 @@ import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
 import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
 import com.unfbx.chatgpt.entity.assistant.*;
+import com.unfbx.chatgpt.entity.assistant.message.MessageFileResponse;
+import com.unfbx.chatgpt.entity.assistant.message.MessageResponse;
+import com.unfbx.chatgpt.entity.assistant.message.ModifyMessage;
+import com.unfbx.chatgpt.entity.assistant.run.*;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadMessage;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -32,6 +37,7 @@ import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobEvent;
 import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobListResponse;
 import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobResponse;
 import com.unfbx.chatgpt.entity.images.*;
+import com.unfbx.chatgpt.entity.images.Image;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
@@ -61,6 +67,8 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.http.*;
+import retrofit2.http.Headers;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -111,6 +119,12 @@ public class OpenAiClient {
      */
     @Getter
     private OpenAiAuthInterceptor authInterceptor;
+
+    /**
+     * 默认的分页参数
+     */
+    @Getter
+    private PageRequest pageRequest = PageRequest.builder().build();
 
     /**
      * 构造器
@@ -1111,6 +1125,7 @@ public class OpenAiClient {
      * @return 助手文件列表
      */
     public AssistantListResponse<AssistantFileResponse> assistantFiles(String assistantId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
         Single<AssistantListResponse<AssistantFileResponse>> deleteResponse = this.openAiApi.assistantFiles(assistantId, pageRequest.getLimit(), pageRequest.getOrder(), pageRequest.getBefore(), pageRequest.getAfter());
         return deleteResponse.blockingGet();
     }
@@ -1158,6 +1173,223 @@ public class OpenAiClient {
      */
     public DeleteResponse deleteThread(String threadId) {
         return this.openAiApi.deleteThread(threadId).blockingGet();
+    }
+
+    /**
+     * 为线程创建消息
+     *
+     * @param threadId 线程id
+     * @param message  message参数
+     * @return
+     * @since 1.1.3
+     */
+    public MessageResponse message(String threadId, ThreadMessage message) {
+        return this.openAiApi.message(threadId, message).blockingGet();
+    }
+
+    /**
+     * 检索某一个线程对应的消息详细信息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @return
+     * @since 1.1.3
+     */
+    public MessageResponse retrieveMessage(String threadId, String messageId) {
+        return this.openAiApi.retrieveMessage(threadId, messageId).blockingGet();
+    }
+
+    /**
+     * 修改某一个线程对应的消息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param message   消息体
+     * @return
+     * @since 1.1.3
+     */
+    public MessageResponse modifyMessage(String threadId, String messageId, ModifyMessage message) {
+        return this.openAiApi.modifyMessage(threadId, messageId, message).blockingGet();
+    }
+
+    /**
+     * 获取某一个线程的消息集合
+     *
+     * @param threadId    线程id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<MessageResponse> messages(String threadId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.messages(threadId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
+    /**
+     * 检索某一个线程对应某一个消息的一个文件信息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param fileId    文件id
+     * @return
+     * @since 1.1.3
+     */
+    public MessageFileResponse retrieveMessageFile(String threadId, String messageId, String fileId) {
+        return this.openAiApi.retrieveMessageFile(threadId, messageId, fileId).blockingGet();
+    }
+
+    /**
+     * messageFiles集合
+     *
+     * @param threadId    线程id
+     * @param messageId   消息id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<MessageFileResponse> messageFiles(String threadId, String messageId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.messageFiles(threadId, messageId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
+
+    /**
+     * 创建Run
+     *
+     * @param threadId 线程id
+     * @param run      run
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse run(String threadId, Run run) {
+        return this.openAiApi.run(threadId, run).blockingGet();
+    }
+
+
+    /**
+     * 检索run详细信息
+     *
+     * @param threadId 线程id
+     * @param runId    run_id
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse retrieveRun(String threadId, String runId) {
+        return this.openAiApi.retrieveRun(threadId, runId).blockingGet();
+    }
+
+    /**
+     * 修改某一个run
+     *
+     * @param threadId 线程id
+     * @param runId    run_id
+     * @param run      消息体
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse modifyRun(String threadId, String runId, ModifyRun run) {
+        return this.openAiApi.modifyRun(threadId, runId, run).blockingGet();
+    }
+
+
+    /**
+     * 获取某一个线程的run集合
+     *
+     * @param threadId    线程id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<RunResponse> runs(String threadId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.runs(threadId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
+
+    /**
+     * 获取某一个线程的run集合
+     *
+     * @param threadId    线程id
+     * @param runId       run id
+     * @param toolOutputs 为其提交输出的工具列表。
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse submitToolOutputs(String threadId, String runId, ToolOutputBody toolOutputs) {
+        return this.openAiApi.submitToolOutputs(threadId, runId, toolOutputs).blockingGet();
+    }
+
+
+    /**
+     * 取消正在进行中的run
+     *
+     * @param threadId 线程id
+     * @param runId    run id
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse cancelRun(String threadId, String runId) {
+        return this.openAiApi.cancelRun(threadId, runId).blockingGet();
+    }
+
+
+    /**
+     * 创建一个线程并在一个请求中运行它
+     *
+     * @param threadRun 对象
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse threadRun(ThreadRun threadRun) {
+        return this.openAiApi.threadRun(threadRun).blockingGet();
+    }
+
+    /**
+     * 检索run step详细信息
+     *
+     * @param threadId 线程id
+     * @param runId    run_id
+     * @param stepId   step_id
+     * @return
+     * @since 1.1.3
+     */
+    public RunStepResponse retrieveRunStep(String threadId, String runId, String stepId) {
+        if (StrUtil.isBlank(stepId)) {
+            log.error("step id不能为空");
+            throw new BaseException(CommonError.PARAM_ERROR);
+        }
+        return this.openAiApi.retrieveRunStep(threadId, runId, stepId).blockingGet();
+    }
+
+
+    /**
+     * 获取某一个线程的run step集合
+     *
+     * @param threadId    线程id
+     * @param runId       run_id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<RunStepResponse> runSteps(String threadId, String runId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.runSteps(threadId, runId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
     }
 
 

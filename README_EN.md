@@ -65,6 +65,8 @@ WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Gr
 - Supports all OpenAI APIs.
 
 # 📑 Update Log
+- [x] 1.1.3   Upgrade to support Assistant、Run、Thread、Message Api
+- [x] 1.1.2-beta0   Upgrade to support chat completion with picture GPT-4V、return JSON model、Tool Call、Dall-e-3、Fine Tune Job、TTS.
 - [x] 1.1.1-beta0   function call update to GPT plugin model, so easy use the plugin api. eg: [PluginTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/PluginTest.java)
 - [x] 1.0.15  moderations api update,code fix,bug fix
 - [x] 1.0.14  Upgrade to support the latest version gpt-3.5—0614、gpt-4.0—0614 models, support function-calling full test e.g.：[OpenAiClientFunctionTest](https://github.com/Grt1228/chatgpt-java/blob/main/src/test/java/com/unfbx/chatgpt/OpenAiClientFunctionTest.java)
