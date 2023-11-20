@@ -1,13 +1,19 @@
-package com.unfbx.chatgpt.entity.assistant;
+package com.unfbx.chatgpt.entity.assistant.run;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.unfbx.chatgpt.entity.chat.Functions;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 
+/**
+ * 描述：
+ *
+ * @author https://www.unfbx.com
+ * @since 1.1.3
+ * 2023-11-20
+ */
 @Data
 @Slf4j
 @Builder
@@ -15,25 +21,22 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Tool implements Serializable {
+public class Output implements Serializable {
 
+    /**
+     * @see Type
+     */
     private String type;
 
-    /**
-     * type为function时，function参数必输
-     */
-    private Functions function;
+    private String logs;
 
+    private Image image;
 
-    /**
-     * 支持的三种类型
-     */
     @Getter
     @AllArgsConstructor
     public enum Type {
-        CODE_INTERPRETER("code_interpreter"),
-        RETRIEVAL("retrieval"),
-        FUNCTION("function"),
+        LOGS("logs"),
+        IMAGE("image"),
         ;
         private final String name;
     }

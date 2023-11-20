@@ -1,13 +1,19 @@
-package com.unfbx.chatgpt.entity.assistant;
+package com.unfbx.chatgpt.entity.assistant.run;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.unfbx.chatgpt.entity.chat.Functions;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 
+/**
+ * 描述：
+ *
+ * @author https://www.unfbx.com
+ * @since 1.1.3
+ * 2023-11-17
+ */
 @Data
 @Slf4j
 @Builder
@@ -15,25 +21,20 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Tool implements Serializable {
-
-    private String type;
-
+public class RunError implements Serializable {
     /**
-     * type为function时，function参数必输
+     * One of server_error or rate_limit_exceeded.
+     * @see Code
      */
-    private Functions function;
+    private String code;
+    private String message;
 
 
-    /**
-     * 支持的三种类型
-     */
     @Getter
     @AllArgsConstructor
-    public enum Type {
-        CODE_INTERPRETER("code_interpreter"),
-        RETRIEVAL("retrieval"),
-        FUNCTION("function"),
+    public enum Code {
+        SERVER_ERROR("server_error"),
+        RATE_LIMIT_EXCEEDED("rate_limit_exceeded"),
         ;
         private final String name;
     }

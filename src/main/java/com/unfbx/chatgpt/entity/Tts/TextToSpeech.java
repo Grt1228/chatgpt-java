@@ -31,6 +31,10 @@ public class TextToSpeech {
      */
     @JsonProperty("response_format")
     private String responseFormat;
+    /**
+     * 速度调节，默认是1，取值范围0.25——4.0
+     */
+    private Double speed;
 
 
     @Getter
