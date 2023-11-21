@@ -3,6 +3,9 @@ package com.unfbx.chatgpt.v1_1_3;
 
 import com.unfbx.chatgpt.FirstKeyStrategy;
 import com.unfbx.chatgpt.OpenAiClient;
+import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
+import com.unfbx.chatgpt.entity.Tts.TtsFormat;
+import com.unfbx.chatgpt.entity.Tts.TtsVoice;
 import com.unfbx.chatgpt.entity.assistant.*;
 import com.unfbx.chatgpt.entity.assistant.message.MessageFileResponse;
 import com.unfbx.chatgpt.entity.assistant.message.MessageResponse;
@@ -19,12 +22,15 @@ import com.unfbx.chatgpt.entity.assistant.thread.ThreadMessage;
 import com.unfbx.chatgpt.entity.assistant.thread.ThreadResponse;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.*;
@@ -66,7 +72,7 @@ public class OpenAiClientTest {
                 .keyStrategy(new FirstKeyStrategy())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://dgr.life/")
+                .apiHost("https://******************/")
                 .build();
     }
 
@@ -78,8 +84,8 @@ public class OpenAiClientTest {
         Tool tool = Tool.builder().type(Tool.Type.CODE_INTERPRETER.getName()).build();
         Assistant assistant = Assistant.builder()
                 .model(BaseChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
-                .name("UnfbxBotV3")
-                .description("UnfbxBotV3是一个自定义数学bot。")
+                .name("UnfbxBot")
+                .description("UnfbxBot是一个自定义数学bot。")
                 .instructions("你是一个数学导师。当我问你问题时，编写并运行Java代码来回答问题。")
                 .tools(Collections.singletonList(tool))
 //                .fileIds()
@@ -458,22 +464,24 @@ public class OpenAiClientTest {
 
     /**
      * 开始一个thread run
+     * asst_bE2sCiib7eL300O9MWJanUd4
      */
     @Test
     public void threadRun() {
-        ThreadRun threadRun = ThreadRun.builder().assistantId("asst_V4Grgp2BQWAmH03Bs56E1H7c").build();
+        ThreadRun threadRun = ThreadRun.builder().assistantId("asst_bE2sCiib7eL300O9MWJanUd4").build();
         RunResponse response = client.threadRun(threadRun);
         System.out.println(response.toString());
+        //RunResponse(id=run_NOznCqW1NQatPLbJfKvOkemE, object=thread.run, createdAt=1700560119, threadId=thread_lVyAEZuzqxeSDHJWBVLbjYeE, assistantId=asst_bE2sCiib7eL300O9MWJanUd4, status=queued, requiredAction=null, lastError=null, expiresAt=1700560719, startedAt=null, cancelledAt=null, failedAt=null, completedAt=null, model=gpt-3.5-turbo-16k-0613, instructions=你是一个数学导师。当我问你问题时，编写并运行Java代码来回答问题。, tools=[Tool(type=code_interpreter, function=null)], fileIds=[], metadata={})
         //RunResponse(id=run_dmR2AtFe9nyGal6uSSxG6GI5, object=thread.run, createdAt=1700492750, threadId=thread_E1mqqdApmpNOCBfoLnqH7KMp, assistantId=asst_V4Grgp2BQWAmH03Bs56E1H7c, status=queued, requiredAction=null, lastError=null, expiresAt=1700493350, startedAt=null, cancelledAt=null, failedAt=null, completedAt=null, model=gpt-3.5-turbo-16k-0613, instructions=你是一个数学导师。当我问你问题时，编写并运行Java代码来回答问题。, tools=[Tool(type=code_interpreter, function=null)], fileIds=[file-tJoDYPF2MMlIOlvwfGbIV94D], metadata={})
     }
 
     @Test
     public void retrieveRunStep() {
-        RunStepResponse response = client.retrieveRunStep("thread_E1mqqdApmpNOCBfoLnqH7KMp",
-                "run_dmR2AtFe9nyGal6uSSxG6GI5",
-                "");
+        RunStepResponse response = client.retrieveRunStep("thread_lVyAEZuzqxeSDHJWBVLbjYeE",
+                "run_NOznCqW1NQatPLbJfKvOkemE",
+                "step_3YUJoS3ioYX5Ziz4AooGLKqd");
         System.out.println(response.toString());
-        //RunResponse(id=run_dmR2AtFe9nyGal6uSSxG6GI5, object=thread.run, createdAt=1700492750, threadId=thread_E1mqqdApmpNOCBfoLnqH7KMp, assistantId=asst_V4Grgp2BQWAmH03Bs56E1H7c, status=queued, requiredAction=null, lastError=null, expiresAt=1700493350, startedAt=null, cancelledAt=null, failedAt=null, completedAt=null, model=gpt-3.5-turbo-16k-0613, instructions=你是一个数学导师。当我问你问题时，编写并运行Java代码来回答问题。, tools=[Tool(type=code_interpreter, function=null)], fileIds=[file-tJoDYPF2MMlIOlvwfGbIV94D], metadata={})
+        //RunStepResponse(id=step_3YUJoS3ioYX5Ziz4AooGLKqd, object=thread.run.step, createdAt=1700560129, assistantId=asst_bE2sCiib7eL300O9MWJanUd4, threadId=thread_lVyAEZuzqxeSDHJWBVLbjYeE, runId=run_NOznCqW1NQatPLbJfKvOkemE, type=message_creation, status=completed, stepDetails=StepDetail(type=message_creation, messageCreation=com.unfbx.chatgpt.entity.assistant.run.MessageCreation@bcec031, toolCalls=null), lastError=null, expiresAt=null, cancelledAt=null, failedAt=null, completedAt=1700560136, metadata=null)
     }
 
     /**
@@ -482,9 +490,61 @@ public class OpenAiClientTest {
     @Test
     public void runSteps() {
 //        PageRequest pageRequest = PageRequest.builder().build();
-        AssistantListResponse<RunStepResponse> response = client.runSteps("thread_E1mqqdApmpNOCBfoLnqH7KMp", "run_dmR2AtFe9nyGal6uSSxG6GI5", null);
+        AssistantListResponse<RunStepResponse> response = client.runSteps("thread_lVyAEZuzqxeSDHJWBVLbjYeE", "run_NOznCqW1NQatPLbJfKvOkemE", null);
         response.getData().forEach(e -> System.out.println(e.toString()));
     }
 
 
+    /**
+     * tts使用示例
+     */
+    @SneakyThrows
+    @Test
+    public void textToSpeed() {
+        TextToSpeech textToSpeech = TextToSpeech.builder()
+                .model(TextToSpeech.Model.TTS_1_HD.getName())
+                .input("OpenAI官方Api的Java SDK，可以快速接入项目使用。目前支持OpenAI官方全部接口，同时支持Tokens计算。官方github地址：https://github.com/Grt1228/chatgpt-java。欢迎star。")
+                .voice(TtsVoice.NOVA.getName())
+                .responseFormat(TtsFormat.MP3.getName())
+                .build();
+        java.io.File file = new java.io.File("C:\\Users\\grt\\Desktop\\test.mp3");
+        ResponseBody responseBody = client.textToSpeech(textToSpeech);
+        InputStream inputStream = responseBody.byteStream();
+        //创建文件
+        if (!file.exists()) {
+            if (!file.getParentFile().exists())
+                file.getParentFile().mkdir();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error("createNewFile IOException");
+            }
+        }
+
+        OutputStream os = null;
+        try {
+            os = new BufferedOutputStream(new FileOutputStream(file));
+            byte data[] = new byte[8192];
+            int len;
+            while ((len = inputStream.read(data, 0, 8192)) != -1) {
+                os.write(data, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (os != null) {
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

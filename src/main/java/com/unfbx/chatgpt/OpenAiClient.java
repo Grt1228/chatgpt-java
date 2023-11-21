@@ -67,9 +67,8 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import retrofit2.http.*;
-import retrofit2.http.Headers;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -1008,7 +1007,7 @@ public class OpenAiClient {
     }
 
     /**
-     * 文本转语音
+     * 文本转语音（异步）
      *
      * @param textToSpeech 参数
      * @param callback     返回值接收
@@ -1017,6 +1016,17 @@ public class OpenAiClient {
     public void textToSpeech(TextToSpeech textToSpeech, Callback callback) {
         Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
         responseBody.enqueue(callback);
+    }
+
+    /**
+     * 文本转语音（同步）
+     *
+     * @param textToSpeech 参数
+     * @since 1.1.3
+     */
+    public ResponseBody textToSpeech(TextToSpeech textToSpeech) throws IOException {
+        Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
+        return responseBody.execute().body();
     }
 
     /**
