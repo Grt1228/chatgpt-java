@@ -176,6 +176,10 @@ public class BaseChatCompletion implements Serializable {
          */
         GPT_3_5_TURBO_16K_0613("gpt-3.5-turbo-16k-0613"),
         /**
+         * gpt-3.5-turbo-1106 最新的 GPT-3.5 Turbo 模型具有改进的指令跟踪、JSON 模式、可重现的输出、并行函数调用等。
+         */
+        GPT_3_5_TURBO_1106("gpt-3.5-turbo-1106"),
+        /**
          * GPT4.0
          */
         GPT_4("gpt-4"),

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 
-@Getter
+@Data
 @Slf4j
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)

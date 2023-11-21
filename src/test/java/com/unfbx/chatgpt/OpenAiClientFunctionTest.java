@@ -121,7 +121,7 @@ public class OpenAiClientFunctionTest {
                 .messages(Collections.singletonList(message))
                 .functions(Collections.singletonList(functions))
                 .functionCall("auto")
-                .model(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
+                .model(ChatCompletion.Model.GPT_4_1106_PREVIEW.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
 
@@ -149,7 +149,7 @@ public class OpenAiClientFunctionTest {
         ChatCompletion chatCompletionV2 = ChatCompletion
                 .builder()
                 .messages(messageList)
-                .model(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
+                .model(ChatCompletion.Model.GPT_4_1106_PREVIEW.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponseV2 = openAiClient.chatCompletion(chatCompletionV2);
         log.info("自定义的方法返回值：{}",chatCompletionResponseV2.getChoices().get(0).getMessage().getContent());

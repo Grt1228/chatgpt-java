@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-@Getter
+@Data
 @Slf4j
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)

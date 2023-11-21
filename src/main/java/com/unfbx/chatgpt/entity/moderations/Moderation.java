@@ -15,7 +15,7 @@ import java.util.Objects;
  * @author https:www.unfbx.com
  *  2023-02-15
  */
-@Getter
+@Data
 @Builder
 @Slf4j
 @NoArgsConstructor

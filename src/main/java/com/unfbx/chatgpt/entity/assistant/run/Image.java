@@ -1,19 +1,20 @@
-package com.unfbx.chatgpt.entity.chat.tool;
+package com.unfbx.chatgpt.entity.assistant.run;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 
+
 /**
- * ToolCall 的 Function参数
- * The function that the model called.
+ * 描述：
  *
- * @author https:www.unfbx.com
- * @since 1.1.2
- * 2023-11-09
+ * @author https://www.unfbx.com
+ * @since 1.1.3
+ * 2023-11-20
  */
 @Data
 @Slf4j
@@ -22,13 +23,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ToolCallFunction implements Serializable {
-    /**
-     * 方法名
-     */
-    private String name;
-    /**
-     * 方法参数
-     */
-    private String arguments;
+public class Image implements Serializable {
+
+    @JsonProperty("file_id")
+    private Image file_id;
 }
