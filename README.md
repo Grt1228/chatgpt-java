@@ -42,9 +42,9 @@ To English Doc -> [English Doc](README_EN.md)
 **ChatGPT的Java客户端**
 OpenAI官方Api的Java SDK，可以快速接入项目使用。支持OpenAI官方全部接口，**同时支持Tokens计算。参考文档：[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)**。
 
-| Dall-e-3 | FineTuneJob | TTS | ChatCompletionWithPicture |
-| --- | --- | --- | --- |
-| AI生成图片 | 微调job | 文本转语音 | 附加图片的ChatCompletion |
+| Assistant | Dall-e-3 | FineTuneJob | TTS | ChatCompletionWithPicture |
+| --- | --- | --- | --- | --- |
+| 自定义知识库、AI助理 | AI生成图片 | 微调job | 文本转语音 | 附加图片的ChatCompletion |
 
 | TikToken | Chat | Completions | Images | Speech To Text | 余额查询 |
 | --- | --- | --- | --- | --- | --- |
