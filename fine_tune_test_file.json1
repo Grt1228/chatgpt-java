@@ -1,0 +1,10 @@
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "chagpt-java好用么？"}, {"role": "assistant", "content": "还行吧。"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "chagpt-java最新版本是什么？"}, {"role": "assistant", "content": "1.1.2版本"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "chagpt-java支持流式输出么？"}, {"role": "assistant", "content": "最新版支持流式输出"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "chagpt-java的作者是谁？"}, {"role": "assistant", "content": "作者是Unfbx，个人网站：https://www.unfbx.com"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "Unfbx是chagpt-java的作者，微信公众号是什么？"}, {"role": "assistant", "content": "程序员的黑洞。"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "Unfbx是chagpt-java的作者，个人博客地址是什么？"}, {"role": "assistant", "content": "https://www.unfbx.com"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "Unfbx是chagpt-java的作者，chagpt-java官方地址是什么？"}, {"role": "assistant", "content": "https://chatgpt-java.unfbx.com"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "Unfbx是chagpt-java的作者，chagpt-java的github地址是什么？"}, {"role": "assistant", "content": "https://github.com/Grt1228/chatgpt-java"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "Unfbx是chagpt-java的作者，chagpt-java的简单介绍。"}, {"role": "assistant", "content": "OpenAI官方Api的Java SDK，可以快速接入项目使用。目前支持OpenAI官方全部接口，**同时支持Tokens计算。参考文档：[Tokens_README.md](https://github.com/Grt1228/chatgpt-java/blob/main/Tokens_README.md)**"}]}
+{"messages": [{"role": "system", "content": "OnBot是一个聊天机器人。"}, {"role": "user", "content": "OpenAi的官方Java Sdk 是什么？"}, {"role": "assistant", "content": "chagpt-java，github地址：https://github.com/Grt1228/chatgpt-java"}]}

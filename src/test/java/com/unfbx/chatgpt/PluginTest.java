@@ -48,12 +48,12 @@ public class PluginTest {
         openAiClient = OpenAiClient.builder()
                 .okHttpClient(okHttpClient)
                 .apiKey(Arrays.asList("sk-********************************"))
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
         openAiStreamClient = OpenAiStreamClient.builder()
                 //支持多key传入，请求时候随机选择
                 .apiKey(Arrays.asList("sk-********************************"))
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
     }
 
@@ -78,7 +78,7 @@ public class PluginTest {
         messages.add(message2);
         //默认模型：GPT_3_5_TURBO_16K_0613
         //有四个重载方法，都可以使用
-        ChatCompletionResponse response = openAiClient.chatCompletionWithPlugin(messages, plugin);
+        ChatCompletionResponse response = openAiClient.chatCompletionWithPlugin(messages, ChatCompletion.Model.GPT_4_1106_PREVIEW.getName(), plugin);
         log.info("自定义的方法返回值：{}", response.getChoices().get(0).getMessage().getContent());
     }
 
@@ -103,7 +103,7 @@ public class PluginTest {
         messages.add(message2);
         //默认模型：GPT_3_5_TURBO_16K_0613
         //有四个重载方法，都可以使用
-        openAiStreamClient.streamChatCompletionWithPlugin(messages, new ConsoleEventSourceListener(), plugin);
+        openAiStreamClient.streamChatCompletionWithPlugin(messages, ChatCompletion.Model.GPT_4_1106_PREVIEW.getName(), new ConsoleEventSourceListener(), plugin);
         CountDownLatch countDownLatch = new CountDownLatch(1);
         try {
             countDownLatch.await();

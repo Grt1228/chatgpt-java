@@ -1,5 +1,6 @@
 package com.unfbx.chatgpt.entity.billing;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import lombok.Data;
  * @since  2023-04-08
  */
 @Data
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Subscription {
     @JsonProperty("object")
     private String object;

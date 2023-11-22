@@ -58,7 +58,7 @@ public class OpenAiClientFunctionTest {
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
 
         openAiStreamClient = OpenAiStreamClient.builder()
@@ -69,7 +69,7 @@ public class OpenAiClientFunctionTest {
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient)
                 //自己做了代理就传代理地址，没有可不不传,(关注公众号回复：openai ，获取免费的测试代理地址)
-                .apiHost("https://dgr.life/")
+                .apiHost("https://*************/")
                 .build();
     }
 
@@ -121,7 +121,7 @@ public class OpenAiClientFunctionTest {
                 .messages(Collections.singletonList(message))
                 .functions(Collections.singletonList(functions))
                 .functionCall("auto")
-                .model(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
+                .model(ChatCompletion.Model.GPT_4_1106_PREVIEW.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);
 
@@ -149,7 +149,7 @@ public class OpenAiClientFunctionTest {
         ChatCompletion chatCompletionV2 = ChatCompletion
                 .builder()
                 .messages(messageList)
-                .model(ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName())
+                .model(ChatCompletion.Model.GPT_4_1106_PREVIEW.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponseV2 = openAiClient.chatCompletion(chatCompletionV2);
         log.info("自定义的方法返回值：{}",chatCompletionResponseV2.getChoices().get(0).getMessage().getContent());

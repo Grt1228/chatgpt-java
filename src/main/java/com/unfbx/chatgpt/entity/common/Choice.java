@@ -10,14 +10,14 @@ import java.io.Serializable;
  * 描述：
  *
  * @author https:www.unfbx.com
- *  2023-02-15
+ * 2023-02-15
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Choice implements Serializable {
     private String text;
     private long index;
-    private Object logprobs;
+    private Logprobs logprobs;
     @JsonProperty("finish_reason")
     private String finishReason;
 }

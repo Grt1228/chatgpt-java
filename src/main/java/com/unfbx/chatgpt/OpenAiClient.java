@@ -5,12 +5,20 @@ import cn.hutool.core.util.StrUtil;
 
 import cn.hutool.json.JSONUtil;
 import com.unfbx.chatgpt.constant.OpenAIConst;
+import com.unfbx.chatgpt.entity.Tts.TextToSpeech;
+import com.unfbx.chatgpt.entity.assistant.*;
+import com.unfbx.chatgpt.entity.assistant.message.MessageFileResponse;
+import com.unfbx.chatgpt.entity.assistant.message.MessageResponse;
+import com.unfbx.chatgpt.entity.assistant.message.ModifyMessage;
+import com.unfbx.chatgpt.entity.assistant.run.*;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadMessage;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
 import com.unfbx.chatgpt.entity.chat.*;
 import com.unfbx.chatgpt.entity.common.DeleteResponse;
 import com.unfbx.chatgpt.entity.common.OpenAiResponse;
+import com.unfbx.chatgpt.entity.common.PageRequest;
 import com.unfbx.chatgpt.entity.completions.Completion;
 import com.unfbx.chatgpt.entity.completions.CompletionResponse;
 import com.unfbx.chatgpt.entity.edits.Edit;
@@ -24,11 +32,19 @@ import com.unfbx.chatgpt.entity.fineTune.Event;
 import com.unfbx.chatgpt.entity.fineTune.FineTune;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneDeleteResponse;
 import com.unfbx.chatgpt.entity.fineTune.FineTuneResponse;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJob;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobEvent;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobListResponse;
+import com.unfbx.chatgpt.entity.fineTune.job.FineTuneJobResponse;
 import com.unfbx.chatgpt.entity.images.*;
+import com.unfbx.chatgpt.entity.images.Image;
 import com.unfbx.chatgpt.entity.models.Model;
 import com.unfbx.chatgpt.entity.models.ModelResponse;
 import com.unfbx.chatgpt.entity.moderations.Moderation;
 import com.unfbx.chatgpt.entity.moderations.ModerationResponse;
+import com.unfbx.chatgpt.entity.assistant.thread.ModifyThread;
+import com.unfbx.chatgpt.entity.assistant.thread.Thread;
+import com.unfbx.chatgpt.entity.assistant.thread.ThreadResponse;
 import com.unfbx.chatgpt.entity.whisper.Transcriptions;
 import com.unfbx.chatgpt.entity.whisper.Translations;
 import com.unfbx.chatgpt.entity.whisper.WhisperResponse;
@@ -46,10 +62,13 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -101,12 +120,18 @@ public class OpenAiClient {
     private OpenAiAuthInterceptor authInterceptor;
 
     /**
+     * 默认的分页参数
+     */
+    @Getter
+    private PageRequest pageRequest = PageRequest.builder().build();
+
+    /**
      * 构造器
      *
      * @return OpenAiClient.Builder
      */
-    public static OpenAiClient.Builder builder() {
-        return new OpenAiClient.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -231,6 +256,7 @@ public class OpenAiClient {
      * @param edit 图片对象
      * @return EditResponse
      */
+    @Deprecated
     public EditResponse edit(Edit edit) {
         Single<EditResponse> edits = this.openAiApi.edits(edit);
         return edits.blockingGet();
@@ -550,7 +576,9 @@ public class OpenAiClient {
      *
      * @param fineTune 微调作业id
      * @return FineTuneResponse
+     * @see #fineTuneJob(FineTuneJob fineTuneJob)
      */
+    @Deprecated
     public FineTuneResponse fineTune(FineTune fineTune) {
         Single<FineTuneResponse> fineTuneResponse = this.openAiApi.fineTune(fineTune);
         return fineTuneResponse.blockingGet();
@@ -561,7 +589,9 @@ public class OpenAiClient {
      *
      * @param trainingFileId 文件id，文件上传返回的id
      * @return FineTuneResponse
+     * @see #fineTuneJob(String trainingFileId)
      */
+    @Deprecated
     public FineTuneResponse fineTune(String trainingFileId) {
         FineTune fineTune = FineTune.builder().trainingFile(trainingFileId).build();
         return this.fineTune(fineTune);
@@ -571,7 +601,9 @@ public class OpenAiClient {
      * 微调模型列表
      *
      * @return FineTuneResponse list
+     * @see #fineTuneJobs(String, Integer)
      */
+    @Deprecated
     public List<FineTuneResponse> fineTunes() {
         Single<OpenAiResponse<FineTuneResponse>> fineTunes = this.openAiApi.fineTunes();
         return fineTunes.blockingGet().getData();
@@ -582,7 +614,9 @@ public class OpenAiClient {
      *
      * @param fineTuneId 微调作业id
      * @return FineTuneResponse
+     * @see #retrieveFineTuneJob(String fineTuneJobId)
      */
+    @Deprecated
     public FineTuneResponse retrieveFineTune(String fineTuneId) {
         Single<FineTuneResponse> fineTune = this.openAiApi.retrieveFineTune(fineTuneId);
         return fineTune.blockingGet();
@@ -593,7 +627,9 @@ public class OpenAiClient {
      *
      * @param fineTuneId 主键
      * @return FineTuneResponse
+     * @see #cancelFineTuneJob(String fineTuneJobId)
      */
+    @Deprecated
     public FineTuneResponse cancelFineTune(String fineTuneId) {
         Single<FineTuneResponse> fineTune = this.openAiApi.cancelFineTune(fineTuneId);
         return fineTune.blockingGet();
@@ -604,7 +640,9 @@ public class OpenAiClient {
      *
      * @param fineTuneId 微调作业id
      * @return Event List
+     * @see #fineTuneJobEvents(String, String, Integer)
      */
+    @Deprecated
     public List<Event> fineTuneEvents(String fineTuneId) {
         Single<OpenAiResponse<Event>> events = this.openAiApi.fineTuneEvents(fineTuneId);
         return events.blockingGet().getData();
@@ -652,13 +690,17 @@ public class OpenAiClient {
      * @param chatCompletion 问答参数
      * @return 答案
      */
-    public ChatCompletionResponse chatCompletion(ChatCompletion chatCompletion) {
-        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion(chatCompletion);
+    public <T extends BaseChatCompletion> ChatCompletionResponse chatCompletion(T chatCompletion) {
+        if (chatCompletion instanceof ChatCompletion) {
+            Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletion((ChatCompletion) chatCompletion);
+            return chatCompletionResponse.blockingGet();
+        }
+        Single<ChatCompletionResponse> chatCompletionResponse = this.openAiApi.chatCompletionWithPicture((ChatCompletionWithPicture) chatCompletion);
         return chatCompletionResponse.blockingGet();
     }
 
     /**
-     * 简易版
+     * 简易版（不支持图片输入）
      *
      * @param messages 问答参数
      * @return 答案
@@ -677,7 +719,7 @@ public class OpenAiClient {
      * @param plugin         插件
      * @param <R>            插件自定义函数的请求值
      * @param <T>            插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(ChatCompletion chatCompletion, PluginAbstract<R, T> plugin) {
         if (Objects.isNull(plugin)) {
@@ -730,7 +772,7 @@ public class OpenAiClient {
      * @param plugin   插件
      * @param <R>      插件自定义函数的请求值
      * @param <T>      插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, PluginAbstract<R, T> plugin) {
         return chatCompletionWithPlugin(messages, ChatCompletion.Model.GPT_3_5_TURBO_16K_0613.getName(), plugin);
@@ -746,7 +788,7 @@ public class OpenAiClient {
      * @param plugin   插件
      * @param <R>      插件自定义函数的请求值
      * @param <T>      插件自定义函数的返回值
-     * @return
+     * @return ChatCompletionResponse
      */
     public <R extends PluginParam, T> ChatCompletionResponse chatCompletionWithPlugin(List<Message> messages, String model, PluginAbstract<R, T> plugin) {
         ChatCompletion chatCompletion = ChatCompletion.builder().messages(messages).model(model).build();
@@ -811,7 +853,7 @@ public class OpenAiClient {
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), fileBody);
         //自定义参数
-        Map<String, RequestBody> requestBodyMap = new HashMap<>(5,1L);
+        Map<String, RequestBody> requestBodyMap = new HashMap<>(5, 1L);
 
         if (StrUtil.isNotBlank(translations.getModel())) {
             requestBodyMap.put(Translations.Fields.model, RequestBody.create(MediaType.parse("multipart/form-data"), translations.getModel()));
@@ -886,6 +928,480 @@ public class OpenAiClient {
         return billingUsage.blockingGet();
     }
 
+    /**
+     * 创建微调job
+     *
+     * @param fineTuneJob 微调job
+     * @return FineTuneJobResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse fineTuneJob(FineTuneJob fineTuneJob) {
+        Single<FineTuneJobResponse> fineTuneJobResponse = this.openAiApi.fineTuneJob(fineTuneJob);
+        return fineTuneJobResponse.blockingGet();
+    }
+
+    /**
+     * 创建微调job
+     *
+     * @param trainingFileId 文件id，文件上传返回的id
+     * @return FineTuneJobResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse fineTuneJob(String trainingFileId) {
+        FineTuneJob fineTuneJob = FineTuneJob.builder()
+                .model(FineTuneJob.Model.GPT_3_5_TURBO_1106.getName())
+                .trainingFile(trainingFileId)
+                .build();
+        return this.fineTuneJob(fineTuneJob);
+    }
+
+    /**
+     * 微调job集合
+     *
+     * @param after 上一个分页请求中最后一个job id，默认值：null
+     * @param limit 每次查询数量 默认值：20
+     * @return FineTuneJobListResponse #FineTuneResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobListResponse<FineTuneJobResponse> fineTuneJobs(String after, Integer limit) {
+        Single<FineTuneJobListResponse<FineTuneJobResponse>> fineTuneJobs = this.openAiApi.fineTuneJobs(after, limit);
+        return fineTuneJobs.blockingGet();
+    }
+
+    /**
+     * 检索微调job
+     *
+     * @param fineTuneJobId 微调job id
+     * @return FineTuneResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse retrieveFineTuneJob(String fineTuneJobId) {
+        Single<FineTuneJobResponse> fineTuneJob = this.openAiApi.retrieveFineTuneJob(fineTuneJobId);
+        return fineTuneJob.blockingGet();
+    }
+
+    /**
+     * 取消微调job
+     *
+     * @param fineTuneJobId 微调job id
+     * @return FineTuneJobResponse
+     * @since 1.1.2
+     */
+    public FineTuneJobResponse cancelFineTuneJob(String fineTuneJobId) {
+        Single<FineTuneJobResponse> fineTuneJob = this.openAiApi.cancelFineTuneJob(fineTuneJobId);
+        return fineTuneJob.blockingGet();
+    }
+
+    /**
+     * 微调作业事件列表
+     *
+     * @param fineTuneJobId 微调job id
+     * @param after         上一个分页请求中最后一个id，默认值：null
+     * @param limit         每次查询数量 默认值：20
+     * @return Event List
+     * @since 1.1.2
+     */
+    public FineTuneJobListResponse<FineTuneJobEvent> fineTuneJobEvents(String fineTuneJobId, String after, Integer limit) {
+        Single<FineTuneJobListResponse<FineTuneJobEvent>> events = this.openAiApi.fineTuneJobEvents(fineTuneJobId, after, limit);
+        return events.blockingGet();
+    }
+
+    /**
+     * 文本转语音（异步）
+     *
+     * @param textToSpeech 参数
+     * @param callback     返回值接收
+     * @since 1.1.2
+     */
+    public void textToSpeech(TextToSpeech textToSpeech, Callback callback) {
+        Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
+        responseBody.enqueue(callback);
+    }
+
+    /**
+     * 文本转语音（同步）
+     *
+     * @param textToSpeech 参数
+     * @since 1.1.3
+     */
+    public ResponseBody textToSpeech(TextToSpeech textToSpeech) throws IOException {
+        Call<ResponseBody> responseBody = this.openAiApi.textToSpeech(textToSpeech);
+        return responseBody.execute().body();
+    }
+
+    /**
+     * 创建助手
+     *
+     * @param assistant 参数
+     * @return 返回助手信息
+     * @since 1.1.2
+     */
+    public AssistantResponse assistant(Assistant assistant) {
+        Single<AssistantResponse> assistantResponse = this.openAiApi.assistant(assistant);
+        return assistantResponse.blockingGet();
+    }
+
+    /**
+     * 获取助手详细信息
+     *
+     * @param assistantId 助手id
+     * @return 助手信息
+     * @since 1.1.3
+     */
+    public AssistantResponse retrieveAssistant(String assistantId) {
+        Single<AssistantResponse> assistant = this.openAiApi.retrieveAssistant(assistantId);
+        return assistant.blockingGet();
+    }
+
+
+    /**
+     * 修改助手信息
+     *
+     * @param assistantId 助手id
+     * @param assistant   修改助手参数
+     * @return 助手信息
+     * @since 1.1.3
+     */
+    public AssistantResponse modifyAssistant(String assistantId, Assistant assistant) {
+        Single<AssistantResponse> assistantResponse = this.openAiApi.modifyAssistant(assistantId, assistant);
+        return assistantResponse.blockingGet();
+    }
+
+    /**
+     * 删除助手
+     *
+     * @param assistantId 助手id
+     * @return 删除状态
+     * @since 1.1.3
+     */
+    public DeleteResponse deleteAssistant(String assistantId) {
+        Single<DeleteResponse> deleteAssistant = this.openAiApi.deleteAssistant(assistantId);
+        return deleteAssistant.blockingGet();
+    }
+
+    /**
+     * 助手列表
+     *
+     * @param pageRequest 分页信息
+     * @return AssistantListResponse #AssistantResponse
+     * @since 1.1.3
+     */
+    public AssistantListResponse<AssistantResponse> assistants(PageRequest pageRequest) {
+        Single<AssistantListResponse<AssistantResponse>> assistants = this.openAiApi.assistants(pageRequest.getLimit(), pageRequest.getOrder(), pageRequest.getBefore(), pageRequest.getAfter());
+        return assistants.blockingGet();
+    }
+
+    /**
+     * 创建助手文件
+     *
+     * @param assistantId 助手id
+     * @param assistantId 文件信息
+     * @return 返回信息AssistantResponse
+     */
+    public AssistantFileResponse assistantFile(String assistantId, AssistantFile assistantFile) {
+        Single<AssistantFileResponse> assistantFileResponse = this.openAiApi.assistantFile(assistantId, assistantFile);
+        return assistantFileResponse.blockingGet();
+    }
+
+    /**
+     * 检索助手文件
+     *
+     * @param assistantId 助手id
+     * @param fileId      文件信息
+     * @return 助手文件信息
+     */
+    public AssistantFileResponse retrieveAssistantFile(String assistantId, String fileId) {
+        Single<AssistantFileResponse> assistantFileResponse = this.openAiApi.retrieveAssistantFile(assistantId, fileId);
+        return assistantFileResponse.blockingGet();
+    }
+
+    /**
+     * 删除助手文件
+     *
+     * @param assistantId 助手id
+     * @param fileId      文件信息
+     * @return 删除状态
+     */
+    public DeleteResponse deleteAssistantFile(String assistantId, String fileId) {
+        Single<DeleteResponse> deleteResponse = this.openAiApi.deleteAssistantFile(assistantId, fileId);
+        return deleteResponse.blockingGet();
+    }
+
+    /**
+     * 助手文件列表
+     *
+     * @param assistantId 助手id
+     * @param pageRequest 分页信息
+     * @return 助手文件列表
+     */
+    public AssistantListResponse<AssistantFileResponse> assistantFiles(String assistantId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        Single<AssistantListResponse<AssistantFileResponse>> deleteResponse = this.openAiApi.assistantFiles(assistantId, pageRequest.getLimit(), pageRequest.getOrder(), pageRequest.getBefore(), pageRequest.getAfter());
+        return deleteResponse.blockingGet();
+    }
+
+    /**
+     * 创建线程
+     *
+     * @param thread 创建线程参数
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    public ThreadResponse thread(Thread thread) {
+        return this.openAiApi.thread(thread).blockingGet();
+    }
+
+    /**
+     * 获取线程详细信息
+     *
+     * @param threadId 线程id
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    public ThreadResponse retrieveThread(String threadId) {
+        return this.openAiApi.retrieveThread(threadId).blockingGet();
+    }
+
+    /**
+     * 修改线程信息
+     *
+     * @param threadId 线程id
+     * @param thread   线程信息
+     * @return 线程信息
+     * @since 1.1.3
+     */
+    public ThreadResponse modifyThread(String threadId, ModifyThread thread) {
+        return this.openAiApi.modifyThread(threadId, thread).blockingGet();
+    }
+
+    /**
+     * 删除线程
+     *
+     * @param threadId 线程id
+     * @return 删除状态
+     * @since 1.1.3
+     */
+    public DeleteResponse deleteThread(String threadId) {
+        return this.openAiApi.deleteThread(threadId).blockingGet();
+    }
+
+    /**
+     * 为线程创建消息
+     *
+     * @param threadId 线程id
+     * @param message  message参数
+     * @return
+     * @since 1.1.3
+     */
+    public MessageResponse message(String threadId, ThreadMessage message) {
+        return this.openAiApi.message(threadId, message).blockingGet();
+    }
+
+    /**
+     * 检索某一个线程对应的消息详细信息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @return
+     * @since 1.1.3
+     */
+    public MessageResponse retrieveMessage(String threadId, String messageId) {
+        return this.openAiApi.retrieveMessage(threadId, messageId).blockingGet();
+    }
+
+    /**
+     * 修改某一个线程对应的消息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param message   消息体
+     * @return
+     * @since 1.1.3
+     */
+    public MessageResponse modifyMessage(String threadId, String messageId, ModifyMessage message) {
+        return this.openAiApi.modifyMessage(threadId, messageId, message).blockingGet();
+    }
+
+    /**
+     * 获取某一个线程的消息集合
+     *
+     * @param threadId    线程id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<MessageResponse> messages(String threadId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.messages(threadId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
+    /**
+     * 检索某一个线程对应某一个消息的一个文件信息
+     *
+     * @param threadId  线程id
+     * @param messageId 消息id
+     * @param fileId    文件id
+     * @return
+     * @since 1.1.3
+     */
+    public MessageFileResponse retrieveMessageFile(String threadId, String messageId, String fileId) {
+        return this.openAiApi.retrieveMessageFile(threadId, messageId, fileId).blockingGet();
+    }
+
+    /**
+     * messageFiles集合
+     *
+     * @param threadId    线程id
+     * @param messageId   消息id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<MessageFileResponse> messageFiles(String threadId, String messageId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.messageFiles(threadId, messageId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
+
+    /**
+     * 创建Run
+     *
+     * @param threadId 线程id
+     * @param run      run
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse run(String threadId, Run run) {
+        return this.openAiApi.run(threadId, run).blockingGet();
+    }
+
+
+    /**
+     * 检索run详细信息
+     *
+     * @param threadId 线程id
+     * @param runId    run_id
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse retrieveRun(String threadId, String runId) {
+        return this.openAiApi.retrieveRun(threadId, runId).blockingGet();
+    }
+
+    /**
+     * 修改某一个run
+     *
+     * @param threadId 线程id
+     * @param runId    run_id
+     * @param run      消息体
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse modifyRun(String threadId, String runId, ModifyRun run) {
+        return this.openAiApi.modifyRun(threadId, runId, run).blockingGet();
+    }
+
+
+    /**
+     * 获取某一个线程的run集合
+     *
+     * @param threadId    线程id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<RunResponse> runs(String threadId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.runs(threadId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
+
+    /**
+     * 获取某一个线程的run集合
+     *
+     * @param threadId    线程id
+     * @param runId       run id
+     * @param toolOutputs 为其提交输出的工具列表。
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse submitToolOutputs(String threadId, String runId, ToolOutputBody toolOutputs) {
+        return this.openAiApi.submitToolOutputs(threadId, runId, toolOutputs).blockingGet();
+    }
+
+
+    /**
+     * 取消正在进行中的run
+     *
+     * @param threadId 线程id
+     * @param runId    run id
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse cancelRun(String threadId, String runId) {
+        return this.openAiApi.cancelRun(threadId, runId).blockingGet();
+    }
+
+
+    /**
+     * 创建一个线程并在一个请求中运行它
+     *
+     * @param threadRun 对象
+     * @return
+     * @since 1.1.3
+     */
+    public RunResponse threadRun(ThreadRun threadRun) {
+        return this.openAiApi.threadRun(threadRun).blockingGet();
+    }
+
+    /**
+     * 检索run step详细信息
+     *
+     * @param threadId 线程id
+     * @param runId    run_id
+     * @param stepId   step_id
+     * @return
+     * @since 1.1.3
+     */
+    public RunStepResponse retrieveRunStep(String threadId, String runId, String stepId) {
+        if (StrUtil.isBlank(stepId)) {
+            log.error("step id不能为空");
+            throw new BaseException(CommonError.PARAM_ERROR);
+        }
+        return this.openAiApi.retrieveRunStep(threadId, runId, stepId).blockingGet();
+    }
+
+
+    /**
+     * 获取某一个线程的run step集合
+     *
+     * @param threadId    线程id
+     * @param runId       run_id
+     * @param pageRequest 分页信息
+     * @return
+     * @since 1.1.3
+     */
+    public AssistantListResponse<RunStepResponse> runSteps(String threadId, String runId, PageRequest pageRequest) {
+        pageRequest = Optional.ofNullable(pageRequest).orElse(this.getPageRequest());
+        return this.openAiApi.runSteps(threadId, runId,
+                pageRequest.getLimit(),
+                pageRequest.getOrder(),
+                pageRequest.getBefore(),
+                pageRequest.getAfter()).blockingGet();
+    }
+
 
     public static final class Builder {
         /**
@@ -895,7 +1411,7 @@ public class OpenAiClient {
         /**
          * api请求地址，结尾处有斜杠
          *
-         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         * @see OpenAIConst
          */
         private String apiHost;
         /**
@@ -919,7 +1435,7 @@ public class OpenAiClient {
         /**
          * @param val api请求地址，结尾处有斜杠
          * @return Builder对象
-         * @see com.unfbx.chatgpt.constant.OpenAIConst
+         * @see OpenAIConst
          */
         public Builder apiHost(String val) {
             apiHost = val;

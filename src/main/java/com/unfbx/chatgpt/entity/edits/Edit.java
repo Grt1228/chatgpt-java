@@ -12,11 +12,12 @@ import java.io.Serializable;
  * @author https:www.unfbx.com
  *  2023-02-15
  */
-@Getter
+@Data
 @Builder
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated
 public class Edit implements Serializable {
     /**
      * 编辑模型，目前支持两种
