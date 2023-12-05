@@ -13,7 +13,7 @@ import java.io.Serializable;
  * 描述：
  *
  * @author https://www.unfbx.com
- * @since 1.1.3
+ * @since 1.1.4
  * 2023-11-20
  */
 @Data
@@ -26,5 +26,5 @@ import java.io.Serializable;
 public class Image implements Serializable {
 
     @JsonProperty("file_id")
-    private Image file_id;
+    private String fileId;
 }
