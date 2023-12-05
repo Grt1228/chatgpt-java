@@ -11,6 +11,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item implements Serializable {
     private String object;
-    private List<BigDecimal> embedding;
+    private List<Float> embedding;
     private Integer index;
 }
