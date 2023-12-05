@@ -79,7 +79,7 @@ WebSocket参考：[OpenAIWebSocketEventSourceListener](https://github.com/Grt122
 - 支持全部OpenAI的Api
 
 # 📑 更新日志
-- [x] 1.1.4   Bug Fix
+- [x] 1.1.5   Bug Fix
 - [x] 1.1.3   支持Assistant、Run、Thread、Message Api。测试案例[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/v1_1_3/OpenAiClientTest.java)
 - [x] 1.1.2-beta0   支持附加图片的ChatCompletion、指定返回数据格式、Tool Call、Dall-e-3生成图片、FineTuneJob、文本转语音TTS。官方文档示例：[chatgpt-java.unfbx.com](https://chatgpt-java.unfbx.com/docs/category/-%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD) 。测试案例[OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/v1_1_2/OpenAiClientTest.java)
 - [x] 1.1.1-beta0   function call改成GPT插件模式调用更加简单的调用方式.参考实现[PluginTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/PluginTest.java)
