@@ -23,5 +23,5 @@ import lombok.extern.slf4j.Slf4j;
 public class FilePath {
 
     @JsonProperty("file_id")
-    private String file_id;
+    private String fileId;
 }
