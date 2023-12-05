@@ -172,12 +172,17 @@ public class OpenAiClient {
                     .build();
         }
         okHttpClient = builder.okHttpClient;
+
+        if (Objects.isNull(builder.openAiApiClass)) {
+            builder.openAiApiClass = OpenAiApi.class;
+        }
+
         this.openAiApi = new Retrofit.Builder()
                 .baseUrl(apiHost)
                 .client(okHttpClient)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
-                .build().create(OpenAiApi.class);
+                .build().create(builder.openAiApiClass);
     }
 
 
@@ -1429,6 +1434,11 @@ public class OpenAiClient {
          */
         private OpenAiAuthInterceptor authInterceptor;
 
+        /**
+         * api接口类
+         */
+        private Class<? extends OpenAiApi> openAiApiClass;
+
         public Builder() {
         }
 
@@ -1459,6 +1469,11 @@ public class OpenAiClient {
 
         public Builder authInterceptor(OpenAiAuthInterceptor val) {
             authInterceptor = val;
+            return this;
+        }
+
+        public Builder openAiApiClass(Class<? extends OpenAiApi> val) {
+            openAiApiClass = val;
             return this;
         }
 
