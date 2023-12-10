@@ -152,7 +152,7 @@ public interface OpenAiApi {
      *
      * @return Single OpenAiResponse File
      */
-    @GET("/v1/files")
+    @GET("v1/files")
     Single<OpenAiResponse<File>> files();
 
     /**

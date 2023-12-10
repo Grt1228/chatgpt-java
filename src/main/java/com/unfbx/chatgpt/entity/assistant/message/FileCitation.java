@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FileCitation {
 
     @JsonProperty("file_id")
-    private String file_id;
+    private String fileId;
 
     @JsonProperty("quote")
     private String quote;
