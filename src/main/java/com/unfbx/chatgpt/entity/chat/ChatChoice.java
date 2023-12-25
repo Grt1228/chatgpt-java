@@ -29,4 +29,6 @@ public class ChatChoice implements Serializable {
     private Message message;
     @JsonProperty("finish_reason")
     private String finishReason;
+
+    private LogprobContent logprobs;
 }

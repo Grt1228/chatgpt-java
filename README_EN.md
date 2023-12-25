@@ -65,6 +65,7 @@ WebSocket Reference：[OpenAIWebSocketEventSourceListener](https://github.com/Gr
 - Supports all OpenAI APIs.
 
 # 📑 Update Log
+- [x] 1.1.6   ChatCompletion api support logprobs param.
 - [x] 1.1.5   Bug Fix
 - [x] 1.1.3   Upgrade to support Assistant、Run、Thread、Message Api. eg: [OpenAiClientTest](https://github.com/Grt1228/chatgpt-java/blob/develop/src/test/java/com/unfbx/chatgpt/v1_1_3/OpenAiClientTest.java)
 - [x] 1.1.2-beta0   Upgrade to support chat completion with picture GPT-4V、return JSON model、Tool Call、Dall-e-3、Fine Tune Job、TTS.

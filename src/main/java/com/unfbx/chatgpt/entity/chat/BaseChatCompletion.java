@@ -145,6 +145,15 @@ public class BaseChatCompletion implements Serializable {
      * @since 1.1.2
      */
     private Integer seed;
+    /**
+     * @since 1.1.6
+     */
+    private Boolean logprobs;
+    /**
+     * @since 1.1.6
+     */
+    @JsonProperty("top_logprobs")
+    private Integer topLogprobs;
 
 
     /**
