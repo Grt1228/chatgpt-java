@@ -1,6 +1,7 @@
 package com.unfbx.chatgpt;
 
 import com.unfbx.chatgpt.function.KeyStrategyFunction;
+import okhttp3.Request;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class FirstKeyStrategy implements KeyStrategyFunction<List<String>, Strin
      * @return
      */
     @Override
-    public String apply(List<String> keys) {
+    public String apply(List<String> keys, Request request) {
         return keys.get(0);
     }
 }
