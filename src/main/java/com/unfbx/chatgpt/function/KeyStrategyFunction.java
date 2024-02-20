@@ -1,5 +1,7 @@
 package com.unfbx.chatgpt.function;
 
+import okhttp3.Request;
+
 import java.util.function.Function;
 
 /**
@@ -19,6 +21,6 @@ public interface KeyStrategyFunction<T, R> {
      * @param t the function argument
      * @return the function result
      */
-    R apply(T t);
+    R apply(T t, Request request);
 
 }

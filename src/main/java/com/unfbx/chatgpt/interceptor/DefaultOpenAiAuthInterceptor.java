@@ -42,7 +42,7 @@ public class DefaultOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
-        return chain.proceed(auth(super.getKey(), original));
+        return chain.proceed(auth(super.getKey(original), original));
     }
 
     /**
