@@ -100,7 +100,7 @@ public class RunResponse implements Serializable {
     public enum Status {
         QUEUED("queued", "排队"),
         IN_PROGRESS("in_progress", "进行中"),
-        REQUIRE_ACTION("require_action", "需要操作"),
+        REQUIRES_ACTION("requires_action", "需要操作"),
         CANCELLING("cancelling", "取消"),
         CANCELLED("cancelled", "已取消"),
         FAILED("failed", "失败"),
