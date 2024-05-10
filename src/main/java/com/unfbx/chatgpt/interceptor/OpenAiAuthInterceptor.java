@@ -58,12 +58,12 @@ public abstract class OpenAiAuthInterceptor implements Interceptor {
      *
      * @return key
      */
-    public final String getKey() {
+    public final String getKey(Request request) {
         if (CollectionUtil.isEmpty(apiKey)) {
             this.noHaveActiveKeyWarring();
             throw new BaseException(CommonError.NO_ACTIVE_API_KEYS);
         }
-        return keyStrategy.apply(apiKey);
+        return keyStrategy.apply(apiKey, request);
     }
 
     /**

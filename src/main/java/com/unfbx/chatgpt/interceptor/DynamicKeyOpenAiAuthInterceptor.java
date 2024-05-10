@@ -52,8 +52,8 @@ public class DynamicKeyOpenAiAuthInterceptor extends OpenAiAuthInterceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        String key = getKey();
         Request original = chain.request();
+        String key = getKey(original);
         Request request = this.auth(key, original);
         Response response = chain.proceed(request);
         if (!response.isSuccessful() && response.body() != null) {
