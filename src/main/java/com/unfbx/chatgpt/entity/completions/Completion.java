@@ -121,7 +121,7 @@ public class Completion implements Serializable {
     @Getter
     @AllArgsConstructor
     public enum Model {
-        DAVINCI_003("text-davinci-003"),
+        DAVINCI_003("gpt-3.5-turbo-instruct"),
         DAVINCI_002("text-davinci-002"),
         DAVINCI("davinci"),
         ;

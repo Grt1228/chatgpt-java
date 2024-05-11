@@ -248,8 +248,6 @@ public class OpenAiClientTest {
         Completion q = Completion.builder()
                 .prompt(question)
                 .stop(Arrays.asList(" Human:", " Bot:"))
-
-                .echo(true)
                 .build();
         CompletionResponse completions = v2.completions(q);
         String text = completions.getChoices().get(0).getText();
