@@ -7,6 +7,9 @@ import com.unfbx.chatgpt.entity.assistant.message.MessageResponse;
 import com.unfbx.chatgpt.entity.assistant.message.ModifyMessage;
 import com.unfbx.chatgpt.entity.assistant.run.*;
 import com.unfbx.chatgpt.entity.assistant.thread.ThreadMessage;
+import com.unfbx.chatgpt.entity.batch.BatchesListResponse;
+import com.unfbx.chatgpt.entity.batch.BatchesRequest;
+import com.unfbx.chatgpt.entity.batch.BatchesResponse;
 import com.unfbx.chatgpt.entity.billing.BillingUsage;
 import com.unfbx.chatgpt.entity.billing.CreditGrantsResponse;
 import com.unfbx.chatgpt.entity.billing.Subscription;
@@ -669,7 +672,7 @@ public interface OpenAiApi {
     @GET("v1/threads/{thread_id}/messages/{message_id}/files")
     @Headers("OpenAI-Beta: assistants=v1")
     Single<AssistantListResponse<MessageFileResponse>> messageFiles(@Path("thread_id") String threadId, @Path("message_id") String messageId,
-                                                                @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
+                                                                    @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
 
 
     /**
@@ -796,5 +799,29 @@ public interface OpenAiApi {
     @Headers("OpenAI-Beta: assistants=v1")
     Single<AssistantListResponse<RunStepResponse>> runSteps(@Path("thread_id") String threadId, @Path("run_id") String runId,
                                                             @Query("limit") Integer limit, @Query("order") String order, @Query("before") String before, @Query("after") String after);
+
+    /**
+     * 创建批处理
+     */
+    @POST("v1/batches")
+    Single<BatchesResponse> createBatch(@Body BatchesRequest batchesRequest);
+
+    /**
+     * 取消批处理
+     */
+    @POST("v1/batches/{batch_id}/cancel")
+    Single<BatchesResponse> cancelBatche(@Path("batch_id") String batchId);
+
+    /**
+     * 查询批处理
+     */
+    @GET("v1/batches/{batch_id}")
+    Single<BatchesResponse> retrieveBatche(@Path("batch_id") String batchId);
+
+    /**
+     * 分页查询批处理
+     */
+    @GET("v1/batches")
+    Single<BatchesListResponse> listBatch(@Query("after") String after, @Query("limit") Integer limit);
 
 }

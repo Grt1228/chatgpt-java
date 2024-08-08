@@ -28,7 +28,7 @@ public class BaseChatCompletion implements Serializable {
 
     @NonNull
     @Builder.Default
-    private String model = Model.GPT_3_5_TURBO.getName();
+    private String model = Model.GPT_4O_MINI.getName();
 
     /**
      * 指定模型必须输出的格式的对象。
@@ -223,6 +223,16 @@ public class BaseChatCompletion implements Serializable {
          * 支持图片
          */
         GPT_4_VISION_PREVIEW("gpt-4-vision-preview"),
+
+        GPT_4O("gpt-4o"),
+
+        GPT_4O_2024_05_13("gpt-4o-2024-05-13"),
+
+        GPT_4O_2024_08_06("gpt-4o-2024-08-06"),
+
+        GPT_4O_MINI("gpt-4o-mini"),
+
+        GPT_4O_MINI_2024_07_18("gpt-4o-mini-2024-07-18"),
         ;
         private final String name;
     }
